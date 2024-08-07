@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/app/auth/login/screen/login_screen.dart';
 
+import '../../../app/onboarding/screen/onboarding_screen.dart';
 import '../../../main.dart';
 
 class AuthController extends GetxController {
@@ -18,7 +19,7 @@ class AuthController extends GetxController {
   var responseMessage = "".obs;
   Future<void> loadApp() async {
     bool isOnboarded = prefs.getBool("isOnboarded") ?? false;
-    bool isLoggedIn = prefs.getBool("isLoggedIn") ?? false;
+    // bool isLoggedIn = prefs.getBool("isLoggedIn") ?? false;
 
     // if (isLoggedIn) {
     // User is logged in, navigate to the home screen
@@ -31,29 +32,30 @@ class AuthController extends GetxController {
     //   popGesture: false,
     //   transition: Get.defaultTransition,
     // );
-    // } else if (isOnboarded) {
-    // User is onboarded but not logged in, navigate to the login screen
-    await Get.offAll(
-      () => const LoginScreen(),
-      routeName: "/login",
-      fullscreenDialog: true,
-      curve: Curves.easeInOut,
-      predicate: (routes) => false,
-      popGesture: false,
-      transition: Get.defaultTransition,
-    );
-    // } else {
-    //   // User is not onboarded, navigate to the onboarding screen
-    //   await Get.offAll(
-    //     () => const OnboardingScreen(),
-    //     routeName: "/onboarding",
-    //     fullscreenDialog: true,
-    //     curve: Curves.easeInOut,
-    //     predicate: (routes) => false,
-    //     popGesture: false,
-    //     transition: Get.defaultTransition,
-    //   );
-    // }
+    // } else
+    if (isOnboarded) {
+      // User is onboarded but not logged in, navigate to the login screen
+      await Get.offAll(
+        () => const LoginScreen(),
+        routeName: "/login",
+        fullscreenDialog: true,
+        curve: Curves.easeInOut,
+        predicate: (routes) => false,
+        popGesture: false,
+        transition: Get.defaultTransition,
+      );
+    } else {
+      // User is not onboarded, navigate to the onboarding screen
+      await Get.offAll(
+        () => const OnboardingScreen(),
+        routeName: "/onboarding",
+        fullscreenDialog: true,
+        curve: Curves.easeInOut,
+        predicate: (routes) => false,
+        popGesture: false,
+        transition: Get.defaultTransition,
+      );
+    }
   }
 
   @override
