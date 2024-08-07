@@ -10,25 +10,32 @@ class OnboardingController extends GetxController {
     return Get.find<OnboardingController>();
   }
 
+  var scrollController = ScrollController().obs;
+
+  var pageController = PageController().obs;
+  var imageController = PageController().obs;
+  var onboardContent = OnboardContent().obs;
+  var currentPage = 0.obs;
+  var currentImage = 0.obs;
+  var isLastPage = false.obs;
+
+  imageListener() {
+    currentImage.value = imageController.value.page!.round();
+  }
+
   @override
   void onInit() {
     pageController.value.addListener(pageListener);
+    imageController.value.addListener(imageListener);
     super.onInit();
-  }
-
-  var scrollController = ScrollController().obs;
-  var pageController = PageController().obs;
-  var onboardContent = OnboardContent().obs;
-  var currentPage = 0.obs;
-
-  var isLastPage = false.obs;
-
-  setIsLastPage(index) {
-    isLastPage.value = onboardContent.value.items.length - 1 == index;
   }
 
   pageListener() {
     currentPage.value = pageController.value.page!.round();
+  }
+
+  setIsLastPage(index) {
+    isLastPage.value = onboardContent.value.items.length - 1 == index;
   }
 
   toLogin() async {

@@ -15,6 +15,10 @@ bottomButtons(Size media, OnboardingController controller) {
             const SizedBox(),
             IconButton.filled(
               onPressed: () {
+                controller.imageController.value.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeIn,
+                );
                 controller.pageController.value.nextPage(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeIn,
@@ -33,6 +37,10 @@ bottomButtons(Size media, OnboardingController controller) {
           return [
             IconButton.filled(
               onPressed: () {
+                controller.imageController.value.previousPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeIn,
+                );
                 controller.pageController.value.previousPage(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeIn,
@@ -60,6 +68,10 @@ bottomButtons(Size media, OnboardingController controller) {
           return [
             IconButton.filled(
               onPressed: () {
+                controller.imageController.value.previousPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeIn,
+                );
                 controller.pageController.value.previousPage(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeIn,
@@ -73,6 +85,10 @@ bottomButtons(Size media, OnboardingController controller) {
             ),
             IconButton.filled(
               onPressed: () {
+                controller.imageController.value.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeIn,
+                );
                 controller.pageController.value.nextPage(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeIn,

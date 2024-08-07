@@ -21,6 +21,9 @@ class Assets {
 //======== PNG =========\\
 
 //======== SVG =========\\
+  static const onboarding1Svg = "assets/images/svg/onboarding_1.svg";
+  static const onboarding2Svg = "assets/images/svg/onboarding_2.svg";
+  static const onboarding3Svg = "assets/images/svg/onboarding_3.svg";
 
 //Placeholder Image
   static const placeholderImage = "assets/images/png/placeholder_image.png";

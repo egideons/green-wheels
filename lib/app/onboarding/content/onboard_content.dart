@@ -1,24 +1,31 @@
+import '../../../src/constants/assets.dart';
 import '../../../src/models/onboard_model.dart';
 
 class OnboardContent {
   List<OnboardModel> items = [
     OnboardModel(
-      title: "Lorem ipsum dolor sit amet.",
+      title: "No Service Denials",
       description:
-          "Lorem ipsum dolor sit amet consectetur. Amet varius suscipit velit massa purus etiam praesent neque duis. Sit id in egestas pharetra phasellus orci dictumst elit blandit.",
-      image: "",
+          "Our network of reliable drivers ensures you're never left waiting, with zero cancellations as our drivers are always on duty.",
+      image: Assets.onboarding1Svg,
     ),
     OnboardModel(
-      title: "Lorem ipsum dolor sit amet.",
+      title: "Ride with Confidence",
       description:
-          "Lorem ipsum dolor sit amet consectetur. Amet varius suscipit velit massa purus etiam praesent neque duis. Sit id in egestas pharetra phasellus orci dictumst elit blandit.y",
-      image: "",
+          "Forget surprise charges! We offer upfront pricing, so you know exactly what you'll pay before you book.",
+      image: Assets.onboarding2Svg,
     ),
     OnboardModel(
-      title: "Lorem ipsum dolor sit amet.",
+      title: "Safety First",
       description:
-          "Lorem ipsum dolor sit amet consectetur. Amet varius suscipit velit massa purus etiam praesent neque duis. Sit id in egestas pharetra phasellus orci dictumst elit blandit.y",
-      image: "",
+          "We take your safety seriously.  Our drivers undergo rigorous background checks, and our vehicles are equipped with the latest safety technology to keep you protected on the road.",
+      image: Assets.onboarding3Svg,
+    ),
+    OnboardModel(
+      title: "Safety First",
+      description:
+          "We take your safety seriously.  Our drivers undergo rigorous background checks, and our vehicles are equipped with the latest safety technology to keep you protected on the road.",
+      image: Assets.onboarding3Svg,
     ),
   ];
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/consts.dart';
+import 'package:green_wheels/src/utils/components/my_app_bar.dart';
 import 'package:green_wheels/theme/colors.dart';
 
 import '../../../../src/controllers/others/onboarding_controller.dart';
@@ -17,12 +19,31 @@ class OnboardingScaffold extends GetView<OnboardingController> {
     var colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: kWhiteColor,
+      appBar: myAppBar(
+        colorScheme,
+        media,
+        toolbarHeight: 0,
+        isLeadingVisible: false,
+      ),
       body: SafeArea(
         child: Stack(
           children: [
             SizedBox(
-              height: media.height,
+              height: media.height / 2,
               width: media.width,
+              child: PageView.builder(
+                // onPageChanged: (index) => controller.setIsLastPage(index),
+                controller: controller.imageController.value,
+                itemCount: controller.onboardContent.value.items.length,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return SvgPicture.asset(
+                    controller.onboardContent.value.items[index].image,
+                    height: media.height / 2,
+                    width: media.width,
+                  );
+                },
+              ),
             ),
             Obx(
               () => controller.currentPage.value + 1 ==

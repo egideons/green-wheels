@@ -7,24 +7,30 @@ import '../../../../../../../../theme/colors.dart';
 myAppBar(
   ColorScheme colorScheme,
   Size media, {
+  Color? backgroundColor,
+  double? toolbarHeight,
   bool? centerTitle,
+  bool? isLeadingVisible,
   String? title,
   List<Widget>? actions,
   PreferredSizeWidget? bottom,
 }) {
   return AppBar(
-    backgroundColor: colorScheme.surface,
+    backgroundColor: backgroundColor ?? colorScheme.surface,
+    toolbarHeight: toolbarHeight ?? kToolbarHeight,
     centerTitle: centerTitle ?? true,
-    leading: IconButton(
-      onPressed: () {
-        Get.back();
-      },
-      icon: const Icon(
-        Icons.chevron_left,
-        size: 30,
-        color: kBlackColor,
-      ),
-    ),
+    leading: isLeadingVisible == true
+        ? IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: const Icon(
+              Icons.chevron_left,
+              size: 30,
+              color: kBlackColor,
+            ),
+          )
+        : const SizedBox(),
     title: SizedBox(
       width: media.width - 100,
       child: Text(
