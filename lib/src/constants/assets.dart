@@ -1,0 +1,37 @@
+class Assets {
+//=================== Icons ===================\\
+
+//App Icon
+  static const appIconLightBg = "assets/images/png/app_icon_light_bg.png";
+  static const lightAppIconNoBg = "assets/images/png/light_app_icon_no_bg.png";
+
+//========== PNG Icons ==========\\
+  static const greenCheckIconPng = "assets/icons/png/check.png";
+  static const greenWavyCheckIconPng = "assets/icons/png/check_wavy.png";
+
+//========== SVG Icons ==========\\
+  static const greenCheckIconSvg = "assets/icons/svg/check.svg";
+  static const greenWavyCheckIconSvg = "assets/icons/svg/check_wavy.svg";
+  static const scheduleIconSvg = "assets/icons/svg/schedule.svg";
+  static const settingsIconSvg = "assets/icons/svg/settings.svg";
+  static const supportIconSvg = "assets/icons/svg/support.svg";
+
+//=================== Images ===================\\
+
+//======== PNG =========\\
+
+//======== SVG =========\\
+
+//Placeholder Image
+  static const placeholderImage = "assets/images/png/placeholder_image.png";
+  static const userPlaceholderImage =
+      "https://img.freepik.com/free-psd/3d-icon-social-media-app_23-2150049569.jpg";
+
+//=================== Animations ===================\\
+  static const badge = "assets/animations/badge.json";
+  static const colorSplash = "assets/animations/color_splash.json";
+  static const connecting = "assets/animations/connecting.json";
+  static const search = "assets/animations/search.json";
+  static const searching = "assets/animations/searching.json";
+  static const success = "assets/animations/success.json";
+}

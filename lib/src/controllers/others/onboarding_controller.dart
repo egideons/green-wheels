@@ -1,0 +1,48 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../../app/auth/login/screen/login_screen.dart';
+import '../../../app/onboarding/content/onboard_content.dart';
+import '../../../main.dart';
+
+class OnboardingController extends GetxController {
+  static OnboardingController get instance {
+    return Get.find<OnboardingController>();
+  }
+
+  @override
+  void onInit() {
+    pageController.value.addListener(pageListener);
+    super.onInit();
+  }
+
+  var scrollController = ScrollController().obs;
+  var pageController = PageController().obs;
+  var onboardContent = OnboardContent().obs;
+  var currentPage = 0.obs;
+
+  var isLastPage = false.obs;
+
+  setIsLastPage(index) {
+    isLastPage.value = onboardContent.value.items.length - 1 == index;
+  }
+
+  pageListener() {
+    currentPage.value = pageController.value.page!.round();
+  }
+
+  toLogin() async {
+    //Save state that the user has been onboarded
+    prefs.setBool("isOnboarded", true);
+
+    await Get.offAll(
+      () => const LoginScreen(),
+      routeName: "/login",
+      fullscreenDialog: true,
+      curve: Curves.easeInOut,
+      predicate: (routes) => false,
+      popGesture: false,
+      transition: Get.defaultTransition,
+    );
+  }
+}

@@ -1,0 +1,97 @@
+name: green_wheels
+description: "A Ride Hailing App"
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.4.4 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  smooth_page_indicator: ^1.2.0
+  cached_network_image:
+  readmore:
+  iconsax: ^0.0.8
+  flutter_svg:
+  get:
+  path:
+  intl:
+  shared_preferences:
+  lottie:
+  image_picker:
+  loading_animation_widget:
+  dio:
+  google_maps_flutter:
+  permission_handler:
+  url_launcher:
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.2
+
+flutter_native_splash:
+  image: assets/images/png/app_icon_light_bg.png
+  color: "#f9f9f9"
+  image_dark: assets/images/png/app_icon_light_bg.png
+  color_dark: "#000000"
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  remove_alpha_ios: true
+  ios: true
+  image_path: "assets/images/png/app_icon_light_bg.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/images/png/app_icon_light_bg.png"
+    background_color: "#FFFFFF"
+    theme_color: "#FFFFFF"
+  windows:
+    generate: true
+    image_path: "assets/images/png/app_icon_light_bg.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/images/png/app_icon_light_bg.png"
+
+flutter:
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/images/png/
+    - assets/images/svg/
+    - assets/icons/png/
+    - assets/icons/svg/
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  fonts:
+    - family: Prototype
+      fonts:
+        - asset: fonts/Prototype.ttf
+
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages
