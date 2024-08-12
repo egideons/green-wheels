@@ -13,7 +13,7 @@ pageTextContent(int index, OnboardingController controller) {
     child: Column(
       children: [
         Text(
-          controller.onboardContent.value.items[index].title,
+          controller.onboardContent.items[index].title,
           textAlign: TextAlign.center,
           maxLines: 4,
           style: const TextStyle(
@@ -24,7 +24,7 @@ pageTextContent(int index, OnboardingController controller) {
         ),
         kSizedBox,
         Text(
-          controller.onboardContent.value.items[index].description,
+          controller.onboardContent.items[index].description,
           textAlign: TextAlign.center,
           maxLines: 6,
           style: const TextStyle(

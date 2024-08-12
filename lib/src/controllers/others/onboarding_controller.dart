@@ -13,20 +13,14 @@ class OnboardingController extends GetxController {
   var scrollController = ScrollController().obs;
 
   var pageController = PageController().obs;
-  var imageController = PageController().obs;
-  var onboardContent = OnboardContent().obs;
+  var onboardContent = OnboardContent();
   var currentPage = 0.obs;
-  var currentImage = 0.obs;
   var isLastPage = false.obs;
-
-  imageListener() {
-    currentImage.value = imageController.value.page!.round();
-  }
 
   @override
   void onInit() {
     pageController.value.addListener(pageListener);
-    imageController.value.addListener(imageListener);
+
     super.onInit();
   }
 
@@ -35,7 +29,7 @@ class OnboardingController extends GetxController {
   }
 
   setIsLastPage(index) {
-    isLastPage.value = onboardContent.value.items.length - 1 == index;
+    isLastPage.value = onboardContent.items.length - 1 == index;
   }
 
   toLogin() async {

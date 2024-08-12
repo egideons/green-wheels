@@ -7,7 +7,7 @@ smoothPageIndicator(ColorScheme colorScheme, OnboardingController controller) {
   return Center(
     child: SmoothPageIndicator(
       controller: controller.pageController.value,
-      count: controller.onboardContent.value.items.length,
+      count: controller.onboardContent.items.length,
       onDotClicked: (index) {
         controller.pageController.value.animateToPage(
           index,
