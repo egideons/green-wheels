@@ -21,11 +21,5 @@ class OnboardContent {
           "We take your safety seriously.  Our drivers undergo rigorous background checks, and our vehicles are equipped with the latest safety technology to keep you protected on the road.",
       image: Assets.onboarding3Svg,
     ),
-    OnboardModel(
-      title: "Safety First",
-      description:
-          "We take your safety seriously.  Our drivers undergo rigorous background checks, and our vehicles are equipped with the latest safety technology to keep you protected on the road.",
-      image: Assets.onboarding3Svg,
-    ),
   ];
 }
