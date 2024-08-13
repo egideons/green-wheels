@@ -29,6 +29,7 @@ class Routes {
   //Auth Screens
   static const signup = "/signup";
   static const login = "/login";
+  static const phoneOTP = "/phone-otp";
   static const emailOTP = "/email-otp";
   static const resetPassword = "/reset-password";
   static const resetPasswordViaEmail = "/reset-password-via-email";
@@ -61,6 +62,7 @@ class Routes {
     GetPage(name: onboarding, page: () => const OnboardingScreen()),
     GetPage(name: signup, page: () => const SignupScreen()),
     GetPage(name: login, page: () => const LoginScreen()),
+    // GetPage(name: phoneOTP, page: () => const PhoneOTP()),
     GetPage(name: emailOTP, page: () => const EmailOTP()),
 
     //Main App Section

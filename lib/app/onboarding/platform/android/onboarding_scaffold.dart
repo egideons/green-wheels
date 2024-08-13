@@ -22,8 +22,8 @@ class OnboardingScaffold extends GetView<OnboardingController> {
       appBar: myAppBar(
         colorScheme,
         media,
-        toolbarHeight: 0,
-        isLeadingVisible: false,
+        toolBarHeight: 0,
+        leadingIsVisible: false,
       ),
       body: GetBuilder<OnboardingController>(
         init: OnboardingController(),

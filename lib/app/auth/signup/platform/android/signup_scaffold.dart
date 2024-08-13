@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/consts.dart';
@@ -16,7 +17,7 @@ class SignupScaffold extends GetView<SignupController> {
     var colorScheme = Theme.of(context).colorScheme;
     return GetBuilder<SignupController>(
         init: SignupController(),
-        builder: (loginController) {
+        builder: (controller) {
           return Scaffold(
             backgroundColor: colorScheme.surface,
             appBar: AppBar(),
@@ -26,10 +27,10 @@ class SignupScaffold extends GetView<SignupController> {
                 padding: const EdgeInsets.all(20),
                 children: [
                   const SizedBox(height: kDefaultPadding * 4),
-                  const Text(
+                  Text(
                     "Enter Mobile Number",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
+                    textAlign: TextAlign.start,
+                    style: defaultTextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.w400,
                       color: kTextBlackColor,
@@ -39,16 +40,44 @@ class SignupScaffold extends GetView<SignupController> {
                   Obx(
                     () => Form(
                       key: controller.formKey,
-                      child: signupForm(colorScheme, media, loginController),
+                      child: signupForm(colorScheme, media, controller),
                     ),
                   ),
+                  Obx(() {
+                    return AndroidElevatedButton(
+                      title: "Sign Up",
+                      disable: controller.isChecked.value ? false : true,
+                      isLoading: controller.isLoading.value,
+                      onPressed: controller.login,
+                    );
+                  }),
                   kSizedBox,
-                  AndroidElevatedButton(
-                    title: "Sign In",
-                    isLoading: loginController.isLoading.value,
-                    onPressed: loginController.login,
+                  Center(
+                    child: RichText(
+                      maxLines: 10,
+                      text: TextSpan(
+                        text: "Already have an account? ",
+                        style: defaultTextStyle(
+                          color: kDisabledTextColor,
+                          fontWeight: FontWeight.w300,
+                          fontSize: 14.0,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: "Sign in",
+                            mouseCursor: SystemMouseCursors.click,
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = controller.toLogin,
+                            style: defaultTextStyle(
+                              color: kPrimaryColor,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  kSizedBox,
                 ],
               ),
             ),

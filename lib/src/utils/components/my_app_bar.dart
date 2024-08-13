@@ -8,42 +8,60 @@ myAppBar(
   ColorScheme colorScheme,
   Size media, {
   Color? backgroundColor,
-  double? toolbarHeight,
   bool? centerTitle,
-  bool? isLeadingVisible,
+  bool? leadingIsVisible = true,
   String? title,
-  List<Widget>? actions,
+  bool? automaticallyImplyLeading,
+  Widget? flexibleSpace,
+  double? leadingWidth,
+  double? elevation,
+  double? scrolledUnderElevation,
+  double? toolBarHeight,
+  Widget? titleWidget,
+  Widget? leading,
   PreferredSizeWidget? bottom,
+  List<Widget>? actions,
+  Color? titleColor,
 }) {
   return AppBar(
     backgroundColor: backgroundColor ?? colorScheme.surface,
-    toolbarHeight: toolbarHeight ?? kToolbarHeight,
     centerTitle: centerTitle ?? true,
-    leading: isLeadingVisible == true
-        ? IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: const Icon(
-              Icons.chevron_left,
-              size: 30,
-              color: kBlackColor,
-            ),
-          )
-        : const SizedBox(),
-    title: SizedBox(
-      width: media.width - 100,
-      child: Text(
-        title ?? "",
-        textAlign: TextAlign.start,
-        style: defaultTextStyle(
-          color: kTextBlackColor,
-          fontSize: 25,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    ),
-    actions: actions ?? [],
+    automaticallyImplyLeading: automaticallyImplyLeading ?? false,
+    flexibleSpace: flexibleSpace ?? Container(),
+    elevation: elevation ?? 0,
+    scrolledUnderElevation: scrolledUnderElevation ?? 0,
     bottom: bottom,
+    toolbarHeight: toolBarHeight ?? kToolbarHeight,
+    leadingWidth: leadingWidth ?? 56.0,
+    leading: leadingIsVisible == true
+        ? leading ??
+            Padding(
+              padding: const EdgeInsets.only(left: 4.0),
+              child: IconButton(
+                tooltip: "Go back",
+                onPressed: () {
+                  Get.back();
+                },
+                icon: const Icon(
+                  Icons.chevron_left,
+                  size: 26,
+                ),
+              ),
+            )
+        : const SizedBox(),
+    title: titleWidget ??
+        SizedBox(
+          width: media.width / 1.6,
+          child: Text(
+            title ?? "",
+            textAlign: TextAlign.center,
+            style: defaultTextStyle(
+              color: titleColor ?? kTextBlackColor,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+    actions: actions ?? [],
   );
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/consts.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
+import 'package:green_wheels/src/utils/components/my_app_bar.dart';
 import 'package:green_wheels/theme/colors.dart';
 
 import '../../../../../src/controllers/auth/login_controller.dart';
@@ -19,7 +20,7 @@ class LoginScaffold extends GetView<LoginController> {
         builder: (controller) {
           return Scaffold(
             backgroundColor: colorScheme.surface,
-            appBar: AppBar(),
+            appBar: myAppBar(colorScheme, media),
             body: SafeArea(
               child: ListView(
                 shrinkWrap: true,

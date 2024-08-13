@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:green_wheels/app/auth/phone_otp/screen/email_otp.dart';
 import 'package:green_wheels/src/constants/consts.dart';
 
+import '../../routes/routes.dart';
 import '../others/api_processor_controller.dart';
 
 class SignupController extends GetxController {
@@ -23,6 +24,7 @@ class SignupController extends GetxController {
   var isLoading = false.obs;
   var isPhoneNumberValid = false.obs;
   var responseStatus = 0.obs;
+  var isChecked = false.obs;
   var responseMessage = "".obs;
 
   Future<void> login() async {
@@ -62,8 +64,18 @@ class SignupController extends GetxController {
 
   //=========== Signup ===========\\
   onSubmitted(value) {
-    login();
+    if (isChecked.value == true) {
+      login();
+    }
   }
 
   //=========== onChanged Functions ===========\\
+  toggleCheck(value) {
+    isChecked.value = !isChecked.value;
+  }
+
+  //=========== Navigate ===========\\
+  toLogin() {
+    Get.toNamed(Routes.login, preventDuplicates: true);
+  }
 }
