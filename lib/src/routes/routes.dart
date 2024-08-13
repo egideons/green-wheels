@@ -1,10 +1,8 @@
 import 'package:get/get.dart';
 
-import '../../app/auth/email_otp/screen/email_otp.dart';
 import '../../app/auth/login/screen/login_screen.dart';
-import '../../app/auth/reset_password/screen/reset_password.dart';
-import '../../app/auth/reset_password_options/via_email/screen/reset_password_via_email.dart';
-import '../../app/auth/reset_password_otp/via_email/screen/reset_password_via_email_otp.dart';
+import '../../app/auth/phone_otp/screen/email_otp.dart';
+import '../../app/auth/signup/screen/signup_screen.dart';
 import '../../app/onboarding/screen/onboarding_screen.dart';
 import '../../app/splash/startup/screen/splash_screen.dart';
 import '../../app/splash/success/screen/success_screen.dart';
@@ -61,17 +59,9 @@ class Routes {
 
     //Auth Pages
     GetPage(name: onboarding, page: () => const OnboardingScreen()),
+    GetPage(name: signup, page: () => const SignupScreen()),
     GetPage(name: login, page: () => const LoginScreen()),
     GetPage(name: emailOTP, page: () => const EmailOTP()),
-    GetPage(
-      name: resetPasswordViaEmail,
-      page: () => const ResetPasswordViaEmail(),
-    ),
-    GetPage(
-        name: resetPasswordViaEmailOTP,
-        page: () => const RestPasswordViaEmailOTP()),
-
-    GetPage(name: resetPassword, page: () => const ResetPassword()),
 
     //Main App Section
     // GetPage(name: homeScreen, page: () => const HomeScreen()),

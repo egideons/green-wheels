@@ -5,9 +5,9 @@ import 'package:green_wheels/src/constants/consts.dart';
 
 import '../others/api_processor_controller.dart';
 
-class LoginController extends GetxController {
-  static LoginController get instance {
-    return Get.find<LoginController>();
+class SignupController extends GetxController {
+  static SignupController get instance {
+    return Get.find<SignupController>();
   }
 
   //=========== Form Key ===========\\

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../../../src/constants/consts.dart';
-import '../../../../src/controllers/auth/login_controller.dart';
+import '../../../../src/controllers/auth/signup_controller.dart';
 import '../../../../src/utils/containers/text_form_field_container.dart';
 import '../../../../src/utils/textformfields/android/android_textformfield.dart';
 import '../../../../theme/colors.dart';
 
-loginForm(ColorScheme colorScheme, Size media, LoginController controller) {
+signupForm(ColorScheme colorScheme, Size media, SignupController controller) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [

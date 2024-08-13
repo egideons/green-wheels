@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/src/controllers/auth/signup_controller.dart';
 
-import '../../../../src/controllers/auth/login_controller.dart';
-import '../platform/android/login_scaffold.dart';
+import '../platform/android/signup_scaffold.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class SignupScreen extends StatelessWidget {
+  const SignupScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     //Initialize controller
-    Get.put(LoginController());
+    Get.put(SignupController());
 
     // if (Platform.isIOS) {
     //   return const OnboardingCupertinoScaffold();
     // }
     return GestureDetector(
       onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
-      child: const LoginScaffold(),
+      child: const SignupScaffold(),
     );
   }
 }

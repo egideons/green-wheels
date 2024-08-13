@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:green_wheels/app/auth/login/screen/login_screen.dart';
+import 'package:green_wheels/app/auth/signup/screen/signup_screen.dart';
 
 import '../../../app/onboarding/screen/onboarding_screen.dart';
 import '../../../main.dart';
@@ -19,25 +19,25 @@ class AuthController extends GetxController {
   var responseMessage = "".obs;
   Future<void> loadApp() async {
     bool isOnboarded = prefs.getBool("isOnboarded") ?? false;
-    // bool isLoggedIn = prefs.getBool("isLoggedIn") ?? false;
+    bool isSignedUp = prefs.getBool("isSignedUp") ?? false;
+    bool isLoggedIn = prefs.getBool("isLoggedIn") ?? false;
 
-    // if (isLoggedIn) {
-    // User is logged in, navigate to the home screen
-    // await Get.offAll(
-    //   () => const HomeScreen(),
-    //   routeName: "/home",
-    //   fullscreenDialog: true,
-    //   curve: Curves.easeInOut,
-    //   predicate: (routes) => false,
-    //   popGesture: false,
-    //   transition: Get.defaultTransition,
-    // );
-    // } else
-    if (isOnboarded) {
-      // User is onboarded but not logged in, navigate to the login screen
+    if (isLoggedIn || isSignedUp) {
+      // User is logged in, navigate to the home screen
+      // await Get.offAll(
+      //   () => const HomeScreen(),
+      //   routeName: "/home",
+      //   fullscreenDialog: true,
+      //   curve: Curves.easeInOut,
+      //   predicate: (routes) => false,
+      //   popGesture: false,
+      //   transition: Get.defaultTransition,
+      // );
+    } else if (isOnboarded) {
+      // User is onboarded but not logged in, navigate to the sign up screen
       await Get.offAll(
-        () => const LoginScreen(),
-        routeName: "/login",
+        () => const SignupScreen(),
+        routeName: "/signup",
         fullscreenDialog: true,
         curve: Curves.easeInOut,
         predicate: (routes) => false,
