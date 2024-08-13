@@ -97,6 +97,7 @@ class HomeScreenController extends GetxController {
   @override
   void onInit() {
     initFunctions();
+    requestLocationPermission();
     super.onInit();
   }
 
