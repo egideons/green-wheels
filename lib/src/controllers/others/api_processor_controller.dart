@@ -8,6 +8,66 @@ import '../../../theme/colors.dart';
 import '../../constants/consts.dart';
 
 class ApiProcessorController extends GetxController {
+  static void errorSnack(msg) {
+    Get.showSnackbar(
+      GetSnackBar(
+        titleText: SizedBox(
+          width: Get.width,
+          child: Text(
+            "ERROR",
+            overflow: TextOverflow.ellipsis,
+            style: defaultTextStyle(
+              color: kTextWhiteColor,
+              fontSize: 18.0,
+              fontWeight: FontWeight.w900,
+              letterSpacing: -0.40,
+            ),
+          ),
+        ),
+        messageText: SizedBox(
+          width: Get.width,
+          child: Text(
+            msg,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 4,
+            style: defaultTextStyle(
+              color: kTextWhiteColor,
+              fontSize: 14.0,
+              fontWeight: FontWeight.w500,
+              letterSpacing: -0.40,
+            ),
+          ),
+        ),
+        icon: const Icon(
+          Icons.error_rounded,
+          size: 18,
+          color: kTextWhiteColor,
+        ),
+        shouldIconPulse: true,
+        isDismissible: true,
+        barBlur: 2.0,
+        borderRadius: 10,
+        snackPosition: SnackPosition.BOTTOM,
+        // backgroundGradient: LinearGradient(
+        //   colors: [kSuccessColor, kSuccessColor.withOpacity(0.6)],
+        // ),
+        margin: const EdgeInsets.all(10),
+        backgroundColor: kErrorColor,
+        duration: const Duration(milliseconds: 1000),
+        mainButton: IconButton(
+          onPressed: () {
+            Get.back();
+          },
+          icon: const Icon(
+            Icons.cancel,
+            size: 14,
+            color: kTextWhiteColor,
+          ),
+        ),
+      ),
+    );
+  }
+
   static Future<dynamic> errorState(data) async {
     try {
       if (data.statusCode == 200) {
@@ -45,7 +105,7 @@ class ApiProcessorController extends GetxController {
             style: defaultTextStyle(
               color: kTextWhiteColor,
               fontSize: 14.0,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
@@ -59,12 +119,12 @@ class ApiProcessorController extends GetxController {
         backgroundColor: kSuccessColor,
         barBlur: 2.0,
         borderRadius: 10,
-        snackPosition: SnackPosition.TOP,
+        snackPosition: SnackPosition.BOTTOM,
         // backgroundGradient: LinearGradient(
         //   colors: [kSuccessColor, kSuccessColor.withOpacity(0.6)],
         // ),
         margin: const EdgeInsets.all(10),
-        duration: const Duration(seconds: 2),
+        duration: const Duration(milliseconds: 1000),
         mainButton: IconButton(
           onPressed: () {
             Get.back();
@@ -73,66 +133,6 @@ class ApiProcessorController extends GetxController {
           icon: const Icon(
             Icons.cancel,
             size: 14,
-          ),
-        ),
-      ),
-    );
-  }
-
-  static void errorSnack(msg) {
-    Get.showSnackbar(
-      GetSnackBar(
-        titleText: SizedBox(
-          width: Get.width,
-          child: Text(
-            "ERROR",
-            overflow: TextOverflow.ellipsis,
-            style: defaultTextStyle(
-              color: kLightBackgroundColor,
-              fontSize: 18.0,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -0.40,
-            ),
-          ),
-        ),
-        messageText: SizedBox(
-          width: Get.width,
-          child: Text(
-            msg,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 4,
-            style: defaultTextStyle(
-              color: kLightBackgroundColor,
-              fontSize: 14.0,
-              fontWeight: FontWeight.w600,
-              letterSpacing: -0.40,
-            ),
-          ),
-        ),
-        icon: const Icon(
-          Icons.error_rounded,
-          size: 18,
-          color: kLightBackgroundColor,
-        ),
-        shouldIconPulse: true,
-        isDismissible: true,
-        barBlur: 2.0,
-        borderRadius: 10,
-        snackPosition: SnackPosition.TOP,
-        // backgroundGradient: LinearGradient(
-        //   colors: [kSuccessColor, kSuccessColor.withOpacity(0.6)],
-        // ),
-        margin: const EdgeInsets.all(10),
-        backgroundColor: kErrorColor,
-        duration: const Duration(seconds: 2),
-        mainButton: IconButton(
-          onPressed: () {
-            Get.back();
-          },
-          icon: const Icon(
-            Icons.cancel,
-            size: 14,
-            color: kLightBackgroundColor,
           ),
         ),
       ),

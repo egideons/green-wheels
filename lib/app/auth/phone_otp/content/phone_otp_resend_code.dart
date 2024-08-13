@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../src/constants/consts.dart';
-import '../../../../src/controllers/auth/email_otp_controller.dart';
+import '../../../../src/controllers/auth/phone_otp_controller.dart';
 import '../../../../theme/colors.dart';
 
-resendCode(ColorScheme colorScheme, EmailOTPController otpController) {
+phoneOTPResendCode(ColorScheme colorScheme, PhoneOTPController otpController) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
@@ -13,11 +13,10 @@ resendCode(ColorScheme colorScheme, EmailOTPController otpController) {
         "Didn't receive code?",
         style: defaultTextStyle(
           fontSize: 15.0,
-          color: colorScheme.inversePrimary,
+          color: kDisabledTextColor,
         ),
       ),
       kHalfWidthSizedBox,
-
       Obx(
         () => InkWell(
           onTap: otpController.timerComplete.isTrue
@@ -39,19 +38,6 @@ resendCode(ColorScheme colorScheme, EmailOTPController otpController) {
         ),
       ),
       kHalfWidthSizedBox,
-      // Obx(
-      //   () => otpController.timerComplete.isTrue
-      //       ? const SizedBox()
-      //       : Text(
-      //           "in ${otpController.formatTime(otpController.secondsRemaining.value)}s",
-      //           textAlign: TextAlign.center,
-      //           style: defaultTextStyle(
-      //             fontSize: 15.0,
-      //             color: colorScheme.primary,
-      //             fontWeight: FontWeight.w400,
-      //           ),
-      //         ),
-      // ),
     ],
   );
 }

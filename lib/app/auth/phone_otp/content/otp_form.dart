@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../../src/controllers/auth/email_otp_controller.dart';
+import '../../../../src/controllers/auth/phone_otp_controller.dart';
 import '../../../../src/utils/textformfields/android/android_textformfield.dart';
 import '../../../../theme/colors.dart';
 
-otpForm(Size media, EmailOTPController otpController, BuildContext context) {
+otpForm(Size media, PhoneOTPController controller, BuildContext context) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceAround,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -13,8 +13,8 @@ otpForm(Size media, EmailOTPController otpController, BuildContext context) {
       SizedBox(
         width: media.width * 0.18,
         child: AndroidTextFormField(
-          controller: otpController.pin1EC,
-          focusNode: otpController.pin1FN,
+          controller: controller.pin1EC,
+          focusNode: controller.pin1FN,
           textInputAction: TextInputAction.next,
           textCapitalization: TextCapitalization.none,
           keyboardType: TextInputType.number,
@@ -28,7 +28,7 @@ otpForm(Size media, EmailOTPController otpController, BuildContext context) {
             borderSide: BorderSide(color: kBlackColor, width: 3),
           ),
           onChanged: (value) {
-            otpController.pin1Onchanged(value, context);
+            controller.pin1Onchanged(value, context);
           },
           inputFormatters: [
             LengthLimitingTextInputFormatter(1),
@@ -42,37 +42,8 @@ otpForm(Size media, EmailOTPController otpController, BuildContext context) {
       SizedBox(
         width: media.width * 0.18,
         child: AndroidTextFormField(
-          controller: otpController.pin2EC,
-          focusNode: otpController.pin2FN,
-          textInputAction: TextInputAction.next,
-          textCapitalization: TextCapitalization.none,
-          keyboardType: TextInputType.number,
-          inputBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: kBlackColor, width: 3),
-          ),
-          enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: kBlackColor, width: 3),
-          ),
-          focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: kBlackColor, width: 3),
-          ),
-          inputFormatters: [
-            LengthLimitingTextInputFormatter(1),
-            FilteringTextInputFormatter.digitsOnly,
-          ],
-          onChanged: (value) {
-            otpController.pin2Onchanged(value, context);
-          },
-          validator: (value) {
-            return null;
-          },
-        ),
-      ),
-      SizedBox(
-        width: media.width * 0.18,
-        child: AndroidTextFormField(
-          controller: otpController.pin3EC,
-          focusNode: otpController.pin3FN,
+          controller: controller.pin2EC,
+          focusNode: controller.pin2FN,
           textInputAction: TextInputAction.next,
           textCapitalization: TextCapitalization.none,
           keyboardType: TextInputType.number,
@@ -90,7 +61,7 @@ otpForm(Size media, EmailOTPController otpController, BuildContext context) {
             FilteringTextInputFormatter.digitsOnly,
           ],
           onChanged: (value) {
-            otpController.pin3Onchanged(value, context);
+            controller.pin2Onchanged(value, context);
           },
           validator: (value) {
             return null;
@@ -100,8 +71,37 @@ otpForm(Size media, EmailOTPController otpController, BuildContext context) {
       SizedBox(
         width: media.width * 0.18,
         child: AndroidTextFormField(
-          controller: otpController.pin4EC,
-          focusNode: otpController.pin4FN,
+          controller: controller.pin3EC,
+          focusNode: controller.pin3FN,
+          textInputAction: TextInputAction.next,
+          textCapitalization: TextCapitalization.none,
+          keyboardType: TextInputType.number,
+          inputBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: kBlackColor, width: 3),
+          ),
+          enabledBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: kBlackColor, width: 3),
+          ),
+          focusedBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: kBlackColor, width: 3),
+          ),
+          inputFormatters: [
+            LengthLimitingTextInputFormatter(1),
+            FilteringTextInputFormatter.digitsOnly,
+          ],
+          onChanged: (value) {
+            controller.pin3Onchanged(value, context);
+          },
+          validator: (value) {
+            return null;
+          },
+        ),
+      ),
+      SizedBox(
+        width: media.width * 0.18,
+        child: AndroidTextFormField(
+          controller: controller.pin4EC,
+          focusNode: controller.pin4FN,
           textInputAction: TextInputAction.done,
           textCapitalization: TextCapitalization.none,
           keyboardType: TextInputType.number,
@@ -114,13 +114,13 @@ otpForm(Size media, EmailOTPController otpController, BuildContext context) {
           focusedBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: kBlackColor, width: 3),
           ),
-          onFieldSubmitted: otpController.onSubmitted,
+          onFieldSubmitted: controller.onSubmitted,
           inputFormatters: [
             LengthLimitingTextInputFormatter(1),
             FilteringTextInputFormatter.digitsOnly,
           ],
           onChanged: (value) {
-            otpController.pin4Onchanged(value, context);
+            controller.pin4Onchanged(value, context);
           },
           validator: (value) {
             return null;

@@ -29,7 +29,7 @@ class LoginScaffold extends GetView<LoginController> {
                   const SizedBox(height: kDefaultPadding * 4),
                   const Text(
                     "Enter Mobile Number",
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.start,
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.w400,

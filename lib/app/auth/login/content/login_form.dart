@@ -9,7 +9,7 @@ import '../../../../theme/colors.dart';
 
 loginForm(ColorScheme colorScheme, Size media, LoginController controller) {
   return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
+    mainAxisAlignment: MainAxisAlignment.start,
     children: [
       formFieldContainer(
         colorScheme,
@@ -31,6 +31,16 @@ loginForm(ColorScheme colorScheme, Size media, LoginController controller) {
               child: const Icon(
                 Iconsax.call,
                 color: kBlackColor,
+              ),
+            ),
+            kHalfWidthSizedBox,
+            Text(
+              "+234",
+              textAlign: TextAlign.start,
+              style: defaultTextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: kTextBlackColor,
               ),
             ),
             kHalfWidthSizedBox,

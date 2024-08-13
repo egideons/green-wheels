@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 import '../../app/auth/login/screen/login_screen.dart';
-import '../../app/auth/phone_otp/screen/email_otp.dart';
+import '../../app/auth/phone_otp/screen/phone_otp.dart';
 import '../../app/auth/signup/screen/signup_screen.dart';
 import '../../app/onboarding/screen/onboarding_screen.dart';
 import '../../app/splash/startup/screen/splash_screen.dart';
@@ -62,8 +62,8 @@ class Routes {
     GetPage(name: onboarding, page: () => const OnboardingScreen()),
     GetPage(name: signup, page: () => const SignupScreen()),
     GetPage(name: login, page: () => const LoginScreen()),
-    // GetPage(name: phoneOTP, page: () => const PhoneOTP()),
-    GetPage(name: emailOTP, page: () => const EmailOTP()),
+    GetPage(name: phoneOTP, page: () => const PhoneOTP()),
+    // GetPage(name: emailOTP, page: () => const EmailOTP()),
 
     //Main App Section
     // GetPage(name: homeScreen, page: () => const HomeScreen()),

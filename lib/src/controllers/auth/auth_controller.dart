@@ -19,10 +19,9 @@ class AuthController extends GetxController {
   var responseMessage = "".obs;
   Future<void> loadApp() async {
     bool isOnboarded = prefs.getBool("isOnboarded") ?? false;
-    bool isSignedUp = prefs.getBool("isSignedUp") ?? false;
     bool isLoggedIn = prefs.getBool("isLoggedIn") ?? false;
 
-    if (isLoggedIn || isSignedUp) {
+    if (isLoggedIn) {
       // User is logged in, navigate to the home screen
       // await Get.offAll(
       //   () => const HomeScreen(),

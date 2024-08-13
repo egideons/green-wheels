@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:green_wheels/app/auth/phone_otp/screen/email_otp.dart';
+import 'package:green_wheels/app/auth/phone_otp/screen/phone_otp.dart';
 import 'package:green_wheels/src/constants/consts.dart';
 
 import '../../routes/routes.dart';
@@ -31,7 +31,7 @@ class SignupController extends GetxController {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
 
-      var phoneNumberRegExp = RegExp(phoneNumberPattern);
+      var phoneNumberRegExp = RegExp(mobilePattern);
 
       if (phoneNumberEC.text.isEmpty) {
         ApiProcessorController.errorSnack("Please enter your phone number");
@@ -46,10 +46,8 @@ class SignupController extends GetxController {
 
       await Future.delayed(const Duration(seconds: 3));
 
-      ApiProcessorController.successSnack("Sign up successful");
-
       await Get.to(
-        () => EmailOTP(userEmail: phoneNumberEC.text),
+        () => PhoneOTP(userPhoneNumber: phoneNumberEC.text),
         routeName: "/phone-otp",
         fullscreenDialog: true,
         curve: Curves.easeInOut,

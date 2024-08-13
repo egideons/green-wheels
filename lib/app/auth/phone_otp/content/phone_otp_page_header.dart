@@ -3,7 +3,7 @@ import 'package:green_wheels/theme/colors.dart';
 
 import '../../../../src/constants/consts.dart';
 
-emailOTPPageHeader({
+phoneOTPPageHeader({
   ColorScheme? colorScheme,
   Size? media,
   String? title,
