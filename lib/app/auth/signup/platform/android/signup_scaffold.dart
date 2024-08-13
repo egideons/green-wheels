@@ -58,7 +58,7 @@ class SignupScaffold extends GetView<SignupController> {
                       text: TextSpan(
                         text: "Already have an account? ",
                         style: defaultTextStyle(
-                          color: kDisabledTextColor,
+                          color: colorScheme.inversePrimary,
                           fontWeight: FontWeight.w300,
                           fontSize: 14.0,
                         ),
@@ -69,7 +69,7 @@ class SignupScaffold extends GetView<SignupController> {
                             recognizer: TapGestureRecognizer()
                               ..onTap = controller.toLogin,
                             style: defaultTextStyle(
-                              color: kPrimaryColor,
+                              color: colorScheme.primary,
                               fontSize: 14.0,
                               fontWeight: FontWeight.w600,
                             ),

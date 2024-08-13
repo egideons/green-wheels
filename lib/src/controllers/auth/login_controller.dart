@@ -12,7 +12,6 @@ class LoginController extends GetxController {
 
   //=========== Form Key ===========\\
   final formKey = GlobalKey<FormState>();
-
   //=========== Controllers ===========\\
   final phoneNumberEC = TextEditingController();
 
@@ -21,10 +20,10 @@ class LoginController extends GetxController {
 
   //=========== Booleans ===========\\
   var isLoading = false.obs;
+
   var isPhoneNumberValid = false.obs;
   var responseStatus = 0.obs;
   var responseMessage = "".obs;
-
   Future<void> login() async {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
@@ -56,6 +55,13 @@ class LoginController extends GetxController {
     }
     isLoading.value = false;
     update();
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    phoneNumberFN.requestFocus();
   }
 
   //=========== Signup ===========\\

@@ -9,8 +9,6 @@ const kDisabledTextColor = Color(0xFF9BAAA2);
 const kErrorColor = Color(0xFFE53935);
 const kFrameBackgroundColor = Color(0xFFC2D4CA);
 const kGreenColor = Color(0xFF133524);
-const kGreenLightColor = Color(0xFFC2D4CA);
-const kGreenLightColor2 = Color(0xFF9BAAA2);
 const kGreyColor = Color(0xFF717070);
 
 const kGreyColor2 = Color(0xFFAFAFAF);

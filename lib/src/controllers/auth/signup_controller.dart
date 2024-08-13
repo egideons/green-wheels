@@ -22,11 +22,11 @@ class SignupController extends GetxController {
 
   //=========== Booleans ===========\\
   var isLoading = false.obs;
+
   var isPhoneNumberValid = false.obs;
   var responseStatus = 0.obs;
   var isChecked = false.obs;
   var responseMessage = "".obs;
-
   Future<void> login() async {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
@@ -58,6 +58,13 @@ class SignupController extends GetxController {
     }
     isLoading.value = false;
     update();
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    phoneNumberFN.requestFocus();
   }
 
   //=========== Signup ===========\\

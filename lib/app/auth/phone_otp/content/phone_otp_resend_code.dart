@@ -13,7 +13,7 @@ phoneOTPResendCode(ColorScheme colorScheme, PhoneOTPController otpController) {
         "Didn't receive code?",
         style: defaultTextStyle(
           fontSize: 15.0,
-          color: kDisabledTextColor,
+          color: colorScheme.inversePrimary,
         ),
       ),
       kHalfWidthSizedBox,
@@ -30,7 +30,7 @@ phoneOTPResendCode(ColorScheme colorScheme, PhoneOTPController otpController) {
               color: otpController.timerComplete.isTrue
                   ? colorScheme.primary
                   : kErrorColor,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
             child: const Text("Resend code"),

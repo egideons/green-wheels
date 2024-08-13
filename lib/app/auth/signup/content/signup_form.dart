@@ -27,7 +27,7 @@ signupForm(ColorScheme colorScheme, Size media, SignupController controller) {
               height: 60,
               width: 60,
               decoration: const BoxDecoration(
-                color: kGreenLightColor,
+                color: kFrameBackgroundColor,
                 borderRadius: BorderRadius.horizontal(
                   left: Radius.circular(6),
                 ),
@@ -53,7 +53,7 @@ signupForm(ColorScheme colorScheme, Size media, SignupController controller) {
                 readOnly: controller.isLoading.value,
                 controller: controller.phoneNumberEC,
                 focusNode: controller.phoneNumberFN,
-                textInputAction: TextInputAction.next,
+                textInputAction: TextInputAction.done,
                 textCapitalization: TextCapitalization.none,
                 keyboardType: TextInputType.phone,
                 hintText: "Mobile Number",
@@ -82,7 +82,7 @@ signupForm(ColorScheme colorScheme, Size media, SignupController controller) {
               text: TextSpan(
                 text: "By Signing up you agree to the ",
                 style: defaultTextStyle(
-                  color: kDisabledTextColor,
+                  color: colorScheme.inversePrimary,
                   fontWeight: FontWeight.w300,
                   fontSize: 14.0,
                 ),
@@ -98,7 +98,7 @@ signupForm(ColorScheme colorScheme, Size media, SignupController controller) {
                         );
                       },
                     style: defaultTextStyle(
-                      color: kPrimaryColor,
+                      color: colorScheme.primary,
                       fontSize: 14.0,
                       fontWeight: FontWeight.w600,
                     ),
@@ -107,7 +107,7 @@ signupForm(ColorScheme colorScheme, Size media, SignupController controller) {
                     text: "and ",
                     mouseCursor: SystemMouseCursors.click,
                     style: defaultTextStyle(
-                      color: kDisabledTextColor,
+                      color: colorScheme.inversePrimary,
                       fontSize: 14.0,
                       fontWeight: FontWeight.w600,
                     ),
@@ -123,7 +123,7 @@ signupForm(ColorScheme colorScheme, Size media, SignupController controller) {
                         );
                       },
                     style: defaultTextStyle(
-                      color: kPrimaryColor,
+                      color: colorScheme.primary,
                       fontSize: 14.0,
                       fontWeight: FontWeight.w600,
                     ),
