@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../app/auth/signup/screen/signup_screen.dart';
+import '../../../app/auth/phone_signup/screen/phone_signup_screen.dart';
 import '../../../app/onboarding/content/onboard_content.dart';
 import '../../../main.dart';
 
@@ -37,8 +37,8 @@ class OnboardingController extends GetxController {
     prefs.setBool("isOnboarded", true);
 
     await Get.offAll(
-      () => const SignupScreen(),
-      routeName: "/signup",
+      () => const PhoneSignupScreen(),
+      routeName: "/phone-signup",
       fullscreenDialog: true,
       curve: Curves.easeInOut,
       predicate: (routes) => false,

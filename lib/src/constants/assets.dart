@@ -15,6 +15,9 @@ class Assets {
   static const scheduleIconSvg = "assets/icons/svg/schedule.svg";
   static const settingsIconSvg = "assets/icons/svg/settings.svg";
   static const supportIconSvg = "assets/icons/svg/support.svg";
+  static const carOutlineIconSvg = "assets/icons/svg/car-outline.svg";
+  static const scheduleRideOutlineIconSvg =
+      "assets/icons/svg/schedule_ride-outline.svg";
 
 //=================== Images ===================\\
 

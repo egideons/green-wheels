@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 // import '../../../app/home/screen/home_screen.dart';
+import '../../../app/auth/provide_name/screen/provide_name_screen.dart';
+import '../../../app/home/screen/home_screen.dart';
 import '../../../main.dart';
 import '../others/api_processor_controller.dart';
 
@@ -55,13 +57,13 @@ class EmailOTPController extends GetxController {
     super.onInit();
   }
 
-  //=========== on Submitted ===========\\
-  onSubmitted(value) {
-    if (formIsValid.isTrue) {
-      submitOTP();
-      update();
-    }
-  }
+  // //=========== on Submitted ===========\\
+  // onSubmitted(value) {
+  //   if (formIsValid.isTrue) {
+  //     submitOTP();
+  //     update();
+  //   }
+  // }
 
   pauseTimer() {
     if (timerComplete.value == false && isLoading.value == true) {
@@ -149,8 +151,44 @@ class EmailOTPController extends GetxController {
     });
   }
 
-  //================= Send OTP ======================\\
-  Future<void> submitOTP() async {
+  //================= submit OTP Signup ======================\\
+  Future<void> submitOTPLogin() async {
+    isLoading.value = true;
+    update();
+
+    //Pause the timer
+    pauseTimer();
+    timerComplete.value = false;
+
+    //Save state that the user has logged in
+    prefs.setBool("isLoggedIn", true);
+    //Save state that the user has entered their phone number
+    prefs.setBool("hasEnteredPhoneNumber", true);
+    //Save state that the user has entered their name
+    prefs.setBool("hasEnteredName", true);
+
+    await Future.delayed(const Duration(seconds: 3));
+    ApiProcessorController.successSnack("Verification successful");
+
+    Get.offAll(
+      () => const HomeScreen(),
+      routeName: "/home",
+      fullscreenDialog: true,
+      curve: Curves.easeInOut,
+      predicate: (routes) => false,
+      popGesture: false,
+      transition: Get.defaultTransition,
+    );
+
+    isLoading.value = false;
+    update();
+
+    //Continue the timer and enable resend button
+    onInit();
+  }
+
+  //================= submit OTP Signup ======================\\
+  Future<void> submitOTPSignup() async {
     isLoading.value = true;
     update();
 
@@ -163,15 +201,15 @@ class EmailOTPController extends GetxController {
 
     await Future.delayed(const Duration(seconds: 3));
     ApiProcessorController.successSnack("Verification successful");
-    // Get.offAll(
-    //   () => const HomeScreen(),
-    //   routeName: "/home",
-    //   fullscreenDialog: true,
-    //   curve: Curves.easeInOut,
-    //   predicate: (routes) => false,
-    //   popGesture: false,
-    //   transition: Get.defaultTransition,
-    // );
+    Get.to(
+      () => const ProvideNameScreen(isEmailSignup: true),
+      routeName: "/provide-name",
+      fullscreenDialog: true,
+      curve: Curves.easeInOut,
+      preventDuplicates: true,
+      popGesture: false,
+      transition: Get.defaultTransition,
+    );
 
     isLoading.value = false;
     update();

@@ -1,6 +1,6 @@
 class RideTabModel {
   String title;
-  int numOfRides;
+  String numOfRides;
   bool isSelected;
   RideTabModel({
     required this.title,

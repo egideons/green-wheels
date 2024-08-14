@@ -5,17 +5,10 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-// import '../../../app/home/content/home_modal_bottom_sheet.dart';
-// import '../../../app/home/views/android/accept_scheduled_ride_request_modal.dart';
-// import '../../../app/home/views/android/accept_todays_ride_request_modal.dart';
-// import '../../../app/home/views/android/accepted_scheduled_ride_request_modal.dart';
-// import '../../../app/home/views/android/scheduled_ride_requests_modal.dart';
-// import '../../../app/home/views/android/todays_ride_requests_modal.dart';
-// import '../../../app/profile/screen/profile_screen.dart';
-// import '../../../app/ride/screen/ride_screen.dart';
-import '../../models/ride_tab_model.dart';
+import '../../constants/assets.dart';
 
-class HomeScreenController extends GetxController {
+class HomeScreenController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   static const CameraPosition kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 14,
@@ -25,29 +18,47 @@ class HomeScreenController extends GetxController {
     return Get.find<HomeScreenController>();
   }
 
+  late TabController tabBarController;
+  var selectedTabBar = 0.obs;
+
   //================ Keys =================\\
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  //================ Ride Tabs =================\\
-  var rideTabs = [
-    RideTabModel(title: "Rides for Today", numOfRides: 3, isSelected: true),
-    RideTabModel(title: "Scheduled Rides", numOfRides: 5, isSelected: false),
-  ].obs;
-
   //================ Boolean =================\\
   var isRefreshing = false.obs;
-  var isScrollToTopBtnVisible = false.obs;
+
   var isLocationPermissionGranted = false.obs;
   var showInfo = false.obs;
-  var showRideInfo = false.obs;
-  var rideInProgress = false.obs;
-  var rideComplete = false.obs;
-
   //================ Controllers =================\\
   final Completer<GoogleMapController> _googleMapController = Completer();
+
   GoogleMapController? newGoogleMapController;
 
-//=============================== Open Drawer =====================================\\
+//=================================== Ride tabs ==========================================\\
+  List<Map<String, dynamic>> tabData(ColorScheme colorScheme) => [
+        {
+          'icon': Assets.carOutlineIconSvg,
+          'label': 'Book a ride',
+          'color': colorScheme.primary,
+        },
+        {
+          'icon': Assets.scheduleRideOutlineIconSvg,
+          'label': 'Schedule a trip',
+          'color': colorScheme.primary,
+        },
+        {
+          'icon': Assets.carOutlineIconSvg,
+          'label': 'Rent a ride',
+          'color': colorScheme.primary,
+        },
+      ];
+
+//================ Select Tab =================//
+  void clickOnTabBarOption(int index) {
+    selectedTabBar.value = index;
+  }
+
+  //=============================== Open Drawer =====================================\\
 
   // void goToProfile() {
   //   Get.to(
@@ -92,12 +103,22 @@ class HomeScreenController extends GetxController {
     hideInfo();
   }
 
+  @override
+  void onClose() {
+    tabBarController.dispose();
+    super.onClose();
+  }
+
   //======================================= Google Maps ================================================\\
 
   @override
   void onInit() {
-    initFunctions();
     requestLocationPermission();
+    tabBarController = TabController(length: 3, vsync: this);
+    tabBarController.addListener(() {
+      selectedTabBar.value = tabBarController.index;
+    });
+    initFunctions();
     super.onInit();
   }
 
@@ -138,165 +159,4 @@ class HomeScreenController extends GetxController {
   void returnHome() async {
     Get.close(2);
   }
-
-  //================ Select Tab =================//
-  void selectTab(int index) {
-    for (int i = 0; i < rideTabs.length; i++) {
-      rideTabs[i].isSelected = i == index;
-    }
-    update();
-  }
-
-  // void showAcceptedScheduledRideRequestModal() {
-  //   Get.close(0);
-  //   final media = MediaQuery.of(Get.context!).size;
-
-  //   showModalBottomSheet(
-  //     isScrollControlled: true,
-  //     enableDrag: true,
-  //     context: Get.context!,
-  //     showDragHandle: true,
-  //     useSafeArea: true,
-  //     constraints:
-  //         BoxConstraints(maxHeight: media.height, minWidth: media.width),
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.only(
-  //         topLeft: Radius.circular(32),
-  //         topRight: Radius.circular(32),
-  //       ),
-  //     ),
-  //     builder: (context) {
-  //       return const AcceptedScheduledRideRequestModal();
-  //     },
-  //   );
-  // }
-
-  // void showAcceptScheduledRideRequestModal() {
-  //   final media = MediaQuery.of(Get.context!).size;
-
-  //   showModalBottomSheet(
-  //     isScrollControlled: true,
-  //     showDragHandle: true,
-  //     enableDrag: true,
-  //     context: Get.context!,
-  //     useSafeArea: true,
-  //     constraints:
-  //         BoxConstraints(maxHeight: media.height / 1.4, minWidth: media.width),
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.only(
-  //         topLeft: Radius.circular(32),
-  //         topRight: Radius.circular(32),
-  //       ),
-  //     ),
-  //     builder: (context) {
-  //       return const AcceptScheduledRideRequestModal();
-  //     },
-  //   );
-  // }
-
-  // void showAcceptTodaysRideRequestsModal() {
-  //   final media = MediaQuery.of(Get.context!).size;
-
-  //   showModalBottomSheet(
-  //     isScrollControlled: true,
-  //     enableDrag: true,
-  //     context: Get.context!,
-  //     showDragHandle: true,
-  //     constraints:
-  //         BoxConstraints(maxHeight: media.height / 1.4, minWidth: media.width),
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.only(
-  //         topLeft: Radius.circular(32),
-  //         topRight: Radius.circular(32),
-  //       ),
-  //     ),
-  //     builder: (context) {
-  //       return const AcceptTodaysRideRequestModal();
-  //     },
-  //   );
-  // }
-
-  //===============================  Bottom modal sheet =====================================\\
-
-  // showHomeModalBottomSheet() {
-  //   final media = MediaQuery.of(Get.context!).size;
-
-  //   showModalBottomSheet(
-  //     isScrollControlled: true,
-  //     constraints:
-  //         BoxConstraints(maxHeight: media.height / 1.8, minWidth: media.width),
-  //     enableDrag: true,
-  //     context: Get.context!,
-  //     useSafeArea: true,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.only(
-  //         topLeft: Radius.circular(50),
-  //         topRight: Radius.circular(50),
-  //       ),
-  //     ),
-  //     builder: (context) {
-  //       return Obx(() {
-  //         return HomeBottomModalSheet(displayInfo: showInfo.value);
-  //       });
-  //     },
-  //   );
-  // }
-
-  //======================================== Scheduled Rides =========================================//
-  // showScheduledRidesModal() {
-  //   var media = MediaQuery.of(Get.context!).size;
-  //   showModalBottomSheet(
-  //     isScrollControlled: true,
-  //     enableDrag: true,
-  //     context: Get.context!,
-  //     useSafeArea: true,
-  //     constraints:
-  //         BoxConstraints(maxHeight: media.height, minWidth: media.width),
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.only(
-  //         topLeft: Radius.circular(32),
-  //         topRight: Radius.circular(32),
-  //       ),
-  //     ),
-  //     builder: (context) {
-  //       return const ScheduledRideRequestsModal();
-  //     },
-  //   );
-  // }
-
-  //======================================== Today's Rides =========================================//
-  // showTodaysRideRequestsModal() {
-  //   var media = MediaQuery.of(Get.context!).size;
-  //   showModalBottomSheet(
-  //     isScrollControlled: true,
-  //     showDragHandle: true,
-  //     enableDrag: true,
-  //     context: Get.context!,
-  //     useSafeArea: true,
-  //     constraints:
-  //         BoxConstraints(maxHeight: media.height, minWidth: media.width),
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.only(
-  //         topLeft: Radius.circular(32),
-  //         topRight: Radius.circular(32),
-  //       ),
-  //     ),
-  //     builder: (context) {
-  //       return const TodaysRideRequestsModal();
-  //     },
-  //   );
-  // }
-
-  // void startRide() async {
-  //   Get.off(
-  //     () => const RideScreen(),
-  //     routeName: "/ride",
-  //     curve: Curves.easeInOut,
-  //     fullscreenDialog: true,
-  //     popGesture: true,
-  //     preventDuplicates: true,
-  //     transition: Get.defaultTransition,
-  //   );
-  //   RideController.instance.showStartRide();
-  // }
 }

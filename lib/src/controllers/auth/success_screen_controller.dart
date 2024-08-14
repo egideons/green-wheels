@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../app/auth/signup/screen/signup_screen.dart';
+import '../../../app/auth/phone_signup/screen/phone_signup_screen.dart';
 
 class SuccessScreenController extends GetxController {
   static SuccessScreenController get instance {
     return Get.find<SuccessScreenController>();
   }
 
-  gotToSignupScreen() {
+  gotToPhoneSignupScreen() {
     Get.offAll(
-      () => const SignupScreen(),
-      routeName: "/signup",
+      () => const PhoneSignupScreen(),
+      routeName: "/phone-signup",
       fullscreenDialog: true,
       curve: Curves.easeInOut,
       predicate: (routes) => false,

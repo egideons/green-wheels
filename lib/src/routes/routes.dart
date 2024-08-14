@@ -1,8 +1,14 @@
 import 'package:get/get.dart';
 
-import '../../app/auth/login/screen/login_screen.dart';
+import '../../app/auth/email_login/screen/email_login_screen.dart';
+import '../../app/auth/email_otp/screen/email_otp.dart';
+import '../../app/auth/email_signup/screen/email_signup_screen.dart';
+import '../../app/auth/phone_login/screen/phone_login_screen.dart';
 import '../../app/auth/phone_otp/screen/phone_otp.dart';
-import '../../app/auth/signup/screen/signup_screen.dart';
+import '../../app/auth/phone_signup/screen/phone_signup_screen.dart';
+import '../../app/auth/provide_name/screen/provide_name_screen.dart';
+import '../../app/auth/provide_phone/screen/provide_phone.dart';
+import '../../app/home/screen/home_screen.dart';
 import '../../app/onboarding/screen/onboarding_screen.dart';
 import '../../app/splash/startup/screen/splash_screen.dart';
 import '../../app/splash/success/screen/success_screen.dart';
@@ -27,10 +33,14 @@ class Routes {
   static const lockedScreen = "/lockedScreen";
 
   //Auth Screens
-  static const signup = "/signup";
-  static const login = "/login";
+  static const phoneSignup = "/phone-signup";
+  static const phoneLogin = "/phone-login";
   static const phoneOTP = "/phone-otp";
+  static const emailSignup = "/email-signup";
+  static const emailLogin = "/email-login";
   static const emailOTP = "/email-otp";
+  static const providePhone = "/provide-phone";
+  static const provideName = "/provide-Name";
   static const resetPassword = "/reset-password";
   static const resetPasswordViaEmail = "/reset-password-via-email";
   static const resetPasswordViaEmailOTP = "/reset-password-via-email-otp";
@@ -60,13 +70,17 @@ class Routes {
 
     //Auth Pages
     GetPage(name: onboarding, page: () => const OnboardingScreen()),
-    GetPage(name: signup, page: () => const SignupScreen()),
-    GetPage(name: login, page: () => const LoginScreen()),
+    GetPage(name: phoneSignup, page: () => const PhoneSignupScreen()),
+    GetPage(name: phoneLogin, page: () => const PhoneLoginScreen()),
     GetPage(name: phoneOTP, page: () => const PhoneOTP()),
-    // GetPage(name: emailOTP, page: () => const EmailOTP()),
+    GetPage(name: emailSignup, page: () => const EmailSignupScreen()),
+    GetPage(name: providePhone, page: () => const ProvidePhone()),
+    GetPage(name: emailLogin, page: () => const EmailLoginScreen()),
+    GetPage(name: emailOTP, page: () => const EmailOTP()),
+    GetPage(name: provideName, page: () => const ProvideNameScreen()),
 
     //Main App Section
-    // GetPage(name: homeScreen, page: () => const HomeScreen()),
+    GetPage(name: homeScreen, page: () => const HomeScreen()),
     // GetPage(name: rideScreen, page: () => const RideScreen()),
     // GetPage(name: profileScreen, page: () => const ProfileScreen()),
     // GetPage(

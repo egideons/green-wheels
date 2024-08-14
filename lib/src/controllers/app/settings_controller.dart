@@ -38,7 +38,7 @@ class SettingsController extends GetxController {
   //   prefs.setBool("isLoggedIn", false);
 
   //   await Get.offAll(
-  //     () => const LoginScreen(),
+  //     () => const PhoneLoginScreen(),
   //     routeName: "/login",
   //     fullscreenDialog: true,
   //     curve: Curves.easeInOut,

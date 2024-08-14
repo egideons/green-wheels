@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:green_wheels/app/auth/signup/screen/signup_screen.dart';
 
+import '../../../app/auth/phone_signup/screen/phone_signup_screen.dart';
 import '../../../app/home/screen/home_screen.dart';
 import '../../../app/onboarding/screen/onboarding_screen.dart';
 import '../../../main.dart';
@@ -24,7 +24,6 @@ class AuthController extends GetxController {
 
     if (isLoggedIn) {
       // User is logged in, navigate to the home screen
-
       await Get.offAll(
         () => const HomeScreen(),
         routeName: "/home",
@@ -37,7 +36,7 @@ class AuthController extends GetxController {
     } else if (isOnboarded) {
       // User is onboarded but not logged in, navigate to the sign up screen
       await Get.offAll(
-        () => const SignupScreen(),
+        () => const PhoneSignupScreen(),
         routeName: "/signup",
         fullscreenDialog: true,
         curve: Curves.easeInOut,

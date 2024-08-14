@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../src/controllers/auth/phone_otp_controller.dart';
-import '../platform/android/phone_otp_scaffold.dart';
+import '../platform/android/email_otp_scaffold.dart';
 
-class PhoneOTP extends StatelessWidget {
-  final String? userPhoneNumber;
+class EmailOTP extends StatelessWidget {
+  final String? userEmail;
   final void Function()? loadData;
 
-  const PhoneOTP({super.key, this.userPhoneNumber, this.loadData});
+  const EmailOTP({super.key, this.userEmail, this.loadData});
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +25,8 @@ class PhoneOTP extends StatelessWidget {
     }
     return GestureDetector(
       onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
-      child: PhoneOTPScaffold(
-        userPhoneNumber: userPhoneNumber,
+      child: EmailOTPScaffold(
+        userEmail: userEmail,
         loadData: loadData,
       ),
     );

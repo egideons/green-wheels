@@ -32,7 +32,7 @@ const String loginPasswordPattern = r'^.{8,}$';
 
 //validation for mobile
 // const String mobilePattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
-const String mobilePattern = r'^(?!0+$)\d{10,13}$';
+const String mobilePattern = r'^(?!0+$)\d{10,11}$';
 
 //username pattern
 const String namePattern = r'^.{3,}$'; //Min. of 3 characters

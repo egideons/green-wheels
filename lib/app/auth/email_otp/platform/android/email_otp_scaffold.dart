@@ -3,18 +3,16 @@ import 'package:get/get.dart';
 import 'package:green_wheels/src/utils/components/my_app_bar.dart';
 
 import '../../../../../src/constants/consts.dart';
-import '../../../../../src/controllers/auth/phone_otp_controller.dart';
+import '../../../../../src/controllers/auth/email_otp_controller.dart';
 import '../../../../../src/utils/buttons/android/android_elevated_button.dart';
-import '../../content/phone_otp_form.dart';
-import '../../content/phone_otp_page_header.dart';
-import '../../content/phone_otp_resend_code.dart';
+import '../../content/email_otp_form.dart';
+import '../../content/email_otp_page_header.dart';
+import '../../content/email_otp_resend_code.dart';
 
-class PhoneOTPScaffold extends GetView<PhoneOTPController> {
-  final String? userPhoneNumber;
+class EmailOTPScaffold extends GetView<EmailOTPController> {
+  final String? userEmail;
   final void Function()? loadData;
-
-  const PhoneOTPScaffold(
-      {super.key, this.loadData, required this.userPhoneNumber});
+  const EmailOTPScaffold({super.key, required this.userEmail, this.loadData});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +49,7 @@ class PhoneOTPScaffold extends GetView<PhoneOTPController> {
     //                   title: "OTP verification",
     //                   subtitle:
     //                       "Enter the 4-digit verification code we sent to ",
-    //                   email: "$userPhoneNumber",
+    //                   email: "$userEmail",
     //                 ),
     //               ],
     //             ),
@@ -182,7 +180,7 @@ class PhoneOTPScaffold extends GetView<PhoneOTPController> {
     //                   ),
     //                 ),
     //                 const SizedBox(height: kDefaultPadding * 2),
-    //                 GetBuilder<PhoneOTPController>(
+    //                 GetBuilder<EmailOTPController>(
     //                   builder: (controller) {
     //                     return AndroidElevatedButton(
     //                       title: "Verify",
@@ -260,18 +258,18 @@ class PhoneOTPScaffold extends GetView<PhoneOTPController> {
               media: media,
               title: "OTP",
               subtitle:
-                  "A verification code was sent to the phone number provided. Please input code.",
+                  "A verification code was sent to the email provided. Please input code.",
             ),
             const SizedBox(height: kDefaultPadding * 2),
             Form(
               key: controller.formKey,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: phoneOTPForm(media, controller, context),
+              child: emailOTPForm(media, controller, context),
             ),
             kSizedBox,
-            phoneOTPResendCode(colorScheme, controller),
+            emailOTPResendCode(colorScheme, controller),
             const SizedBox(height: kDefaultPadding * 2),
-            GetBuilder<PhoneOTPController>(
+            GetBuilder<EmailOTPController>(
               builder: (controller) {
                 return AndroidElevatedButton(
                   title: "Continue",
@@ -281,6 +279,7 @@ class PhoneOTPScaffold extends GetView<PhoneOTPController> {
                 );
               },
             ),
+            const SizedBox(height: kDefaultPadding * 2),
             kSizedBox,
           ],
         ),
