@@ -83,12 +83,12 @@ class HomeScreenController extends GetxController
           'color': colorScheme.primary,
         },
         {
-          'icon': Assets.scheduleRideOutlineIconSvg,
+          'icon': Assets.carCalendarOutlineIconSvg,
           'label': 'Schedule',
           'color': colorScheme.primary,
         },
         {
-          'icon': Assets.carOutlineIconSvg,
+          'icon': Assets.carClockIconOutlineSvg,
           'label': 'Rent',
           'color': colorScheme.primary,
         },

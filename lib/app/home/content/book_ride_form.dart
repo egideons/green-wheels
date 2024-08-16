@@ -74,6 +74,7 @@ bookRideForm(
                 textInputAction: TextInputAction.done,
                 focusNode: controller.destinationFN,
                 textCapitalization: TextCapitalization.words,
+                hintText: "Enter destination",
                 validator: (value) {
                   return null;
                 },

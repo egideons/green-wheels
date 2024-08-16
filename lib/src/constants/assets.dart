@@ -16,10 +16,10 @@ class Assets {
   static const settingsIconSvg = "assets/icons/svg/settings.svg";
   static const supportIconSvg = "assets/icons/svg/support.svg";
   static const carOutlineIconSvg = "assets/icons/svg/car-outline.svg";
-  static const scheduleRideOutlineIconSvg =
-      "assets/icons/svg/schedule_ride-outline.svg";
-  static const locationIconOutlineSvg =
-      "assets/icons/svg/location_icon-outline.svg";
+  static const carCalendarOutlineIconSvg =
+      "assets/icons/svg/car_calendar-outline.svg";
+  static const carClockIconOutlineSvg =
+      "assets/icons/svg/car_clock_outline.svg";
 
 //=================== Images ===================\\
 
