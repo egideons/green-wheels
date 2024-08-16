@@ -26,6 +26,7 @@ dependencies:
   dio:
   google_maps_flutter:
   permission_handler:
+  # geolocator:
   url_launcher:
   sliding_up_panel: ^2.0.0+1
 

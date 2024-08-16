@@ -23,6 +23,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission  android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission  android:name="android.permission.RECORD_AUDIO"  />
     <uses-permission  android:name="android.permission.MODIFY_AUDIO_SETTINGS"  />
@@ -97,7 +98,8 @@
             android:name="flutterEmbedding"
             android:value="2" />
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyASLwzxLl1Qoq9UVb_cmoTKGdHCO_lUQ"/>
+            android:value="AIzaSyABRQIbm3Dl4x8TKq_6Ht3PaNllH_8yuwo"/>
+<!--            android:value="AIzaSyASLwzxLl1Qoq9UVb_cmoTKGdHCO_lUQ"/>-->
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

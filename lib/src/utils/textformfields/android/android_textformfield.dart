@@ -30,7 +30,8 @@ class AndroidTextFormField extends StatelessWidget {
   final InputBorder? inputBorder, focusedBorder, enabledBorder;
 
   final List<TextInputFormatter>? inputFormatters;
-  final void Function()? onTap;
+  final void Function()? onTap, onEditingComplete;
+  final void Function(PointerDownEvent)? onTapOutside;
   final TextInputType? keyboardType;
   final int? maxLines, minLines, maxLength;
   final MaxLengthEnforcement? maxLengthEnforcement;
@@ -77,6 +78,8 @@ class AndroidTextFormField extends StatelessWidget {
     this.inputBorder,
     this.focusedBorder,
     this.enabledBorder,
+    this.onTapOutside,
+    this.onEditingComplete,
   });
 
   @override
@@ -93,6 +96,8 @@ class AndroidTextFormField extends StatelessWidget {
       enableIMEPersonalizedLearning: true,
       mouseCursor: SystemMouseCursors.text,
       onTap: onTap,
+      onTapOutside: onTapOutside,
+      onEditingComplete: onEditingComplete,
       inputFormatters: inputFormatters,
       onFieldSubmitted: onFieldSubmitted,
       onSaved: onSaved,

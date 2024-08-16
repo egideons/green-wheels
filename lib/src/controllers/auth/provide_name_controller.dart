@@ -74,12 +74,12 @@ class ProvideNameController extends GetxController {
       //Save state that the user has entered their name
       prefs.setBool("hasEnteredName", true);
 
-      await Get.to(
+      await Get.offAll(
         () => const HomeScreen(),
         routeName: "/home",
         fullscreenDialog: true,
         curve: Curves.easeInOut,
-        preventDuplicates: true,
+        predicate: (routes) => false,
         popGesture: false,
         transition: Get.defaultTransition,
       );

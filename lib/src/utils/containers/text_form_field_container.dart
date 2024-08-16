@@ -10,17 +10,18 @@ Widget formFieldContainer(
   double? containerWidth,
   EdgeInsetsGeometry? padding,
   Color? color,
-  borderSide,
+  BorderSide? borderSide,
 }) {
   return Container(
     width: containerWidth ?? media.width,
-    height: containerHeight ?? media.height * 0.06,
+    height: containerHeight ?? media.height * .066,
     padding: padding ?? const EdgeInsets.symmetric(horizontal: 10),
     decoration: ShapeDecoration(
       color: color ?? kTransparentColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: colorScheme.inversePrimary, width: 0.5),
+        side: borderSide ??
+            BorderSide(color: colorScheme.inversePrimary, width: 0.5),
       ),
 
       // shadows: [

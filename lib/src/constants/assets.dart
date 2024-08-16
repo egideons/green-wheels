@@ -18,6 +18,8 @@ class Assets {
   static const carOutlineIconSvg = "assets/icons/svg/car-outline.svg";
   static const scheduleRideOutlineIconSvg =
       "assets/icons/svg/schedule_ride-outline.svg";
+  static const locationIconOutlineSvg =
+      "assets/icons/svg/location_icon-outline.svg";
 
 //=================== Images ===================\\
 
