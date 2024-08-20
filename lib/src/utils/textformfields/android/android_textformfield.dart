@@ -104,7 +104,7 @@ class AndroidTextFormField extends StatelessWidget {
       onChanged: onChanged,
       textInputAction: textInputAction,
       textAlign: TextAlign.start,
-      cursorColor: colorScheme.inversePrimary,
+      cursorColor: colorScheme.primary,
       autocorrect: autoCorrect ?? true,
       enableSuggestions: true,
       keyboardType: keyboardType,

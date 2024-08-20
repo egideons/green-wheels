@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import '../../../app/home/modals/searching_for_driver_modal.dart';
 import '../../constants/assets.dart';
 
 class HomeScreenController extends GetxController
@@ -44,12 +46,17 @@ class HomeScreenController extends GetxController
   var isRefreshing = false.obs;
   var isLocationPermissionGranted = false.obs;
   var showInfo = false.obs;
+  var isPickupLocationTextFieldActive = false.obs;
+  var isDestinationTextFieldActive = false.obs;
   var isStopLocationVisible = false.obs;
-  var isStopLocationTextFieldFilled = false.obs;
+  var isStopLocationTextFieldActive = false.obs;
+  var mapSuggestionIsSelected = false.obs;
 
   //================ Controllers =================\\
   final Completer<GoogleMapController> _googleMapController = Completer();
   GoogleMapController? newGoogleMapController;
+  var scrollController = ScrollController();
+  var panelController = PanelController();
 
   final pickupLocationEC =
       TextEditingController(text: "Pin Plaza, 1st Avenue, Festac");
@@ -64,6 +71,86 @@ class HomeScreenController extends GetxController
   final stop2LocationFN = FocusNode();
   final stop3LocationFN = FocusNode();
   final destinationFN = FocusNode();
+
+//================ Panel Functions =================\\
+  togglePanel() => panelController.isPanelOpen
+      ? panelController.close()
+      : panelController.open();
+
+  openPanel() => panelController.open();
+  closePanel() => panelController.close();
+
+//================ OnTap and Onchanged =================\\
+  void selectPickupSuggestion() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  void selectStopLocationSuggestion() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  void selectDestinationSuggestion() async {
+    mapSuggestionIsSelected.value = true;
+    // FocusScope.of(Get.context!).unfocus();
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  void destinationOnTap() async {
+    isStopLocationVisible.value = true;
+    mapSuggestionIsSelected.value = false;
+  }
+
+  pickupLocationOnChanged(value) {
+    mapSuggestionIsSelected.value = false;
+
+    // Check if the text field is empty
+    if (value.isEmpty) {
+      isPickupLocationTextFieldActive.value = false;
+      isDestinationTextFieldActive.value = false;
+    } else {
+      if (stop1LocationEC.text.isEmpty) {
+        isDestinationTextFieldActive.value = false;
+        isStopLocationTextFieldActive.value = false;
+        isPickupLocationTextFieldActive.value = true;
+      } else {
+        isDestinationTextFieldActive.value = false;
+        isStopLocationTextFieldActive.value = true;
+        isPickupLocationTextFieldActive.value = true;
+      }
+    }
+  }
+
+  destinationOnChanged(value) {
+    mapSuggestionIsSelected.value = false;
+
+    // Check if the text field is empty
+    if (value.isEmpty) {
+      isDestinationTextFieldActive.value = false;
+    } else {
+      if (stop1LocationEC.text.isEmpty) {
+        isStopLocationTextFieldActive.value = false;
+        isPickupLocationTextFieldActive.value = false;
+        isDestinationTextFieldActive.value = true;
+      } else {
+        isStopLocationTextFieldActive.value = true;
+        isPickupLocationTextFieldActive.value = false;
+        isDestinationTextFieldActive.value = true;
+      }
+    }
+  }
+
+  stopLocationOnChanged(value) {
+    mapSuggestionIsSelected.value = false;
+
+    // Check if the text field is empty
+    if (value.isEmpty) {
+      isStopLocationTextFieldActive.value = false;
+    } else {
+      isDestinationTextFieldActive.value = false;
+      isPickupLocationTextFieldActive.value = false;
+      isStopLocationTextFieldActive.value = true;
+    }
+  }
 
 //================ on Field Submitted =================\\
   onFieldSubmitted(value) {
@@ -229,5 +316,63 @@ class HomeScreenController extends GetxController
 
   void returnHome() async {
     Get.close(2);
+  }
+
+  //=============================== Modal Bottom Sheets =====================================\\
+  void showSearchingForDriverModalSheet() async {
+    final media = MediaQuery.of(Get.context!).size;
+
+    await closePanel();
+
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      showDragHandle: true,
+      enableDrag: true,
+      context: Get.context!,
+      useSafeArea: true,
+      isDismissible: false,
+      constraints:
+          BoxConstraints(maxHeight: media.height / 1.6, minWidth: media.width),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(32),
+          topRight: Radius.circular(32),
+        ),
+      ),
+      builder: (context) {
+        return const SearchingForDriverModal();
+      },
+    );
+  }
+
+  void cancelDriverRequest() async {
+    Get.close(0);
+    await openPanel();
+  }
+
+  void showRequestAccepted() async {
+    final media = MediaQuery.of(Get.context!).size;
+
+    await closePanel();
+
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      showDragHandle: true,
+      enableDrag: true,
+      context: Get.context!,
+      useSafeArea: true,
+      isDismissible: false,
+      constraints:
+          BoxConstraints(maxHeight: media.height / 1.6, minWidth: media.width),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(32),
+          topRight: Radius.circular(32),
+        ),
+      ),
+      builder: (context) {
+        return const SearchingForDriverModal();
+      },
+    );
   }
 }

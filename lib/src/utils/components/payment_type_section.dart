@@ -2,27 +2,29 @@ import 'package:flutter/material.dart';
 
 import '../../constants/consts.dart';
 
-estimatedTravelTime(ColorScheme colorScheme, {String? estimatedTime}) {
+paymentTypeSection(ColorScheme colorScheme) {
   return Row(
+    mainAxisSize: MainAxisSize.max,
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      Text(
-        "Estimated Travel time",
-        style: defaultTextStyle(
-          color: colorScheme.primary,
-          fontSize: 16,
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-      kHalfWidthSizedBox,
       Expanded(
         child: Text(
-          "~${estimatedTime ?? ""}",
+          "Payment Type",
+          style: defaultTextStyle(
+            color: colorScheme.primary,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+      Expanded(
+        child: Text(
+          "Green Wallet",
           textAlign: TextAlign.end,
           style: defaultTextStyle(
             color: colorScheme.primary,
             fontSize: 16,
-            fontWeight: FontWeight.w400,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),

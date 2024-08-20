@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 
 import '../../../src/constants/consts.dart';
 import '../../../src/controllers/app/home_screen_controller.dart';
@@ -30,6 +31,7 @@ bookRideForm(
                   textInputAction: TextInputAction.next,
                   focusNode: controller.pickupLocationFN,
                   textCapitalization: TextCapitalization.words,
+                  onChanged: controller.pickupLocationOnChanged,
                   validator: (value) {
                     return null;
                   },
@@ -51,6 +53,7 @@ bookRideForm(
                         focusNode: controller.stop1LocationFN,
                         textInputAction: TextInputAction.next,
                         textCapitalization: TextCapitalization.words,
+                        onChanged: controller.stopLocationOnChanged,
                         hintText: "Add Stop",
                         validator: (value) {
                           return null;
@@ -69,16 +72,29 @@ bookRideForm(
                 width: 1,
                 color: colorScheme.primary,
               ),
-              child: AndroidTextFormField(
-                controller: controller.destinationEC,
-                textInputAction: TextInputAction.done,
-                focusNode: controller.destinationFN,
-                textCapitalization: TextCapitalization.words,
-                hintText: "Enter destination",
-                validator: (value) {
-                  return null;
-                },
-                onFieldSubmitted: controller.onFieldSubmitted,
+              child: Row(
+                children: [
+                  Icon(
+                    Iconsax.search_normal,
+                    color: colorScheme.inversePrimary,
+                  ),
+                  kSmallWidthSizedBox,
+                  Expanded(
+                    child: AndroidTextFormField(
+                      controller: controller.destinationEC,
+                      focusNode: controller.destinationFN,
+                      textInputAction: TextInputAction.done,
+                      onTap: controller.destinationOnTap,
+                      textCapitalization: TextCapitalization.words,
+                      hintText: "Enter destination",
+                      onChanged: controller.destinationOnChanged,
+                      onFieldSubmitted: controller.onFieldSubmitted,
+                      validator: (value) {
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

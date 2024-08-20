@@ -34,7 +34,7 @@ rideIconsSection(ColorScheme colorScheme, HomeScreenController controller) {
                   height: 32,
                   decoration: ShapeDecoration(
                     shape: const CircleBorder(),
-                    color: controller.isStopLocationTextFieldFilled.value
+                    color: controller.isStopLocationTextFieldActive.value
                         ? colorScheme.primary
                         : colorScheme.inversePrimary,
                   ),
