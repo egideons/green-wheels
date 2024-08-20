@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,7 +7,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import '../../../app/home/modals/searching_for_driver_modal.dart';
+import '../../../app/home/modals/book_ride_request_accepted_modal.dart';
+import '../../../app/home/modals/book_ride_searching_for_driver_modal.dart';
 import '../../constants/assets.dart';
 
 class HomeScreenController extends GetxController
@@ -29,11 +31,14 @@ class HomeScreenController extends GetxController
   @override
   void onClose() {
     tabBarController.dispose();
+    timer?.cancel();
     super.onClose();
   }
 
   late TabController tabBarController;
   var selectedTabBar = 0.obs;
+  var progress = .0.obs;
+  Timer? timer;
 
   // Position? userPosition;
   CameraPosition? cameraPosition;
@@ -51,6 +56,8 @@ class HomeScreenController extends GetxController
   var isStopLocationVisible = false.obs;
   var isStopLocationTextFieldActive = false.obs;
   var mapSuggestionIsSelected = false.obs;
+  var bookDriverTimerFinished = false.obs;
+  var bookDriverFound = false.obs;
 
   //================ Controllers =================\\
   final Completer<GoogleMapController> _googleMapController = Completer();
@@ -318,12 +325,60 @@ class HomeScreenController extends GetxController
     Get.close(2);
   }
 
+  //==== Book Ride Section =========================================================================>
+
+  //============== Progress Indicatior =================\\
+  // Method to update the progress
+  void updateProgress(double value) {
+    if (value >= 0.0 && value <= 1.0) {
+      progress.value = value;
+      log("Progress: ${progress.value}");
+    }
+  }
+
+// Start the progress simulation with a Timer
+  void simulateBookRideDriverSearchProgress() {
+    progress.value = 0.0;
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (progress.value < 0.9) {
+        updateProgress(progress.value + 0.1);
+      } else {
+        // Directly set progress to 1.0 on the last step
+        updateProgress(1.0);
+        bookDriverTimerFinished.value = true;
+        bookDriverFound.value = true;
+        update();
+        log("Timer finished: ${bookDriverTimerFinished.value}");
+        log("Driver found: ${bookDriverFound.value}");
+        cancelProgress();
+      }
+    });
+  }
+
+  // Cancel the progress simulation
+  void cancelProgress() {
+    timer?.cancel();
+  }
+
+  void cancelBookRideDriverRequest() async {
+    Get.close(0);
+    progress.value = 0.0;
+    bookDriverTimerFinished.value = false;
+    bookDriverFound.value = false;
+    update();
+
+    await openPanel();
+  }
+
   //=============================== Modal Bottom Sheets =====================================\\
+
   void showSearchingForDriverModalSheet() async {
     final media = MediaQuery.of(Get.context!).size;
 
     await closePanel();
 
+    simulateBookRideDriverSearchProgress();
+
     await showModalBottomSheet(
       isScrollControlled: true,
       showDragHandle: true,
@@ -340,21 +395,14 @@ class HomeScreenController extends GetxController
         ),
       ),
       builder: (context) {
-        return const SearchingForDriverModal();
+        return const BookRideSearchingForDriverModal();
       },
     );
   }
 
-  void cancelDriverRequest() async {
-    Get.close(0);
-    await openPanel();
-  }
-
-  void showRequestAccepted() async {
+  void showBookRideRequestAcceptedModal() async {
     final media = MediaQuery.of(Get.context!).size;
 
-    await closePanel();
-
     await showModalBottomSheet(
       isScrollControlled: true,
       showDragHandle: true,
@@ -363,7 +411,7 @@ class HomeScreenController extends GetxController
       useSafeArea: true,
       isDismissible: false,
       constraints:
-          BoxConstraints(maxHeight: media.height / 1.6, minWidth: media.width),
+          BoxConstraints(maxHeight: media.height, minWidth: media.width),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(32),
@@ -371,8 +419,12 @@ class HomeScreenController extends GetxController
         ),
       ),
       builder: (context) {
-        return const SearchingForDriverModal();
+        return const BookRideRequestAcceptedModal();
       },
     );
   }
+
+  //==== Schedule Trip =========================================================================>
+
+  //==== Rent Ride =========================================================================>
 }

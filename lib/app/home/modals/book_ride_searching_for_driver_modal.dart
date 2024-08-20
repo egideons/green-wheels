@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 import 'package:green_wheels/src/utils/components/amount_charge_section.dart';
 import 'package:green_wheels/src/utils/components/payment_type_section.dart';
 import 'package:green_wheels/theme/colors.dart';
@@ -10,8 +11,8 @@ import '../../../../src/utils/components/estimated_travel_time.dart';
 import '../../../src/constants/consts.dart';
 import '../../../src/utils/buttons/android/android_outlined_button.dart';
 
-class SearchingForDriverModal extends GetView<HomeScreenController> {
-  const SearchingForDriverModal({super.key});
+class BookRideSearchingForDriverModal extends GetView<HomeScreenController> {
+  const BookRideSearchingForDriverModal({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -49,28 +50,58 @@ class SearchingForDriverModal extends GetView<HomeScreenController> {
               ),
             ),
             kSizedBox,
-            Container(
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: const BorderSide(
-                    color: kFrameBackgroundColor,
+            Obx(() {
+              return Container(
+                decoration: ShapeDecoration(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: const BorderSide(
+                      color: kFrameBackgroundColor,
+                    ),
                   ),
                 ),
-              ),
-              child: LinearProgressIndicator(
-                value: 0.8,
-                minHeight: 10,
-                backgroundColor: kFrameBackgroundColor,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  colorScheme.primary,
+                child: LinearProgressIndicator(
+                  value: controller.progress.value,
+                  minHeight: 10,
+                  backgroundColor: kFrameBackgroundColor,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    colorScheme.primary,
+                  ),
                 ),
-              ),
+              );
+            }),
+            Obx(() {
+              return controller.bookDriverFound.value
+                  ? Text(
+                      "Driver found!",
+                      style: defaultTextStyle(
+                        color: kTextBlackColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    )
+                  : const SizedBox();
+            }),
+            kSizedBox,
+            Obx(
+              () {
+                return controller.bookDriverTimerFinished.value &&
+                        controller.bookDriverFound.value
+                    ? AndroidElevatedButton(
+                        title: "Continue",
+                        onPressed: controller.showBookRideRequestAcceptedModal,
+                      )
+                    : AndroidElevatedButton(
+                        title: "Retry",
+                        onPressed:
+                            controller.simulateBookRideDriverSearchProgress,
+                      );
+              },
             ),
             kSizedBox,
             AndroidOutlinedButton(
               title: "Cancel request",
-              onPressed: controller.cancelDriverRequest,
+              onPressed: controller.cancelBookRideDriverRequest,
             ),
             kSizedBox,
           ],

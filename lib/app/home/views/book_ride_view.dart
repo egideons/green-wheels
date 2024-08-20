@@ -4,7 +4,7 @@ import '../../../src/constants/consts.dart';
 import '../../../src/controllers/app/home_screen_controller.dart';
 import '../../../theme/colors.dart';
 import '../content/book_ride_form.dart';
-import '../content/ride_icons_section.dart';
+import '../content/book_ride_ride_icons_section.dart';
 
 bookRideView(
     Size media, ColorScheme colorScheme, HomeScreenController controller) {

@@ -4,11 +4,11 @@ import 'package:get/get.dart';
 import '../../../src/constants/consts.dart';
 import '../../../src/controllers/app/home_screen_controller.dart';
 import '../../../src/utils/components/drag_handle.dart';
-import '../content/destination_map_suggestions.dart';
-import '../content/pickup_location_map_suggestions.dart';
-import '../content/ride_option_tabbar.dart';
-import '../content/search_for_driver_section.dart';
-import '../content/stop_location_map_suggestions.dart';
+import '../content/book_ride_destination_map_suggestions.dart';
+import '../content/book_ride_option_tabbar.dart';
+import '../content/book_ride_pickup_location_map_suggestions.dart';
+import '../content/book_ride_search_for_driver_section.dart';
+import '../content/book_ride_stop_location_map_suggestions.dart';
 import 'book_ride_view.dart';
 
 homePanelSection(
