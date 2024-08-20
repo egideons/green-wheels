@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_outlined_button.dart';
+import 'package:green_wheels/src/utils/components/drag_handle.dart';
 
 import '../../../../src/constants/consts.dart';
 import '../../../../src/controllers/app/home_screen_controller.dart';
@@ -22,8 +25,13 @@ class BookRideRequestAcceptedModal extends GetView<HomeScreenController> {
     final media = MediaQuery.of(context).size;
     var colorScheme = Theme.of(context).colorScheme;
 
+    Timer(const Duration(seconds: 3), () {
+      controller.runDriverHasArrived();
+    });
+
     return Container(
       width: media.width,
+      padding: const EdgeInsets.only(top: 20),
       decoration: ShapeDecoration(
         color: colorScheme.surface,
         shape: const RoundedRectangleBorder(
@@ -37,30 +45,45 @@ class BookRideRequestAcceptedModal extends GetView<HomeScreenController> {
         padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
         child: Column(
           children: [
+            dragHandle(media),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Request accepted!",
-                      style: defaultTextStyle(
-                        color: kTextBlackColor,
-                        fontSize: 25,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      "Driver is on his way",
-                      style: defaultTextStyle(
-                        color: kTextBlackColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Obx(() {
+                        return Text(
+                          controller.driverHasArrived.value
+                              ? "Driver has arrived!"
+                              : "Request accepted!",
+                          style: defaultTextStyle(
+                            color: kTextBlackColor,
+                            fontSize: 25,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        );
+                      }),
+                      const SizedBox(height: 2),
+                      Obx(() {
+                        return Text(
+                          controller.driverHasArrived.value
+                              ? "Please avoid keeping the driver waiting as this attracts a charge fee"
+                              : "Driver is on his way",
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 4,
+                          style: defaultTextStyle(
+                            color: controller.driverHasArrived.value
+                                ? colorScheme.error
+                                : kTextBlackColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        );
+                      })
+                    ],
+                  ),
                 ),
                 chatAndCallSection(
                   colorScheme,

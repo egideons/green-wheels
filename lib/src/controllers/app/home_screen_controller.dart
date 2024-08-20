@@ -339,6 +339,8 @@ class HomeScreenController extends GetxController
 // Start the progress simulation with a Timer
   void simulateBookRideDriverSearchProgress() {
     progress.value = 0.0;
+    driverHasArrived.value = false;
+
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (progress.value < 0.9) {
         updateProgress(progress.value + 0.1);
@@ -405,8 +407,8 @@ class HomeScreenController extends GetxController
 
     await showModalBottomSheet(
       isScrollControlled: true,
-      showDragHandle: true,
-      enableDrag: true,
+      showDragHandle: false,
+      enableDrag: false,
       context: Get.context!,
       useSafeArea: true,
       isDismissible: false,
@@ -422,6 +424,12 @@ class HomeScreenController extends GetxController
         return const BookRideRequestAcceptedModal();
       },
     );
+  }
+
+  var driverHasArrived = false.obs;
+
+  runDriverHasArrived() {
+    driverHasArrived.value = true;
   }
 
   //==== Schedule Trip =========================================================================>
