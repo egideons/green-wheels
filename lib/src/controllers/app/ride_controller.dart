@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../../../app/ride/content/trip_completed_modal.dart';
+import '../../../app/ride/content/trip_feedback_modal.dart';
 import '../../../app/ride/content/trip_payment_successful_modal.dart';
 import '../../../theme/colors.dart';
 
@@ -144,6 +145,54 @@ class RideController extends GetxController {
       ),
       builder: (context) {
         return const TripPaymentSuccessfulModal();
+      },
+    );
+  }
+
+  //===================================== Feedback Section ======================================\\
+
+  var starPosition = 250.0;
+  final starPosition2 = 200.0;
+  final starPosition3 = 210.0;
+  var rating = 0.0;
+
+//====================== BOOL VALUES =======================\\
+  var pageChanged = false.obs;
+  var submittingRequest = false.obs;
+
+//========================== KEYS ===========================\\
+  final formKey = GlobalKey<FormState>();
+
+//======================= CONTROLLERS ========================\\
+  final ratingPageController = PageController();
+  final myMessageEC = TextEditingController();
+
+//====================== FOCUS NODES ==========================\\
+  final myMessageFN = FocusNode();
+
+  giveFeedback() async {
+    Get.close(0);
+    final media = MediaQuery.of(Get.context!).size;
+
+    showModalBottomSheet(
+      isScrollControlled: true,
+      enableDrag: true,
+      isDismissible: true,
+      context: Get.context!,
+      barrierColor: kTransparentColor,
+      useSafeArea: true,
+      constraints: BoxConstraints(
+        maxHeight: media.height,
+        minWidth: media.width,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(50),
+          topRight: Radius.circular(50),
+        ),
+      ),
+      builder: (context) {
+        return const TripFeedbackModal();
       },
     );
   }

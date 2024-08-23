@@ -86,6 +86,8 @@ class TripPaymentSuccessfulModal extends GetView<RideController> {
             kHalfSizedBox,
             Text(
               "Your feedback will help us improve trip experiences to serve you better",
+              maxLines: 10,
+              textAlign: TextAlign.center,
               style: defaultTextStyle(
                 color: kDisabledTextColor,
                 fontSize: 16,
@@ -95,7 +97,7 @@ class TripPaymentSuccessfulModal extends GetView<RideController> {
             kBigSizedBox,
             AndroidElevatedButton(
               title: "Provide feedback",
-              onPressed: () {},
+              onPressed: controller.giveFeedback,
             ),
             kSizedBox,
           ],
