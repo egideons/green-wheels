@@ -11,25 +11,23 @@ searchForDriverSection(
   ColorScheme colorScheme,
   HomeScreenController controller,
 ) {
-  return Expanded(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        defaultInfoContainer(
-          padding: const EdgeInsets.all(10),
-          child: amounChargeSection(colorScheme, amount: 2000),
-        ),
-        kHalfSizedBox,
-        defaultInfoContainer(
-          padding: const EdgeInsets.all(10),
-          child: paymentTypeSection(colorScheme),
-        ),
-        kSizedBox,
-        AndroidElevatedButton(
-          title: "Search for Driver",
-          onPressed: controller.showSearchingForDriverModalSheet,
-        )
-      ],
-    ),
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      defaultInfoContainer(
+        padding: const EdgeInsets.all(10),
+        child: amounChargeSection(colorScheme, amount: 2000),
+      ),
+      kHalfSizedBox,
+      defaultInfoContainer(
+        padding: const EdgeInsets.all(10),
+        child: paymentTypeSection(colorScheme),
+      ),
+      kSizedBox,
+      AndroidElevatedButton(
+        title: "Search for Driver",
+        onPressed: controller.showSearchingForDriverModalSheet,
+      )
+    ],
   );
 }

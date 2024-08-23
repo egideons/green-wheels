@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 import 'package:green_wheels/src/utils/components/drag_handle.dart';
 
 import '../../../src/constants/consts.dart';
-import '../../../src/controllers/app/home_screen_controller.dart';
+import '../../../src/controllers/app/ride_controller.dart';
 import '../../../src/utils/components/default_info_container.dart';
 import '../../../src/utils/components/driver_avatar_name_and_rating.dart';
 import '../../../theme/colors.dart';
@@ -12,10 +13,10 @@ ridePanelSection(
   ColorScheme colorScheme,
   Size media,
   BuildContext context,
-  // ScrollController scrollController,
+  RideController controller,
 ) {
-  return GetBuilder<HomeScreenController>(
-    init: HomeScreenController(),
+  return GetBuilder<RideController>(
+    init: RideController(),
     builder: (controller) {
       return Container(
         decoration: ShapeDecoration(
@@ -36,15 +37,19 @@ ridePanelSection(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Trip has started",
-                    textAlign: TextAlign.start,
-                    style: defaultTextStyle(
-                      color: kTextBlackColor,
-                      fontSize: 25,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
+                  Obx(() {
+                    return Text(
+                      controller.rideComplete.value
+                          ? "Trip completed"
+                          : "Trip has started",
+                      textAlign: TextAlign.start,
+                      style: defaultTextStyle(
+                        color: kTextBlackColor,
+                        fontSize: 25,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    );
+                  }),
                   defaultInfoContainer(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,6 +119,15 @@ ridePanelSection(
                       ],
                     ),
                   ),
+                  kSizedBox,
+                  Obx(() {
+                    return controller.hasPaid.value
+                        ? AndroidElevatedButton(
+                            title: "Done",
+                            onPressed: controller.goToHomeScreen,
+                          )
+                        : const SizedBox();
+                  }),
                 ],
               ),
             ),

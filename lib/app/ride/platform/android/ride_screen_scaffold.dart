@@ -24,7 +24,7 @@ class RideScreenScaffold extends GetView<RideController> {
           return SafeArea(
             child: SlidingUpPanel(
               controller: controller.panelController,
-              maxHeight: media.height * .44,
+              maxHeight: media.height * .52,
               backdropTapClosesPanel: true,
               minHeight: media.height * .26,
               backdropEnabled: true,
@@ -44,15 +44,15 @@ class RideScreenScaffold extends GetView<RideController> {
                   //       )
                   //     :
                   rideGoogleMap(controller),
-              // panelBuilder: (sc) {
-              //   return ridePanelSection(
-              //     colorScheme,
-              //     media,
-              //     context,
-              //     // sc,
-              //   );
-              // },
-              panel: ridePanelSection(colorScheme, media, context),
+              panelBuilder: (sc) {
+                return ridePanelSection(
+                  colorScheme,
+                  media,
+                  context,
+                  controller,
+                );
+              },
+              // panel: ridePanelSection(colorScheme, media, context, controller),
             ),
           );
         },

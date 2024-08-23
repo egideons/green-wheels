@@ -3,13 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import '../../../app/home/screen/home_screen.dart';
 import '../../../app/ride/content/trip_completed_modal.dart';
+import '../../../app/ride/content/trip_feedback_appreciation_dialog.dart';
 import '../../../app/ride/content/trip_feedback_modal.dart';
 import '../../../app/ride/content/trip_payment_successful_modal.dart';
 import '../../../theme/colors.dart';
+import '../../constants/consts.dart';
 
 class RideController extends GetxController {
   static RideController get instance {
@@ -25,8 +29,7 @@ class RideController extends GetxController {
   //================ Boolean =================\\
   var isLocationPermissionGranted = false.obs;
   var floatingIconButtonIsVisible = false.obs;
-  var showInfo = false.obs;
-  var showRideInfo = false.obs;
+  var hasPaid = false.obs;
   var rideInProgress = false.obs;
   var rideComplete = false.obs;
 
@@ -67,6 +70,7 @@ class RideController extends GetxController {
   //======================================== Init Function =========================================//
   initFunctions() async {
     await Future.delayed(const Duration(seconds: 10));
+    rideComplete.value = true;
     showTripCompletedModal();
   }
 
@@ -96,6 +100,8 @@ class RideController extends GetxController {
   // }
 
   void showTripCompletedModal() async {
+    hasRated.value = false;
+
     final media = MediaQuery.of(Get.context!).size;
 
     showModalBottomSheet(
@@ -125,6 +131,7 @@ class RideController extends GetxController {
   makePayment() async {
     Get.close(0);
     final media = MediaQuery.of(Get.context!).size;
+    hasPaid.value = true;
 
     showModalBottomSheet(
       isScrollControlled: true,
@@ -150,41 +157,41 @@ class RideController extends GetxController {
   }
 
   //===================================== Feedback Section ======================================\\
-
-  var starPosition = 250.0;
-  final starPosition2 = 200.0;
-  final starPosition3 = 210.0;
-  var rating = 0.0;
+  var rating = 0.0.obs;
 
 //====================== BOOL VALUES =======================\\
-  var pageChanged = false.obs;
+  var hasRated = false.obs;
   var submittingRequest = false.obs;
+  var feedbackTextFieldIsActive = false.obs;
 
 //========================== KEYS ===========================\\
   final formKey = GlobalKey<FormState>();
 
 //======================= CONTROLLERS ========================\\
   final ratingPageController = PageController();
-  final myMessageEC = TextEditingController();
+  final feedbackMessageEC = TextEditingController();
 
 //====================== FOCUS NODES ==========================\\
-  final myMessageFN = FocusNode();
+  final feedbackMessageFN = FocusNode();
 
   giveFeedback() async {
+    hasRated.value = false;
+    rating.value = 0.0;
+    feedbackMessageEC.text.isEmpty ? null : feedbackMessageEC.clear();
+
     Get.close(0);
     final media = MediaQuery.of(Get.context!).size;
 
     showModalBottomSheet(
       isScrollControlled: true,
-      enableDrag: true,
-      isDismissible: true,
+      enableDrag: false,
+      isDismissible: false,
+      showDragHandle: true,
       context: Get.context!,
       barrierColor: kTransparentColor,
       useSafeArea: true,
-      constraints: BoxConstraints(
-        maxHeight: media.height,
-        minWidth: media.width,
-      ),
+      constraints:
+          BoxConstraints(maxHeight: media.height, minWidth: media.width),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(50),
@@ -195,5 +202,64 @@ class RideController extends GetxController {
         return const TripFeedbackModal();
       },
     );
+  }
+
+  rateRide(Size media, int index) {
+    rating.value = index + 1;
+    hasRated.value = true;
+  }
+
+  activateFeedbackTextField() {
+    feedbackTextFieldIsActive.value = true;
+  }
+
+  deactivateFeedbackTextField(event) {
+    feedbackTextFieldIsActive.value = false;
+  }
+
+  Future<void> submitFeedback() async {
+    if (feedbackMessageEC.text.isEmpty) {
+      ApiProcessorController.errorSnack("Field cannot be empty");
+      return;
+    }
+    submittingRequest.value = true;
+    await Future.delayed(const Duration(seconds: 3));
+    submittingRequest.value = false;
+    showTripFeedbackAppreciationDialog();
+  }
+
+  showTripFeedbackAppreciationDialog() {
+    Get.close(0);
+    showDialog(
+      context: Get.context!,
+      builder: (context) {
+        return Dialog(
+          insetAnimationCurve: Curves.easeIn,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kDefaultPadding),
+          ),
+          alignment: Alignment.center,
+          elevation: 50,
+          child: const TripFeedbackAppreciationDialog(),
+        );
+      },
+    );
+  }
+
+  goToHomeScreen() async {
+    hasRated.value = false;
+    rating.value = 0.0;
+    feedbackMessageEC.clear();
+
+    Get.offAll(
+      () => const HomeScreen(),
+      routeName: "/home",
+      curve: Curves.easeInOut,
+      fullscreenDialog: true,
+      popGesture: true,
+      predicate: (routes) => false,
+      transition: Get.defaultTransition,
+    );
+    return null;
   }
 }

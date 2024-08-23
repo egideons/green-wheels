@@ -82,67 +82,84 @@ homePanelSection(
                     ),
                   ),
                 ),
-                child: ListView(
-                  // controller: scrollController,
-                  children: [
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: media.width / 3.6),
-                      child: dragHandle(media),
-                    ),
-                    kSmallSizedBox,
-                    Container(
-                      decoration: ShapeDecoration(
-                        color: colorScheme.surface,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          side: BorderSide(
-                            width: .8,
-                            color: colorScheme.primary,
+                child: Obx(
+                  () {
+                    return ListView(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: media.width / 3.6),
+                          child: dragHandle(media),
+                        ),
+                        kSmallSizedBox,
+                        Container(
+                          decoration: ShapeDecoration(
+                            color: colorScheme.surface,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: BorderSide(
+                                width: .8,
+                                color: colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                          child: Obx(
+                            () {
+                              return rideOptionTabBar(
+                                controller,
+                                colorScheme,
+                              );
+                            },
                           ),
                         ),
-                      ),
-                      child: Obx(
-                        () {
-                          return rideOptionTabBar(
-                            controller,
-                            colorScheme,
-                          );
-                        },
-                      ),
-                    ),
-                    kSizedBox,
-                    bookARideFormView(media, colorScheme, controller),
-                    kSizedBox,
-                    Obx(() {
-                      return controller.mapSuggestionIsSelected.isTrue
-                          ? searchForDriverSection(
-                              colorScheme,
-                              controller,
-                            )
-                          : controller.isPickupLocationTextFieldActive.value
-                              ? pickupLocationMapSuggestions(
+                        kSizedBox,
+                        bookARideFormView(media, colorScheme, controller),
+                        kSizedBox,
+                        Column(
+                          children: () {
+                            if (controller.mapSuggestionIsSelected.isTrue) {
+                              return <Widget>[
+                                searchForDriverSection(
+                                  colorScheme,
+                                  controller,
+                                ),
+                              ];
+                            } else if (controller
+                                .isPickupLocationTextFieldActive.value) {
+                              return <Widget>[
+                                pickupLocationMapSuggestions(
+                                  colorScheme,
+                                  controller,
+                                  media,
+                                ),
+                              ];
+                            } else if (controller
+                                .isDestinationTextFieldActive.value) {
+                              return <Widget>[
+                                destinationMapSuggestions(
                                   colorScheme,
                                   controller,
                                   media,
                                 )
-                              : controller.isDestinationTextFieldActive.value
-                                  ? destinationMapSuggestions(
-                                      colorScheme,
-                                      controller,
-                                      media,
-                                    )
-                                  : controller
-                                          .isStopLocationTextFieldActive.value
-                                      ? stopLocationMapSuggestions(
-                                          colorScheme,
-                                          controller,
-                                          media,
-                                        )
-                                      : const SizedBox(height: 300);
-                    }),
-                    SizedBox(height: media.height * .3),
-                  ],
+                              ];
+                            } else if (controller
+                                .isStopLocationTextFieldActive.value) {
+                              return <Widget>[
+                                stopLocationMapSuggestions(
+                                  colorScheme,
+                                  controller,
+                                  media,
+                                )
+                              ];
+                            }
+                            return <Widget>[
+                              SizedBox(height: media.height * .3),
+                            ];
+                          }(),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
