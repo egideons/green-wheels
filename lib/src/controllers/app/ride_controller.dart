@@ -95,7 +95,6 @@ class RideController extends GetxController {
   // }
 
   void showTripCompletedModal() async {
-    Get.close(0);
     final media = MediaQuery.of(Get.context!).size;
 
     showModalBottomSheet(
@@ -116,11 +115,7 @@ class RideController extends GetxController {
         ),
       ),
       builder: (context) {
-        return Obx(
-          () {
-            return const TripCompletedModal();
-          },
-        );
+        return const TripCompletedModal();
       },
     );
   }
@@ -138,7 +133,7 @@ class RideController extends GetxController {
       barrierColor: kTransparentColor,
       useSafeArea: true,
       constraints: BoxConstraints(
-        maxHeight: media.height / 1.6,
+        maxHeight: media.height,
         minWidth: media.width,
       ),
       shape: const RoundedRectangleBorder(
@@ -148,11 +143,7 @@ class RideController extends GetxController {
         ),
       ),
       builder: (context) {
-        return Obx(
-          () {
-            return const TripPaymentSuccessfulModal();
-          },
-        );
+        return const TripPaymentSuccessfulModal();
       },
     );
   }

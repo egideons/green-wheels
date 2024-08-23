@@ -404,6 +404,7 @@ class HomeScreenController extends GetxController
   }
 
   void showBookRideRequestAcceptedModal() async {
+    Get.close(0);
     final media = MediaQuery.of(Get.context!).size;
 
     await showModalBottomSheet(

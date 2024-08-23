@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 import 'package:green_wheels/src/utils/components/default_info_container.dart';
+import 'package:green_wheels/src/utils/components/drag_handle.dart';
 import 'package:green_wheels/src/utils/components/estimated_travel_time.dart';
 
 import '../../../src/constants/consts.dart';
@@ -34,9 +35,15 @@ class TripCompletedModal extends GetView<RideController> {
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Align(
+              alignment: Alignment.center,
+              child: dragHandle(media),
+            ),
             Text(
               "Trip completed",
+              textAlign: TextAlign.start,
               style: defaultTextStyle(
                 color: kTextBlackColor,
                 fontSize: 25,
@@ -142,7 +149,7 @@ class TripCompletedModal extends GetView<RideController> {
             kSizedBox,
             AndroidElevatedButton(
               title: "Make Payment",
-              onPressed: () {},
+              onPressed: controller.makePayment,
             ),
             kSizedBox,
           ],
