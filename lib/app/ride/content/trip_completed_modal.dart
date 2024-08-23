@@ -1,38 +1,27 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
-import 'package:green_wheels/src/utils/buttons/android/android_outlined_button.dart';
-import 'package:green_wheels/src/utils/components/drag_handle.dart';
+import 'package:green_wheels/src/utils/components/default_info_container.dart';
+import 'package:green_wheels/src/utils/components/estimated_travel_time.dart';
 
-import '../../../../src/constants/consts.dart';
-import '../../../../src/controllers/app/home_screen_controller.dart';
-import '../../../../src/utils/components/chat_and_call_section.dart';
-import '../../../../src/utils/components/ride_address_section.dart';
-import '../../../../theme/colors.dart';
-import '../../../src/controllers/others/url_launcher_controller.dart';
+import '../../../src/constants/consts.dart';
+import '../../../src/controllers/app/ride_controller.dart';
 import '../../../src/utils/components/amount_charge_section.dart';
-import '../../../src/utils/components/default_info_container.dart';
 import '../../../src/utils/components/driver_avatar_name_and_rating.dart';
-import '../../../src/utils/components/estimated_travel_time.dart';
 import '../../../src/utils/components/payment_type_section.dart';
+import '../../../src/utils/components/ride_address_section.dart';
+import '../../../theme/colors.dart';
 
-class BookRideRequestAcceptedModal extends GetView<HomeScreenController> {
-  const BookRideRequestAcceptedModal({super.key});
+class TripCompletedModal extends GetView<RideController> {
+  const TripCompletedModal({super.key});
 
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
     var colorScheme = Theme.of(context).colorScheme;
 
-    Timer(const Duration(seconds: 3), () {
-      controller.runDriverHasArrived();
-    });
-
     return Container(
       width: media.width,
-      padding: const EdgeInsets.only(top: 20),
       decoration: ShapeDecoration(
         color: colorScheme.surface,
         shape: const RoundedRectangleBorder(
@@ -46,56 +35,13 @@ class BookRideRequestAcceptedModal extends GetView<HomeScreenController> {
         padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
         child: Column(
           children: [
-            dragHandle(media),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Obx(() {
-                        return Text(
-                          controller.driverHasArrived.value
-                              ? "Driver has arrived!"
-                              : "Request accepted!",
-                          style: defaultTextStyle(
-                            color: kTextBlackColor,
-                            fontSize: 25,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        );
-                      }),
-                      const SizedBox(height: 2),
-                      Obx(() {
-                        return Text(
-                          controller.driverHasArrived.value
-                              ? "Please avoid keeping the driver waiting as this attracts a charge fee"
-                              : "Driver is on his way",
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 4,
-                          style: defaultTextStyle(
-                            color: controller.driverHasArrived.value
-                                ? colorScheme.error
-                                : kTextBlackColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        );
-                      })
-                    ],
-                  ),
-                ),
-                chatAndCallSection(
-                  colorScheme,
-                  chatFunc: () {
-                    UrlLaunchController.sendSms("07039502751");
-                  },
-                  callFunc: () {
-                    UrlLaunchController.makePhoneCall("07039502751");
-                  },
-                ),
-              ],
+            Text(
+              "Trip completed",
+              style: defaultTextStyle(
+                color: kTextBlackColor,
+                fontSize: 25,
+                fontWeight: FontWeight.w400,
+              ),
             ),
             kSizedBox,
             defaultInfoContainer(
@@ -193,18 +139,10 @@ class BookRideRequestAcceptedModal extends GetView<HomeScreenController> {
               ),
             ),
             kSizedBox,
-            Obx(() {
-              return controller.driverHasArrived.value
-                  ? AndroidElevatedButton(
-                      title: "Start trip",
-                      onPressed: controller.startTrip,
-                    )
-                  : const SizedBox();
-            }),
-            kHalfSizedBox,
-            AndroidOutlinedButton(
-              title: "Cancel request",
-              onPressed: controller.cancelBookRideDriverRequest,
+            kSizedBox,
+            AndroidElevatedButton(
+              title: "Make Payment",
+              onPressed: () {},
             ),
             kSizedBox,
           ],

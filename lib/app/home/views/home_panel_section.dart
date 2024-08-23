@@ -9,7 +9,7 @@ import '../content/book_ride_option_tabbar.dart';
 import '../content/book_ride_pickup_location_map_suggestions.dart';
 import '../content/book_ride_search_for_driver_section.dart';
 import '../content/book_ride_stop_location_map_suggestions.dart';
-import 'book_ride_view.dart';
+import 'book_a_ride_form_view.dart';
 
 homePanelSection(
   ColorScheme colorScheme,
@@ -112,42 +112,36 @@ homePanelSection(
                       ),
                     ),
                     kSizedBox,
-                    bookRideView(media, colorScheme, controller),
+                    bookARideFormView(media, colorScheme, controller),
                     kSizedBox,
-                    Obx(
-                      () {
-                        return controller.mapSuggestionIsSelected.isTrue
-                            ? searchForDriverSection(
-                                colorScheme,
-                                controller,
-                              )
-                            : Expanded(
-                                child: controller
-                                        .isPickupLocationTextFieldActive.value
-                                    ? pickupLocationMapSuggestions(
-                                        colorScheme,
-                                        controller,
-                                        media,
-                                      )
-                                    : controller
-                                            .isDestinationTextFieldActive.value
-                                        ? destinationMapSuggestions(
-                                            colorScheme,
-                                            controller,
-                                            media,
-                                          )
-                                        : controller
-                                                .isStopLocationTextFieldActive
-                                                .value
-                                            ? stopLocationMapSuggestions(
-                                                colorScheme,
-                                                controller,
-                                                media,
-                                              )
-                                            : const SizedBox(height: 300));
-                      },
-                    ),
-                    kBigSizedBox,
+                    Obx(() {
+                      return controller.mapSuggestionIsSelected.isTrue
+                          ? searchForDriverSection(
+                              colorScheme,
+                              controller,
+                            )
+                          : controller.isPickupLocationTextFieldActive.value
+                              ? pickupLocationMapSuggestions(
+                                  colorScheme,
+                                  controller,
+                                  media,
+                                )
+                              : controller.isDestinationTextFieldActive.value
+                                  ? destinationMapSuggestions(
+                                      colorScheme,
+                                      controller,
+                                      media,
+                                    )
+                                  : controller
+                                          .isStopLocationTextFieldActive.value
+                                      ? stopLocationMapSuggestions(
+                                          colorScheme,
+                                          controller,
+                                          media,
+                                        )
+                                      : const SizedBox(height: 300);
+                    }),
+                    SizedBox(height: media.height * .3),
                   ],
                 ),
               ),

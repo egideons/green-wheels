@@ -9,6 +9,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../../../app/home/modals/book_ride_request_accepted_modal.dart';
 import '../../../app/home/modals/book_ride_searching_for_driver_modal.dart';
+import '../../../app/ride/screen/ride_screen.dart';
 import '../../constants/assets.dart';
 
 class HomeScreenController extends GetxController
@@ -430,6 +431,20 @@ class HomeScreenController extends GetxController
 
   runDriverHasArrived() {
     driverHasArrived.value = true;
+  }
+
+  startTrip() async {
+    Get.close(0);
+    await Future.delayed(const Duration(milliseconds: 300));
+    Get.to(
+      () => const RideScreen(),
+      routeName: "/ride",
+      curve: Curves.easeInOut,
+      fullscreenDialog: true,
+      popGesture: true,
+      preventDuplicates: false,
+      transition: Get.defaultTransition,
+    );
   }
 
   //==== Schedule Trip =========================================================================>

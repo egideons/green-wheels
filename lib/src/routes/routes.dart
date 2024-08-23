@@ -10,6 +10,7 @@ import '../../app/auth/provide_name/screen/provide_name_screen.dart';
 import '../../app/auth/provide_phone/screen/provide_phone.dart';
 import '../../app/home/screen/home_screen.dart';
 import '../../app/onboarding/screen/onboarding_screen.dart';
+import '../../app/ride/screen/ride_screen.dart';
 import '../../app/splash/startup/screen/splash_screen.dart';
 import '../../app/splash/success/screen/success_screen.dart';
 // import '../../app/home/screen/home_screen.dart';
@@ -81,7 +82,7 @@ class Routes {
 
     //Main App Section
     GetPage(name: homeScreen, page: () => const HomeScreen()),
-    // GetPage(name: rideScreen, page: () => const RideScreen()),
+    GetPage(name: rideScreen, page: () => const RideScreen()),
     // GetPage(name: profileScreen, page: () => const ProfileScreen()),
     // GetPage(
     //   name: scheduledTripsScreen,

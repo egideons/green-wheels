@@ -55,14 +55,15 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
                       //       )
                       //     :
                       homeGoogleMap(controller),
-                  panelBuilder: (sc) {
-                    return homePanelSection(
-                      colorScheme,
-                      media,
-                      context,
-                      // sc,
-                    );
-                  },
+                  // panelBuilder: (sc) {
+                  //   return homePanelSection(
+                  //     colorScheme,
+                  //     media,
+                  //     context,
+                  //     // sc,
+                  //   );
+                  // },
+                  panel: homePanelSection(colorScheme, media, context),
                 ),
                 Positioned(
                   top: 15,

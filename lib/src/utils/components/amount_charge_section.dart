@@ -37,7 +37,7 @@ amounChargeSection(ColorScheme colorScheme, {int? amount}) {
             ),
           ],
         ),
-      )
+      ),
     ],
   );
 }

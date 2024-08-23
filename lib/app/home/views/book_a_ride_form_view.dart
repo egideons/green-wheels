@@ -6,7 +6,7 @@ import '../../../theme/colors.dart';
 import '../content/book_ride_form.dart';
 import '../content/book_ride_ride_icons_section.dart';
 
-bookRideView(
+bookARideFormView(
     Size media, ColorScheme colorScheme, HomeScreenController controller) {
   return Container(
     width: media.width,

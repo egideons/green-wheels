@@ -1,22 +1,24 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-// import '../../../app/home/screen/home_screen.dart';
-// import '../../../app/home/views/android/payment_success_dialog.dart';
-// import '../../../app/ride/content/end_trip_modal.dart';
-// import '../../../app/ride/content/start_ride_modal.dart';
+import '../../../app/ride/content/trip_completed_modal.dart';
+import '../../../app/ride/content/trip_payment_successful_modal.dart';
+import '../../../theme/colors.dart';
 
 class RideController extends GetxController {
-  static const CameraPosition kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14,
-  );
-
   static RideController get instance {
     return Get.find<RideController>();
+  }
+
+  @override
+  void onInit() {
+    initFunctions();
+    super.onInit();
   }
 
   //================ Boolean =================\\
@@ -30,48 +32,12 @@ class RideController extends GetxController {
   //================ Controllers =================\\
   final Completer<GoogleMapController> _googleMapController = Completer();
   GoogleMapController? newGoogleMapController;
+  var panelController = PanelController();
 
-  displayRideInfo() async {
-    showRideInfo.value = true;
-    update();
-  }
-
-  // endRide() async {
-  //   hideRideInfo();
-  //   await Future.delayed(const Duration(milliseconds: 300));
-  //   Get.offAll(
-  //     () => const HomeScreen(),
-  //     routeName: "/home",
-  //     curve: Curves.easeInOut,
-  //     fullscreenDialog: true,
-  //     popGesture: true,
-  //     predicate: (routes) => false,
-  //     transition: Get.defaultTransition,
-  //   );
-  //   // HomeScreenController.instance.showHomeModalBottomSheet();
-  // }
-
-  //======================================= Google Maps ================================================\\
-
-  hideRideInfo() async {
-    rideInProgress.value = false;
-    rideComplete.value = false;
-
-    showRideInfo.value = false;
-    update();
-  }
-
-  //======================================== Init Function =========================================//
-  initFunctions() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    // showStartRide();
-  }
-
-  @override
-  void onInit() {
-    initFunctions();
-    super.onInit();
-  }
+  static const CameraPosition kGooglePlex = CameraPosition(
+    target: LatLng(37.42796133580664, -122.085749655962),
+    zoom: 14,
+  );
 
   //====================================== Setting Google Map Consts =========================================\\
 
@@ -80,14 +46,7 @@ class RideController extends GetxController {
     newGoogleMapController = controller;
   }
 
-  // openPaymentSuccessDialog(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return const PaymentSuccessDialog();
-  //     },
-  //   );
-  // }
+  //======================================= Google Maps ================================================\\
 
   /// When the location services are not enabled or permissions are denied the `Future` will return an error.
   Future<void> requestLocationPermission() async {
@@ -104,97 +63,10 @@ class RideController extends GetxController {
     }
   }
 
-  // void reShowEndRideModal() async {
-  //   final media = MediaQuery.of(Get.context!).size;
-
-  //   await showFloatingIconButton();
-
-  //   showModalBottomSheet(
-  //     isScrollControlled: true,
-  //     enableDrag: true,
-  //     isDismissible: true,
-  //     context: Get.context!,
-  //     barrierColor: kTransparentColor,
-  //     useSafeArea: true,
-  //     constraints: BoxConstraints(
-  //       maxHeight: media.height / 1.4,
-  //       minWidth: media.width,
-  //     ),
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.only(
-  //         topLeft: Radius.circular(50),
-  //         topRight: Radius.circular(50),
-  //       ),
-  //     ),
-  //     builder: (context) {
-  //       return Obx(
-  //         () {
-  //           return EndTripModal(displayInfo: showRideInfo.value);
-  //         },
-  //       );
-  //     },
-  //   );
-
-  //   rideInProgressFunc();
-  //   await Future.delayed(const Duration(seconds: 5));
-  //   rideCompleteFunc();
-  // }
-
-  rideCompleteFunc() async {
-    rideComplete.value = true;
-    update();
-  }
-
-  rideInProgressFunc() async {
-    rideInProgress.value = true;
-    update();
-  }
-
-  // void showEndRideModal() async {
-  //   Get.close(0);
-  //   final media = MediaQuery.of(Get.context!).size;
-
-  //   await showFloatingIconButton();
-
-  //   showModalBottomSheet(
-  //     isScrollControlled: true,
-  //     enableDrag: true,
-  //     isDismissible: true,
-  //     context: Get.context!,
-  //     barrierColor: kTransparentColor,
-  //     useSafeArea: true,
-  //     constraints: BoxConstraints(
-  //       maxHeight: media.height / 1.6,
-  //       minWidth: media.width,
-  //     ),
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.only(
-  //         topLeft: Radius.circular(50),
-  //         topRight: Radius.circular(50),
-  //       ),
-  //     ),
-  //     builder: (context) {
-  //       return Obx(
-  //         () {
-  //           return EndTripModal(displayInfo: showRideInfo.value);
-  //         },
-  //       );
-  //     },
-  //   );
-
-  // This will display info immediately and then hide it after 3 seconds
-  //   displayRideInfo();
-  //   await Future.delayed(const Duration(seconds: 2));
-  //   rideInProgressFunc();
-  //   await Future.delayed(const Duration(seconds: 5));
-  //   rideCompleteFunc();
-  // }
-
-  //================= End Ride ===================\\
-
-  showFloatingIconButton() {
-    floatingIconButtonIsVisible.value = true;
-    update();
+  //======================================== Init Function =========================================//
+  initFunctions() async {
+    await Future.delayed(const Duration(seconds: 10));
+    showTripCompletedModal();
   }
 
   //======================================== Ride Functions =========================================//
@@ -209,7 +81,7 @@ class RideController extends GetxController {
   //     showDragHandle: true,
   //     useSafeArea: true,
   //     constraints:
-  //         BoxConstraints(maxHeight: media.height, minWidth: media.width),
+  //         BoxConstraints(maxHeight: media.height / 3, minWidth: media.width),
   //     shape: const RoundedRectangleBorder(
   //       borderRadius: BorderRadius.only(
   //         topLeft: Radius.circular(32),
@@ -217,8 +89,71 @@ class RideController extends GetxController {
   //       ),
   //     ),
   //     builder: (context) {
-  //       return const StartRideModal();
+  //       return const TripStartedModal();
   //     },
   //   );
   // }
+
+  void showTripCompletedModal() async {
+    Get.close(0);
+    final media = MediaQuery.of(Get.context!).size;
+
+    showModalBottomSheet(
+      isScrollControlled: true,
+      enableDrag: false,
+      isDismissible: false,
+      context: Get.context!,
+      barrierColor: kTransparentColor,
+      useSafeArea: true,
+      constraints: BoxConstraints(
+        maxHeight: media.height,
+        minWidth: media.width,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(50),
+          topRight: Radius.circular(50),
+        ),
+      ),
+      builder: (context) {
+        return Obx(
+          () {
+            return const TripCompletedModal();
+          },
+        );
+      },
+    );
+  }
+
+  //=============== Payment Section ================\\
+  makePayment() async {
+    Get.close(0);
+    final media = MediaQuery.of(Get.context!).size;
+
+    showModalBottomSheet(
+      isScrollControlled: true,
+      enableDrag: true,
+      isDismissible: true,
+      context: Get.context!,
+      barrierColor: kTransparentColor,
+      useSafeArea: true,
+      constraints: BoxConstraints(
+        maxHeight: media.height / 1.6,
+        minWidth: media.width,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(50),
+          topRight: Radius.circular(50),
+        ),
+      ),
+      builder: (context) {
+        return Obx(
+          () {
+            return const TripPaymentSuccessfulModal();
+          },
+        );
+      },
+    );
+  }
 }
