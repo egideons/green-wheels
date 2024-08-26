@@ -33,6 +33,7 @@ class BookRideSearchingForDriverModal extends GetView<HomeScreenController> {
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             defaultInfoContainer(
               child: Column(
@@ -70,17 +71,27 @@ class BookRideSearchingForDriverModal extends GetView<HomeScreenController> {
                 ),
               );
             }),
+            kHalfSizedBox,
             Obx(() {
               return controller.bookDriverFound.value
                   ? Text(
                       "Driver found!",
+                      textAlign: TextAlign.start,
                       style: defaultTextStyle(
                         color: kTextBlackColor,
                         fontSize: 20,
                         fontWeight: FontWeight.w400,
                       ),
                     )
-                  : const SizedBox();
+                  : Text(
+                      "Searching for a Driver",
+                      textAlign: TextAlign.start,
+                      style: defaultTextStyle(
+                        color: kTextBlackColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    );
             }),
             kSizedBox,
             Obx(

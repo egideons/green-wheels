@@ -52,7 +52,7 @@ class TripFeedbackAppreciationDialog extends GetView<RideController> {
           kSizedBox,
           kBigSizedBox,
           AndroidElevatedButton(
-            title: "Home screen",
+            title: "Done",
             onPressed: controller.goToHomeScreen,
           ),
           kBigSizedBox,

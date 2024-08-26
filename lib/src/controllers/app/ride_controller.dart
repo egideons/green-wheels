@@ -7,13 +7,14 @@ import 'package:green_wheels/src/controllers/others/api_processor_controller.dar
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import '../../../app/home/screen/home_screen.dart';
 import '../../../app/ride/content/trip_completed_modal.dart';
 import '../../../app/ride/content/trip_feedback_appreciation_dialog.dart';
 import '../../../app/ride/content/trip_feedback_modal.dart';
 import '../../../app/ride/content/trip_payment_successful_modal.dart';
+import '../../../app/splash/loading/screen/loading_screen.dart';
 import '../../../theme/colors.dart';
 import '../../constants/consts.dart';
+import '../others/loading_controller.dart';
 
 class RideController extends GetxController {
   static RideController get instance {
@@ -247,19 +248,26 @@ class RideController extends GetxController {
   }
 
   goToHomeScreen() async {
-    hasRated.value = false;
-    rating.value = 0.0;
-    feedbackMessageEC.clear();
-
-    Get.offAll(
-      () => const HomeScreen(),
+    await Get.offAll(
+      () => LoadingScreen(
+        loadData: LoadingController.instance.loadHomeScreen,
+      ),
       routeName: "/home",
-      curve: Curves.easeInOut,
       fullscreenDialog: true,
-      popGesture: true,
+      curve: Curves.easeInOut,
       predicate: (routes) => false,
+      popGesture: false,
       transition: Get.defaultTransition,
     );
-    return null;
+
+    // Get.offAll(
+    //   () => const HomeScreen(),
+    //   routeName: "/home",
+    //   curve: Curves.easeInOut,
+    //   fullscreenDialog: true,
+    //   popGesture: true,
+    //   predicate: (routes) => false,
+    //   transition: Get.defaultTransition,
+    // );
   }
 }

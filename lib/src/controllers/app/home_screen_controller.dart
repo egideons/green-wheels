@@ -59,6 +59,7 @@ class HomeScreenController extends GetxController
   var mapSuggestionIsSelected = false.obs;
   var bookDriverTimerFinished = false.obs;
   var bookDriverFound = false.obs;
+  var driverHasArrived = false.obs;
 
   //================ Controllers =================\\
   final Completer<GoogleMapController> _googleMapController = Completer();
@@ -428,15 +429,14 @@ class HomeScreenController extends GetxController
     );
   }
 
-  var driverHasArrived = false.obs;
-
   runDriverHasArrived() {
     driverHasArrived.value = true;
+    startTrip();
   }
 
   startTrip() async {
     Get.close(0);
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(seconds: 3));
     Get.to(
       () => const RideScreen(),
       routeName: "/ride",

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_outlined_button.dart';
 import 'package:green_wheels/src/utils/components/drag_handle.dart';
 
@@ -193,15 +192,6 @@ class BookRideRequestAcceptedModal extends GetView<HomeScreenController> {
               ),
             ),
             kSizedBox,
-            Obx(() {
-              return controller.driverHasArrived.value
-                  ? AndroidElevatedButton(
-                      title: "Start trip",
-                      onPressed: controller.startTrip,
-                    )
-                  : const SizedBox();
-            }),
-            kHalfSizedBox,
             AndroidOutlinedButton(
               title: "Cancel request",
               onPressed: controller.cancelBookRideDriverRequest,

@@ -39,6 +39,7 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
                   backdropTapClosesPanel: true,
                   minHeight: media.height * .26,
                   backdropEnabled: true,
+                  defaultPanelState: PanelState.CLOSED,
                   panelSnapping: false,
                   backdropColor: kTransparentColor,
                   backdropOpacity: 0,
@@ -55,15 +56,15 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
                       //       )
                       //     :
                       homeGoogleMap(controller),
-                  panelBuilder: (sc) {
-                    return homePanelSection(
-                      colorScheme,
-                      media,
-                      context,
-                      // sc,
-                    );
-                  },
-                  // panel: homePanelSection(colorScheme, media, context),
+                  // panelBuilder: (sc) {
+                  //   return homePanelSection(
+                  //     colorScheme,
+                  //     media,
+                  //     context,
+                  //     // sc,
+                  //   );
+                  // },
+                  panel: homePanelSection(colorScheme, media, context),
                 ),
                 Positioned(
                   top: 15,
