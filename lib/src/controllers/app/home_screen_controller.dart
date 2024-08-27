@@ -10,11 +10,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../../../app/home/content/book_a_ride/book_ride_request_canceled_dialog.dart';
+import '../../../app/home/content/schedule_a_trip/schedule_trip_intro_dialog.dart';
 import '../../../app/home/modals/book_a_ride/book_ride_cancel_request_modal.dart';
 import '../../../app/home/modals/book_a_ride/book_ride_request_accepted_modal.dart';
 import '../../../app/home/modals/book_a_ride/book_ride_searching_for_driver_modal.dart';
 import '../../../app/ride/screen/ride_screen.dart';
 import '../../../app/splash/loading/screen/loading_screen.dart';
+import '../../../main.dart';
 import '../../constants/assets.dart';
 import '../../constants/consts.dart';
 import '../others/loading_controller.dart';
@@ -585,6 +587,67 @@ class HomeScreenController extends GetxController
   }
 
   //==== Schedule Trip =========================================================================>
+  Future<void> scheduleATrip() async {
+    bool hasViewedScheduleTripIntro =
+        prefs.getBool("viewedScheduleTripIntro") ?? false;
+    if (!hasViewedScheduleTripIntro) {
+      await closePanel();
+      showScheduleTripIntroDialog();
+      log("User has not viewed");
+    } else {
+      log("User has viewed");
+      // User has viewed intro already, navigate to the schedule trip screen
+      // await closePanel();
+      // goToScheduleTripScreen();
+    }
+  }
+
+  showScheduleTripIntroDialog() {
+    showDialog(
+      context: Get.context!,
+      builder: (context) {
+        return Dialog(
+          insetAnimationCurve: Curves.easeIn,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kDefaultPadding),
+          ),
+          insetPadding: const EdgeInsets.all(10),
+          alignment: Alignment.center,
+          elevation: 50,
+          child: const ScheduleTripIntroDialog(),
+        );
+      },
+    );
+  }
+
+  List<Map<String, String>> scheduleTripIntroInfo = [
+    {
+      'icon': Assets.calendarOutlineIconSvg,
+      'label': 'Choose a pick-up date within 30 days',
+    },
+    {
+      'icon': Assets.clockIconSvg,
+      'label': 'Choose a time at your convenience',
+    },
+    {
+      'icon': Assets.routeIconSvg,
+      'label': 'Choose a route you prefer',
+    },
+  ];
+
+  goToScheduleTripScreen() async {
+    prefs.setBool("viewedScheduleTripIntro", true);
+
+    // Get.to(
+    //   () => const ProfileScreen(),
+    //   transition: Transition.rightToLeft,
+    //   routeName: "/profile-screen",
+    //   curve: Curves.easeInOut,
+    //   fullscreenDialog: true,
+    //   popGesture: true,
+    //   preventDuplicates: true,
+    // );
+  }
 
   //==== Rent Ride =========================================================================>
 }

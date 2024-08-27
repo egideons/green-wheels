@@ -14,7 +14,10 @@ class Assets {
   static const greenWavyCheckIconSvg = "assets/icons/svg/check_wavy.svg";
   static const cancelWavyIconSvg = "assets/icons/svg/cancel_wavy.svg";
   static const scheduleIconSvg = "assets/icons/svg/schedule.svg";
+  static const calendarOutlineIconSvg = "assets/icons/svg/calendar_outline.svg";
   static const settingsIconSvg = "assets/icons/svg/settings.svg";
+  static const clockIconSvg = "assets/icons/svg/clock_outline.svg";
+  static const routeIconSvg = "assets/icons/svg/route.svg";
   static const supportIconSvg = "assets/icons/svg/support.svg";
   static const carOutlineIconSvg = "assets/icons/svg/car-outline.svg";
   static const carCalendarOutlineIconSvg =

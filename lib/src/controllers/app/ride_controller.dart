@@ -129,15 +129,15 @@ class RideController extends GetxController {
   }
 
   //=============== Payment Section ================\\
-  makePayment() async {
+  showPaymentSuccessfulModal() async {
     Get.close(0);
     final media = MediaQuery.of(Get.context!).size;
     hasPaid.value = true;
 
     showModalBottomSheet(
       isScrollControlled: true,
-      enableDrag: true,
-      isDismissible: true,
+      enableDrag: false,
+      isDismissible: false,
       context: Get.context!,
       barrierColor: kTransparentColor,
       useSafeArea: true,
