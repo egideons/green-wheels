@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
-import '../../../src/constants/consts.dart';
-import '../../../src/controllers/app/home_screen_controller.dart';
-import '../../../src/utils/containers/text_form_field_container.dart';
-import '../../../src/utils/textformfields/android/android_textformfield.dart';
+import '../../../../src/constants/consts.dart';
+import '../../../../src/controllers/app/home_screen_controller.dart';
+import '../../../../src/utils/containers/text_form_field_container.dart';
+import '../../../../src/utils/textformfields/android/android_textformfield.dart';
 
 bookRideForm(
   HomeScreenController controller,
@@ -15,7 +15,7 @@ bookRideForm(
   return Obx(
     () {
       return Form(
-        key: controller.formKey,
+        key: controller.bookRideFormKey,
         child: Column(
           children: [
             formFieldContainer(
@@ -54,7 +54,7 @@ bookRideForm(
                         textInputAction: TextInputAction.next,
                         textCapitalization: TextCapitalization.words,
                         onChanged: controller.stopLocationOnChanged,
-                        hintText: "Add Stop",
+                        hintText: "Add a Stop",
                         validator: (value) {
                           return null;
                         },

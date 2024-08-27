@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../src/constants/consts.dart';
 import '../../../src/controllers/app/home_screen_controller.dart';
 import '../../../theme/colors.dart';
-import '../content/book_ride_form.dart';
-import '../content/book_ride_ride_icons_section.dart';
+import '../content/book_a_ride/book_ride_form.dart';
+import '../content/book_a_ride/book_ride_ride_icons_section.dart';
 
 bookARideFormView(
     Size media, ColorScheme colorScheme, HomeScreenController controller) {

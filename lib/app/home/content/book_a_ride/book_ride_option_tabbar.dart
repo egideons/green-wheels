@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../src/constants/consts.dart';
-import '../../../src/controllers/app/home_screen_controller.dart';
-import '../../../theme/colors.dart';
+import '../../../../src/constants/consts.dart';
+import '../../../../src/controllers/app/home_screen_controller.dart';
+import '../../../../theme/colors.dart';
 
 rideOptionTabBar(HomeScreenController controller, ColorScheme colorScheme) {
   return TabBar(
@@ -35,7 +35,7 @@ rideOptionTabBar(HomeScreenController controller, ColorScheme colorScheme) {
       (index) {
         final tab = controller.tabData(colorScheme)[index];
         return Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8.0),
           child: Column(
             children: [
               SvgPicture.asset(

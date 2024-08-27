@@ -12,6 +12,7 @@ class Assets {
 //========== SVG Icons ==========\\
   static const greenCheckIconSvg = "assets/icons/svg/check.svg";
   static const greenWavyCheckIconSvg = "assets/icons/svg/check_wavy.svg";
+  static const cancelWavyIconSvg = "assets/icons/svg/cancel_wavy.svg";
   static const scheduleIconSvg = "assets/icons/svg/schedule.svg";
   static const settingsIconSvg = "assets/icons/svg/settings.svg";
   static const supportIconSvg = "assets/icons/svg/support.svg";

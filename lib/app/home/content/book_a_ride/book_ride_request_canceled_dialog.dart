@@ -4,15 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/assets.dart';
-import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 import 'package:green_wheels/theme/colors.dart';
-import 'package:iconsax/iconsax.dart';
 
-import '../../../src/constants/consts.dart';
-import '../../../src/controllers/app/ride_controller.dart';
+import '../../../../src/constants/consts.dart';
+import '../../../../src/controllers/app/home_screen_controller.dart';
 
-class TripFeedbackAppreciationDialog extends GetView<RideController> {
-  const TripFeedbackAppreciationDialog({super.key});
+class BookRideRequestCanceledDialog extends GetView<HomeScreenController> {
+  const BookRideRequestCanceledDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,17 +34,10 @@ class TripFeedbackAppreciationDialog extends GetView<RideController> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Align(
-            alignment: Alignment.topLeft,
-            child: IconButton(
-              onPressed: controller.goToHomeScreen,
-              icon: const Icon(Iconsax.close_circle),
-            ),
-          ),
-          SvgPicture.asset(Assets.greenWavyCheckIconSvg),
+          SvgPicture.asset(Assets.cancelWavyIconSvg),
           kHalfSizedBox,
           Text(
-            "Thank you for your feedback!",
+            "Request canceled!",
             maxLines: 10,
             textAlign: TextAlign.center,
             style: defaultTextStyle(
@@ -56,12 +47,6 @@ class TripFeedbackAppreciationDialog extends GetView<RideController> {
             ),
           ),
           kSizedBox,
-          kBigSizedBox,
-          AndroidElevatedButton(
-            title: "Done",
-            onPressed: controller.goToHomeScreen,
-          ),
-          kBigSizedBox,
         ],
       ),
     );

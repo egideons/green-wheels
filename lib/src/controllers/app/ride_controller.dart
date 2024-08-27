@@ -219,14 +219,17 @@ class RideController extends GetxController {
   }
 
   Future<void> submitFeedback() async {
-    if (feedbackMessageEC.text.isEmpty) {
-      ApiProcessorController.errorSnack("Field cannot be empty");
-      return;
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+      if (feedbackMessageEC.text.isEmpty) {
+        ApiProcessorController.errorSnack("Field cannot be empty");
+        return;
+      }
+      submittingRequest.value = true;
+      await Future.delayed(const Duration(seconds: 3));
+      submittingRequest.value = false;
+      showTripFeedbackAppreciationDialog();
     }
-    submittingRequest.value = true;
-    await Future.delayed(const Duration(seconds: 3));
-    submittingRequest.value = false;
-    showTripFeedbackAppreciationDialog();
   }
 
   showTripFeedbackAppreciationDialog() {
@@ -259,15 +262,5 @@ class RideController extends GetxController {
       popGesture: false,
       transition: Get.defaultTransition,
     );
-
-    // Get.offAll(
-    //   () => const HomeScreen(),
-    //   routeName: "/home",
-    //   curve: Curves.easeInOut,
-    //   fullscreenDialog: true,
-    //   popGesture: true,
-    //   predicate: (routes) => false,
-    //   transition: Get.defaultTransition,
-    // );
   }
 }

@@ -117,7 +117,7 @@ class TripFeedbackModal extends GetView<RideController> {
                       hintText: "Write your text...",
                       maxLines: 8,
                       keyboardType: TextInputType.multiline,
-                      textCapitalization: TextCapitalization.words,
+                      textCapitalization: TextCapitalization.sentences,
                       focusNode: controller.feedbackMessageFN,
                       onTap: controller.activateFeedbackTextField,
                       onTapOutside: controller.deactivateFeedbackTextField,

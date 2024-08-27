@@ -4,13 +4,20 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
+import 'package:green_wheels/theme/colors.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import '../../../app/home/modals/book_ride_request_accepted_modal.dart';
-import '../../../app/home/modals/book_ride_searching_for_driver_modal.dart';
+import '../../../app/home/content/book_a_ride/book_ride_request_canceled_dialog.dart';
+import '../../../app/home/modals/book_a_ride/book_ride_cancel_request_modal.dart';
+import '../../../app/home/modals/book_a_ride/book_ride_request_accepted_modal.dart';
+import '../../../app/home/modals/book_a_ride/book_ride_searching_for_driver_modal.dart';
 import '../../../app/ride/screen/ride_screen.dart';
+import '../../../app/splash/loading/screen/loading_screen.dart';
 import '../../constants/assets.dart';
+import '../../constants/consts.dart';
+import '../others/loading_controller.dart';
 
 class HomeScreenController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -46,7 +53,7 @@ class HomeScreenController extends GetxController
 
   //================ Keys =================\\
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  final formKey = GlobalKey<FormState>();
+  final bookRideFormKey = GlobalKey<FormState>();
 
   //================ Boolean =================\\
   var isRefreshing = false.obs;
@@ -364,14 +371,141 @@ class HomeScreenController extends GetxController
     timer?.cancel();
   }
 
-  void cancelBookRideDriverRequest() async {
-    Get.close(0);
-    progress.value = 0.0;
-    bookDriverTimerFinished.value = false;
-    bookDriverFound.value = false;
-    update();
+  var cancelRequestSubmitButtonIsEnabled = false.obs;
+  var cancelRequestFormKey = GlobalKey<FormState>();
+  var isOtherSelected = false.obs;
+  var otherOptionEC = TextEditingController();
+  var otherOptionFN = FocusNode();
+  var cancelRequestReasons = [
+    "Waited for a long time",
+    "Unable to contact the driver",
+    "Wrong location inputted",
+  ];
+  // List to hold the state of each checkbox
+  var cancelRequestReasonIsSelected = [false, false, false, false].obs;
 
-    await openPanel();
+  // Function to toggle the state of the checkboxes
+  void toggleSelection(int index) {
+    if (index == 3) {
+      // "Other" checkbox
+      cancelRequestReasonIsSelected[0] = false;
+      cancelRequestReasonIsSelected[1] = false;
+      cancelRequestReasonIsSelected[2] = false;
+      cancelRequestReasonIsSelected[3] = !cancelRequestReasonIsSelected[3];
+      cancelRequestSubmitButtonIsEnabled.value = false;
+    } else {
+      cancelRequestReasonIsSelected[3] = false; // Uncheck "Other"
+      cancelRequestReasonIsSelected[index] =
+          !cancelRequestReasonIsSelected[index];
+      cancelRequestSubmitButtonIsEnabled.value = true;
+    }
+  }
+
+  otherOptionOnchanged(value) {
+    if (value.isEmpty) {
+      cancelRequestSubmitButtonIsEnabled.value = false;
+    } else {
+      cancelRequestSubmitButtonIsEnabled.value = true;
+    }
+  }
+
+  Future<void> submitCancelRequestReason() async {
+    if (cancelRequestFormKey.currentState!.validate()) {
+      cancelRequestFormKey.currentState!.save();
+
+      if (cancelRequestReasonIsSelected[3] == true &&
+          otherOptionEC.text.isEmpty) {
+        ApiProcessorController.errorSnack("Field cannot be empty");
+        return;
+      }
+
+      List<String> selectedValues = [];
+
+      if (cancelRequestReasonIsSelected[0]) {
+        selectedValues.add("Waited for a long time");
+      }
+      if (cancelRequestReasonIsSelected[1]) {
+        selectedValues.add("Unable to contact the Driver");
+      }
+      if (cancelRequestReasonIsSelected[2]) {
+        selectedValues.add("Wrong location inputted");
+      }
+      if (cancelRequestReasonIsSelected[3]) {
+        selectedValues.add(otherOptionEC.text); // "Other" text
+      }
+
+      // Log or process the selected values
+      log("Selected Values: $selectedValues");
+
+      await showTripFeedbackAppreciationDialog();
+    }
+  }
+
+  void cancelBookRideDriverRequest() async {
+    final media = MediaQuery.of(Get.context!).size;
+
+    // Get.close(0);
+
+    if (bookDriverFound.value == true ||
+        bookDriverTimerFinished.value == true) {
+      progress.value = 0.0;
+      bookDriverTimerFinished.value = false;
+      bookDriverFound.value = false;
+    }
+
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      enableDrag: true,
+      context: Get.context!,
+      useSafeArea: true,
+      isDismissible: false,
+      constraints:
+          BoxConstraints(maxHeight: media.height, minWidth: media.width),
+      // shape: const RoundedRectangleBorder(
+      //   borderRadius: BorderRadius.only(
+      //     topLeft: Radius.circular(32),
+      //     topRight: Radius.circular(32),
+      //   ),
+      // ),
+      builder: (context) {
+        return GestureDetector(
+          onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
+          child: const BookRideCancelRequest(),
+        );
+      },
+    );
+  }
+
+  showTripFeedbackAppreciationDialog() {
+    showDialog(
+      context: Get.context!,
+      barrierColor: kBlackColor.withOpacity(.8),
+      builder: (context) {
+        return Dialog(
+          insetAnimationCurve: Curves.easeIn,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kDefaultPadding),
+          ),
+          alignment: Alignment.center,
+          elevation: 50,
+          child: const BookRideRequestCanceledDialog(),
+        );
+      },
+    );
+  }
+
+  goToHomeScreen() async {
+    await Get.offAll(
+      () => LoadingScreen(
+        loadData: LoadingController.instance.loadHomeScreen,
+      ),
+      routeName: "/home",
+      fullscreenDialog: true,
+      curve: Curves.easeInOut,
+      predicate: (routes) => false,
+      popGesture: false,
+      transition: Get.defaultTransition,
+    );
   }
 
   //=============================== Modal Bottom Sheets =====================================\\
@@ -429,9 +563,11 @@ class HomeScreenController extends GetxController
     );
   }
 
-  runDriverHasArrived() {
+  runDriverHasArrived() async {
     driverHasArrived.value = true;
-    startTrip();
+    await Future.delayed(const Duration(seconds: 3));
+
+    await startTrip();
   }
 
   startTrip() async {

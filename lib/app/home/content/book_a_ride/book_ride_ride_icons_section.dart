@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../src/controllers/app/home_screen_controller.dart';
+import '../../../../src/controllers/app/home_screen_controller.dart';
 
 rideIconsSection(ColorScheme colorScheme, HomeScreenController controller) {
   return Obx(

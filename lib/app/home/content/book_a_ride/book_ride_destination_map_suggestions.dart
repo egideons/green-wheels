@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:green_wheels/src/controllers/app/home_screen_controller.dart';
 import 'package:iconsax/iconsax.dart';
 
-import '../../../src/constants/consts.dart';
-import '../../../theme/colors.dart';
+import '../../../../src/constants/consts.dart';
+import '../../../../theme/colors.dart';
 
 destinationMapSuggestions(
   ColorScheme colorScheme,
