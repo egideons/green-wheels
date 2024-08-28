@@ -5,11 +5,11 @@ import 'package:green_wheels/src/utils/components/amount_charge_section.dart';
 import 'package:green_wheels/src/utils/components/payment_type_section.dart';
 import 'package:green_wheels/theme/colors.dart';
 
-import '../../../../../src/controllers/app/home_screen_controller.dart';
-import '../../../../../src/utils/components/default_info_container.dart';
-import '../../../../../src/utils/components/estimated_travel_time.dart';
-import '../../../../src/constants/consts.dart';
-import '../../../../src/utils/buttons/android/android_outlined_button.dart';
+import '../../../../src/controllers/app/home_screen_controller.dart';
+import '../../../../src/utils/components/default_info_container.dart';
+import '../../../../src/utils/components/estimated_travel_time.dart';
+import '../../../src/constants/consts.dart';
+import '../../../src/utils/buttons/android/android_outlined_button.dart';
 
 class BookRideSearchingForDriverModal extends GetView<HomeScreenController> {
   const BookRideSearchingForDriverModal({super.key});

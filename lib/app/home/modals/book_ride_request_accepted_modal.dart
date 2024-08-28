@@ -5,17 +5,17 @@ import 'package:get/get.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_outlined_button.dart';
 import 'package:green_wheels/src/utils/components/drag_handle.dart';
 
-import '../../../../../src/constants/consts.dart';
-import '../../../../../src/controllers/app/home_screen_controller.dart';
-import '../../../../../src/utils/components/chat_and_call_section.dart';
-import '../../../../../src/utils/components/ride_address_section.dart';
-import '../../../../../theme/colors.dart';
-import '../../../../src/controllers/others/url_launcher_controller.dart';
-import '../../../../src/utils/components/amount_charge_section.dart';
-import '../../../../src/utils/components/default_info_container.dart';
-import '../../../../src/utils/components/driver_avatar_name_and_rating.dart';
-import '../../../../src/utils/components/estimated_travel_time.dart';
-import '../../../../src/utils/components/payment_type_section.dart';
+import '../../../../src/constants/consts.dart';
+import '../../../../src/controllers/app/home_screen_controller.dart';
+import '../../../../src/utils/components/chat_and_call_section.dart';
+import '../../../../src/utils/components/ride_address_section.dart';
+import '../../../../theme/colors.dart';
+import '../../../src/controllers/others/url_launcher_controller.dart';
+import '../../../src/utils/components/amount_charge_section.dart';
+import '../../../src/utils/components/default_info_container.dart';
+import '../../../src/utils/components/driver_avatar_name_and_rating.dart';
+import '../../../src/utils/components/estimated_travel_time.dart';
+import '../../../src/utils/components/payment_type_section.dart';
 
 class BookRideRequestAcceptedModal extends GetView<HomeScreenController> {
   const BookRideRequestAcceptedModal({super.key});

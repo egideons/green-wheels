@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:green_wheels/src/controllers/app/home_screen_controller.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../../../src/constants/consts.dart';
 import '../../../../theme/colors.dart';
+import '../../../src/controllers/app/schedule_trip_controller.dart';
 
-bookRideDestinationMapSuggestions(
+scheduleTripDestinationMapSuggestions(
   ColorScheme colorScheme,
-  HomeScreenController controller,
+  ScheduleTripController controller,
   Size media,
 ) {
   return ListView.separated(

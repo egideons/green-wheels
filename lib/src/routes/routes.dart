@@ -11,6 +11,7 @@ import '../../app/auth/provide_phone/screen/provide_phone.dart';
 import '../../app/home/screen/home_screen.dart';
 import '../../app/onboarding/screen/onboarding_screen.dart';
 import '../../app/ride/screen/ride_screen.dart';
+import '../../app/schedule_trip/screen/schedule_trip_screen.dart';
 import '../../app/splash/startup/screen/splash_screen.dart';
 import '../../app/splash/success/screen/success_screen.dart';
 // import '../../app/home/screen/home_screen.dart';
@@ -52,8 +53,7 @@ class Routes {
 
   //Profile Section
   static const profileScreen = "/profile";
-  static const scheduledTripsScreen = "/scheduled-trips-screen";
-  static const scheduledRides = "/scheduled-rides";
+  static const scheduleTripScreen = "/schedule-trip";
   static const schoolCommutesScreen = "/school-commutes";
   static const support = "/support";
   static const settingsScreen = "/settings";
@@ -83,16 +83,18 @@ class Routes {
     //Main App Section
     GetPage(name: homeScreen, page: () => const HomeScreen()),
     GetPage(name: rideScreen, page: () => const RideScreen()),
-    // GetPage(name: profileScreen, page: () => const ProfileScreen()),
-    // GetPage(
-    //   name: scheduledTripsScreen,
-    //   page: () => const ScheduledTripsScreen(),
-    // ),
+    GetPage(
+      name: scheduleTripScreen,
+      page: () => const ScheduleTripScreen(),
+    ),
     // GetPage(
     //   name: schoolCommutesScreen,
     //   page: () => const SchoolCommutesScreen(),
     // ),
     // GetPage(name: settingsScreen, page: () => const SettingsScreen()),
+
+    //Drawer Section
     // GetPage(name: notificationsScreen, page: () => const NotificationsScreen()),
+    // GetPage(name: profileScreen, page: () => const ProfileScreen()),
   ];
 }

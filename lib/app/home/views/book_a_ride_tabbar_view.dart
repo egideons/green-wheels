@@ -20,14 +20,14 @@ bookRideTabBarView(
         children: () {
           if (controller.mapSuggestionIsSelected.isTrue) {
             return <Widget>[
-              searchForDriverSection(
+              bookRideSearchForDriverSection(
                 colorScheme,
                 controller,
               ),
             ];
           } else if (controller.isPickupLocationTextFieldActive.value) {
             return <Widget>[
-              pickupLocationMapSuggestions(
+              bookRidePickupLocationMapSuggestions(
                 colorScheme,
                 controller,
                 media,
@@ -35,7 +35,7 @@ bookRideTabBarView(
             ];
           } else if (controller.isDestinationTextFieldActive.value) {
             return <Widget>[
-              destinationMapSuggestions(
+              bookRideDestinationMapSuggestions(
                 colorScheme,
                 controller,
                 media,
@@ -43,7 +43,7 @@ bookRideTabBarView(
             ];
           } else if (controller.isStopLocationTextFieldActive.value) {
             return <Widget>[
-              stopLocationMapSuggestions(
+              bookRideStopLocationMapSuggestions(
                 colorScheme,
                 controller,
                 media,

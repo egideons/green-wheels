@@ -40,7 +40,7 @@ class TripFeedbackAppreciationDialog extends GetView<RideController> {
             alignment: Alignment.topLeft,
             child: IconButton(
               onPressed: controller.goToHomeScreen,
-              icon: const Icon(Iconsax.close_circle),
+              icon: const Icon(Iconsax.close_circle, size: 32),
             ),
           ),
           SvgPicture.asset(Assets.greenWavyCheckIconSvg),

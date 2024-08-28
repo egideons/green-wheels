@@ -7,7 +7,7 @@ import '../../../../src/utils/buttons/android/android_elevated_button.dart';
 import '../../../../src/utils/components/amount_charge_section.dart';
 import '../../../../src/utils/components/payment_type_section.dart';
 
-searchForDriverSection(
+bookRideSearchForDriverSection(
   ColorScheme colorScheme,
   HomeScreenController controller,
 ) {

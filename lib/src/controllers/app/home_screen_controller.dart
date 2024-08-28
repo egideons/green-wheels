@@ -11,10 +11,11 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../../../app/home/content/book_a_ride/book_ride_request_canceled_dialog.dart';
 import '../../../app/home/content/schedule_a_trip/schedule_trip_intro_dialog.dart';
-import '../../../app/home/modals/book_a_ride/book_ride_cancel_request_modal.dart';
-import '../../../app/home/modals/book_a_ride/book_ride_request_accepted_modal.dart';
-import '../../../app/home/modals/book_a_ride/book_ride_searching_for_driver_modal.dart';
+import '../../../app/home/modals/book_ride_cancel_request_modal.dart';
+import '../../../app/home/modals/book_ride_request_accepted_modal.dart';
+import '../../../app/home/modals/book_ride_searching_for_driver_modal.dart';
 import '../../../app/ride/screen/ride_screen.dart';
+import '../../../app/schedule_trip/screen/schedule_trip_screen.dart';
 import '../../../app/splash/loading/screen/loading_screen.dart';
 import '../../../main.dart';
 import '../../constants/assets.dart';
@@ -587,19 +588,34 @@ class HomeScreenController extends GetxController
   }
 
   //==== Schedule Trip =========================================================================>
-  Future<void> scheduleATrip() async {
+
+  scheduleATrip() async {
     bool hasViewedScheduleTripIntro =
         prefs.getBool("viewedScheduleTripIntro") ?? false;
-    if (!hasViewedScheduleTripIntro) {
+    if (hasViewedScheduleTripIntro) {
+      // User has viewed intro already, navigate to the schedule trip screen
       await closePanel();
+      goToScheduleTripScreen();
+      log("User has viewed");
+    } else {
+      closePanel();
       showScheduleTripIntroDialog();
       log("User has not viewed");
-    } else {
-      log("User has viewed");
-      // User has viewed intro already, navigate to the schedule trip screen
-      // await closePanel();
-      // goToScheduleTripScreen();
     }
+  }
+
+  goToScheduleTripScreen() async {
+    prefs.setBool("viewedScheduleTripIntro", true);
+
+    Get.to(
+      () => const ScheduleTripScreen(),
+      transition: Transition.rightToLeft,
+      routeName: "/schedule-trip",
+      curve: Curves.easeInOut,
+      fullscreenDialog: true,
+      popGesture: true,
+      preventDuplicates: true,
+    );
   }
 
   showScheduleTripIntroDialog() {
@@ -611,7 +627,7 @@ class HomeScreenController extends GetxController
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(kDefaultPadding),
           ),
-          insetPadding: const EdgeInsets.all(10),
+          insetPadding: const EdgeInsets.all(20),
           alignment: Alignment.center,
           elevation: 50,
           child: const ScheduleTripIntroDialog(),
@@ -634,20 +650,6 @@ class HomeScreenController extends GetxController
       'label': 'Choose a route you prefer',
     },
   ];
-
-  goToScheduleTripScreen() async {
-    prefs.setBool("viewedScheduleTripIntro", true);
-
-    // Get.to(
-    //   () => const ProfileScreen(),
-    //   transition: Transition.rightToLeft,
-    //   routeName: "/profile-screen",
-    //   curve: Curves.easeInOut,
-    //   fullscreenDialog: true,
-    //   popGesture: true,
-    //   preventDuplicates: true,
-    // );
-  }
 
   //==== Rent Ride =========================================================================>
 }

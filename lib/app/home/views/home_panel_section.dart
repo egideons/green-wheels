@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 
 import '../../../src/constants/consts.dart';
 import '../../../src/controllers/app/home_screen_controller.dart';
 import '../../../src/utils/components/drag_handle.dart';
 import '../content/book_a_ride/book_ride_option_tabbar.dart';
 import 'book_a_ride_tabbar_view.dart';
+import 'schedule_trip_tabbar_view.dart';
 
 homePanelSection(
   ColorScheme colorScheme,
@@ -120,20 +120,7 @@ homePanelSection(
                                   controller,
                                 )
                               : controller.selectedTabBar.value == 1
-                                  ? Column(
-                                      children: [
-                                        kBigSizedBox,
-                                        AndroidElevatedButton(
-                                          title: "Schedule a Ride",
-                                          onPressed: controller.scheduleATrip,
-                                        ),
-                                        kSizedBox,
-                                        AndroidElevatedButton(
-                                          title: "School Commutes",
-                                          onPressed: () {},
-                                        ),
-                                      ],
-                                    )
+                                  ? scheduleTripTabBarView(controller)
                                   : const Column(
                                       children: [],
                                     ),

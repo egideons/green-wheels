@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/assets.dart';
 import 'package:green_wheels/src/constants/consts.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
+import 'package:iconsax/iconsax.dart';
 
 import '../../../../src/controllers/app/home_screen_controller.dart';
 import '../../../../theme/colors.dart';
@@ -35,12 +36,13 @@ class ScheduleTripIntroDialog extends GetView<HomeScreenController> {
                 onPressed: () {
                   Get.close(0);
                 },
-                icon: const Icon(Icons.close)),
+                icon: const Icon(Iconsax.close_circle, size: 32)),
           ),
           SvgPicture.asset(
             Assets.carCalendarOutlineIconSvg,
             height: 50,
           ),
+          kBigSizedBox,
           Column(
             children: List.generate(
               controller.scheduleTripIntroInfo.length,
@@ -74,10 +76,14 @@ class ScheduleTripIntroDialog extends GetView<HomeScreenController> {
           ),
           kBigSizedBox,
           kBigSizedBox,
-          AndroidElevatedButton(
-            title: "Proceed",
-            onPressed: controller.goToScheduleTripScreen(),
-          )
+          SizedBox(
+            width: media.width - 200,
+            child: AndroidElevatedButton(
+              title: "Proceed",
+              onPressed: controller.goToScheduleTripScreen,
+            ),
+          ),
+          SizedBox(height: media.height * .05),
         ],
       ),
     );

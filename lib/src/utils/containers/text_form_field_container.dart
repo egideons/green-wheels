@@ -11,6 +11,7 @@ Widget formFieldContainer(
   EdgeInsetsGeometry? padding,
   Color? color,
   BorderSide? borderSide,
+  BorderRadiusGeometry? borderRadius,
 }) {
   return Container(
     width: containerWidth ?? media.width,
@@ -19,7 +20,7 @@ Widget formFieldContainer(
     decoration: ShapeDecoration(
       color: color ?? kTransparentColor,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: borderRadius ?? BorderRadius.circular(8),
         side: borderSide ??
             BorderSide(color: colorScheme.inversePrimary, width: 0.5),
       ),

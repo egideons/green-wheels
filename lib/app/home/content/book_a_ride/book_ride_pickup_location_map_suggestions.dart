@@ -5,7 +5,7 @@ import 'package:iconsax/iconsax.dart';
 import '../../../../src/constants/consts.dart';
 import '../../../../theme/colors.dart';
 
-pickupLocationMapSuggestions(
+bookRidePickupLocationMapSuggestions(
   ColorScheme colorScheme,
   HomeScreenController controller,
   Size media,

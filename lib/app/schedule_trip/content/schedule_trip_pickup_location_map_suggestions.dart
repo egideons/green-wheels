@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:green_wheels/src/controllers/app/home_screen_controller.dart';
+import 'package:green_wheels/src/controllers/app/schedule_trip_controller.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../../../src/constants/consts.dart';
 import '../../../../theme/colors.dart';
 
-bookRideDestinationMapSuggestions(
+scheduleTripPickupLocationMapSuggestions(
   ColorScheme colorScheme,
-  HomeScreenController controller,
+  ScheduleTripController controller,
   Size media,
 ) {
   return ListView.separated(
@@ -17,7 +17,7 @@ bookRideDestinationMapSuggestions(
     separatorBuilder: (context, index) => kSmallSizedBox,
     itemBuilder: (context, index) {
       return InkWell(
-        onTap: controller.selectDestinationSuggestion,
+        onTap: controller.selectPickupSuggestion,
         borderRadius: BorderRadius.circular(4),
         child: Container(
           padding: const EdgeInsets.all(10),
@@ -40,11 +40,13 @@ bookRideDestinationMapSuggestions(
               kSmallWidthSizedBox,
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   SizedBox(
                     width: media.width - 100,
                     child: Text(
-                      "Destination: Holy Family Catholic Church",
+                      "Pickup: Holy Family Catholic Church",
+                      overflow: TextOverflow.ellipsis,
                       style: defaultTextStyle(
                         color: kTextBlackColor,
                         fontSize: 20,

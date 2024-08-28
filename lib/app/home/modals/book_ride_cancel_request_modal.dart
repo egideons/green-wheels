@@ -5,8 +5,8 @@ import 'package:green_wheels/src/utils/containers/text_form_field_container.dart
 import 'package:green_wheels/src/utils/textformfields/android/android_textformfield.dart';
 import 'package:green_wheels/theme/colors.dart';
 
-import '../../../../../src/controllers/app/home_screen_controller.dart';
-import '../../../../src/constants/consts.dart';
+import '../../../../src/controllers/app/home_screen_controller.dart';
+import '../../../src/constants/consts.dart';
 
 class BookRideCancelRequest extends GetView<HomeScreenController> {
   const BookRideCancelRequest({super.key});
