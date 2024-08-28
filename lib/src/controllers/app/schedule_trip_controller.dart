@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/schedule_trip/modals/select_route_modal.dart';
@@ -184,6 +185,27 @@ class ScheduleTripController extends GetxController {
     }
   }
 
+  void submitRouteForm() {
+    if (stop1LocationEC.text.isNotEmpty) {
+      selectedRouteEC.text =
+          "${pickupLocationEC.text} - ${stop1LocationEC.text} - ${destinationEC.text}";
+    } else {
+      selectedRouteEC.text = "${pickupLocationEC.text} - ${destinationEC.text}";
+    }
+    Get.close(0);
+  }
+
   //================ Confirm Booking =================//
-  confirmBooking() async {}
+  confirmBooking() async {
+    if (scheduleTripFormKey.currentState!.validate()) {
+      scheduleTripFormKey.currentState!.save();
+      if (selectedDateEC.text.isEmpty) {
+        ApiProcessorController.errorSnack("Please select a date");
+        return;
+      } else if (selectedTimeEC.text.isEmpty) {
+        ApiProcessorController.errorSnack("Please select a time");
+        return;
+      }
+    }
+  }
 }

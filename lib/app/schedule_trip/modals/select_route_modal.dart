@@ -89,7 +89,7 @@ class SelectRouteModal extends GetView<ScheduleTripController> {
                     return <Widget>[
                       AndroidElevatedButton(
                         title: "Done",
-                        onPressed: () {},
+                        onPressed: controller.submitRouteForm,
                       )
                     ];
                   } else if (controller.isPickupLocationTextFieldActive.value) {
