@@ -8,8 +8,8 @@ import 'package:green_wheels/theme/colors.dart';
 import '../../../../src/controllers/app/home_screen_controller.dart';
 import '../../../src/constants/consts.dart';
 
-class BookRideCancelRequest extends GetView<HomeScreenController> {
-  const BookRideCancelRequest({super.key});
+class BookRideCancelRequestModal extends GetView<HomeScreenController> {
+  const BookRideCancelRequestModal({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -73,189 +73,61 @@ class BookRideCancelRequest extends GetView<HomeScreenController> {
                         key: controller.cancelRequestFormKey,
                         child: Column(
                           children: [
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  side: BorderSide(
-                                    width: 1.4,
-                                    color: controller
-                                            .cancelRequestReasonIsSelected[0]
-                                        ? kBlackColor
-                                        : kDisabledColor,
+                            Column(
+                              children: List.generate(
+                                controller.cancelRequestReasons.length,
+                                (index) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: ShapeDecoration(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        side: BorderSide(
+                                          width: 1.4,
+                                          color: controller
+                                                      .cancelRequestReasonIsSelected[
+                                                  index]
+                                              ? kBlackColor
+                                              : kDisabledColor,
+                                        ),
+                                      ),
+                                    ),
+                                    child: ListTile(
+                                      onTap: () {
+                                        controller.toggleSelection(index);
+                                      },
+                                      contentPadding: const EdgeInsets.all(0),
+                                      dense: true,
+                                      title: Text(
+                                        controller.cancelRequestReasons[index],
+                                        style: defaultTextStyle(
+                                          fontSize: 16,
+                                          color: controller
+                                                      .cancelRequestReasonIsSelected[
+                                                  index]
+                                              ? kTextBlackColor
+                                              : kDisabledTextColor,
+                                          fontWeight: controller
+                                                      .cancelRequestReasonIsSelected[
+                                                  index]
+                                              ? FontWeight.w600
+                                              : FontWeight.w500,
+                                        ),
+                                      ),
+                                      leading: Checkbox(
+                                        value: controller
+                                                .cancelRequestReasonIsSelected[
+                                            index],
+                                        activeColor: colorScheme.primary,
+                                        checkColor: colorScheme.secondary,
+                                        side: const BorderSide(
+                                            color: kDisabledColor),
+                                        onChanged: (value) =>
+                                            controller.toggleSelection(index),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                              child: ListTile(
-                                onTap: () {
-                                  controller.toggleSelection(0);
-                                },
-                                contentPadding: const EdgeInsets.all(0),
-                                dense: true,
-                                title: Text(
-                                  "Waited for a long time",
-                                  style: defaultTextStyle(
-                                    fontSize: 16,
-                                    color: controller
-                                            .cancelRequestReasonIsSelected[0]
-                                        ? kTextBlackColor
-                                        : kDisabledTextColor,
-                                    fontWeight: controller
-                                            .cancelRequestReasonIsSelected[0]
-                                        ? FontWeight.w600
-                                        : FontWeight.w500,
-                                  ),
-                                ),
-                                leading: Checkbox(
-                                  value: controller
-                                      .cancelRequestReasonIsSelected[0],
-                                  activeColor: colorScheme.primary,
-                                  checkColor: colorScheme.secondary,
-                                  side: const BorderSide(color: kDisabledColor),
-                                  onChanged: (value) =>
-                                      controller.toggleSelection(0),
-                                ),
-                              ),
-                            ),
-                            kHalfSizedBox,
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  side: BorderSide(
-                                    width: 1.4,
-                                    color: controller
-                                            .cancelRequestReasonIsSelected[1]
-                                        ? kBlackColor
-                                        : kDisabledColor,
-                                  ),
-                                ),
-                              ),
-                              child: ListTile(
-                                onTap: () {
-                                  controller.toggleSelection(1);
-                                },
-                                contentPadding: const EdgeInsets.all(0),
-                                dense: true,
-                                title: Text(
-                                  "Unable to contact the driver",
-                                  style: defaultTextStyle(
-                                    fontSize: 16,
-                                    color: controller
-                                            .cancelRequestReasonIsSelected[1]
-                                        ? kTextBlackColor
-                                        : kDisabledTextColor,
-                                    fontWeight: controller
-                                            .cancelRequestReasonIsSelected[1]
-                                        ? FontWeight.w600
-                                        : FontWeight.w500,
-                                  ),
-                                ),
-                                leading: Checkbox(
-                                  value: controller
-                                      .cancelRequestReasonIsSelected[1],
-                                  activeColor: colorScheme.primary,
-                                  checkColor: colorScheme.secondary,
-                                  side: const BorderSide(color: kDisabledColor),
-                                  onChanged: (bool? value) {
-                                    controller.toggleSelection(1);
-                                  },
-                                ),
-                              ),
-                            ),
-                            kHalfSizedBox,
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  side: BorderSide(
-                                    width: 1.4,
-                                    color: controller
-                                            .cancelRequestReasonIsSelected[2]
-                                        ? kBlackColor
-                                        : kDisabledColor,
-                                  ),
-                                ),
-                              ),
-                              child: ListTile(
-                                onTap: () {
-                                  controller.toggleSelection(2);
-                                },
-                                contentPadding: const EdgeInsets.all(0),
-                                dense: true,
-                                title: Text(
-                                  "Wrong location inputted",
-                                  style: defaultTextStyle(
-                                    fontSize: 16,
-                                    color: controller
-                                            .cancelRequestReasonIsSelected[2]
-                                        ? kTextBlackColor
-                                        : kDisabledTextColor,
-                                    fontWeight: controller
-                                            .cancelRequestReasonIsSelected[2]
-                                        ? FontWeight.w600
-                                        : FontWeight.w500,
-                                  ),
-                                ),
-                                leading: Checkbox(
-                                  value: controller
-                                      .cancelRequestReasonIsSelected[2],
-                                  activeColor: colorScheme.primary,
-                                  checkColor: colorScheme.secondary,
-                                  side: const BorderSide(color: kDisabledColor),
-                                  onChanged: (bool? value) {
-                                    controller.toggleSelection(2);
-                                  },
-                                ),
-                              ),
-                            ),
-                            kHalfSizedBox,
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  side: BorderSide(
-                                    width: 1.4,
-                                    color: controller
-                                            .cancelRequestReasonIsSelected[3]
-                                        ? kBlackColor
-                                        : kDisabledColor,
-                                  ),
-                                ),
-                              ),
-                              child: ListTile(
-                                onTap: () {
-                                  controller.toggleSelection(3);
-                                },
-                                contentPadding: const EdgeInsets.all(0),
-                                dense: true,
-                                title: Text(
-                                  "Other",
-                                  style: defaultTextStyle(
-                                    fontSize: 16,
-                                    color: controller
-                                            .cancelRequestReasonIsSelected[3]
-                                        ? kTextBlackColor
-                                        : kDisabledTextColor,
-                                    fontWeight: controller
-                                            .cancelRequestReasonIsSelected[3]
-                                        ? FontWeight.w600
-                                        : FontWeight.w500,
-                                  ),
-                                ),
-                                leading: Checkbox(
-                                  value: controller
-                                      .cancelRequestReasonIsSelected[3],
-                                  activeColor: colorScheme.primary,
-                                  checkColor: colorScheme.secondary,
-                                  side: const BorderSide(color: kDisabledColor),
-                                  onChanged: (bool? value) {
-                                    controller.toggleSelection(3);
-                                  },
                                 ),
                               ),
                             ),

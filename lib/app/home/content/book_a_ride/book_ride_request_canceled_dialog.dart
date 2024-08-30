@@ -17,7 +17,7 @@ class BookRideRequestCanceledDialog extends GetView<HomeScreenController> {
     final media = MediaQuery.of(context).size;
     var colorScheme = Theme.of(context).colorScheme;
 
-    Timer(const Duration(seconds: 3), () async {
+    Timer(const Duration(milliseconds: 1000), () async {
       controller.goToHomeScreen();
     });
 

@@ -134,7 +134,7 @@ class TripCompletedModal extends GetView<RideController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  amounChargeSection(colorScheme, amount: 2000),
+                  amountChargeSection(colorScheme, amount: 2000),
                   kSizedBox,
                   estimatedTravelTime(
                     colorScheme,

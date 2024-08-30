@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../constants/consts.dart';
 
-amounChargeSection(ColorScheme colorScheme, {int? amount}) {
+amountChargeSection(ColorScheme colorScheme, {int? amount}) {
   return Row(
     mainAxisSize: MainAxisSize.max,
     mainAxisAlignment: MainAxisAlignment.spaceBetween,

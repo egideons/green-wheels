@@ -16,7 +16,7 @@ bookRideSearchForDriverSection(
     children: [
       defaultInfoContainer(
         padding: const EdgeInsets.all(10),
-        child: amounChargeSection(colorScheme, amount: 2000),
+        child: amountChargeSection(colorScheme, amount: 2000),
       ),
       kHalfSizedBox,
       defaultInfoContainer(

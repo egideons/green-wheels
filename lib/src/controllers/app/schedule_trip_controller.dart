@@ -1,9 +1,16 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/schedule_trip/modals/select_route_modal.dart';
+import '../../../app/splash/loading/screen/loading_screen.dart';
+import '../../../theme/colors.dart';
+import '../../constants/consts.dart';
+import '../others/loading_controller.dart';
 
 class ScheduleTripController extends GetxController {
   static ScheduleTripController get instance {
@@ -133,7 +140,7 @@ class ScheduleTripController extends GetxController {
     mapSuggestionIsSelected.value = false;
   }
 
-  pickupLocationOnChanged(value) {
+  pickupLocationOnChanged(String value) {
     mapSuggestionIsSelected.value = false;
 
     // Check if the text field is empty
@@ -153,7 +160,7 @@ class ScheduleTripController extends GetxController {
     }
   }
 
-  destinationOnChanged(value) {
+  destinationOnChanged(String value) {
     mapSuggestionIsSelected.value = false;
 
     // Check if the text field is empty
@@ -172,7 +179,7 @@ class ScheduleTripController extends GetxController {
     }
   }
 
-  stopLocationOnChanged(value) {
+  stopLocationOnChanged(String value) {
     mapSuggestionIsSelected.value = false;
 
     // Check if the text field is empty
@@ -189,8 +196,10 @@ class ScheduleTripController extends GetxController {
     if (stop1LocationEC.text.isNotEmpty) {
       selectedRouteEC.text =
           "${pickupLocationEC.text} - ${stop1LocationEC.text} - ${destinationEC.text}";
+      confirmBookingButtonIsEnabled.value = true;
     } else {
       selectedRouteEC.text = "${pickupLocationEC.text} - ${destinationEC.text}";
+      confirmBookingButtonIsEnabled.value = true;
     }
     Get.close(0);
   }
@@ -206,6 +215,238 @@ class ScheduleTripController extends GetxController {
         ApiProcessorController.errorSnack("Please select a time");
         return;
       }
+
+      showSearchingForDriverModalSheet();
     }
+  }
+
+  Timer? bookRideTimer;
+  var progress = .0.obs;
+  var bookDriverTimerFinished = false.obs;
+  var bookDriverFound = false.obs;
+  var driverHasArrived = false.obs;
+
+  void showSearchingForDriverModalSheet() async {
+    final media = MediaQuery.of(Get.context!).size;
+
+    simulateBookRideDriverSearchProgress();
+
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      showDragHandle: true,
+      enableDrag: true,
+      context: Get.context!,
+      useSafeArea: true,
+      isDismissible: false,
+      constraints:
+          BoxConstraints(maxHeight: media.height / 1.6, minWidth: media.width),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(32),
+          topRight: Radius.circular(32),
+        ),
+      ),
+      builder: (context) {
+        return const BookRideSearchingForDriverModal();
+      },
+    );
+  }
+
+  void showBookRideRequestAcceptedModal() async {
+    Get.close(0);
+    final media = MediaQuery.of(Get.context!).size;
+
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      showDragHandle: false,
+      enableDrag: false,
+      context: Get.context!,
+      useSafeArea: true,
+      isDismissible: false,
+      constraints:
+          BoxConstraints(maxHeight: media.height, minWidth: media.width),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(32),
+          topRight: Radius.circular(32),
+        ),
+      ),
+      builder: (context) {
+        return const BookRideRequestAcceptedModal();
+      },
+    );
+  }
+
+  //============== Progress Indicatior =================\\
+  // Method to update the progress
+  void updateProgress(double value) {
+    if (value >= 0.0 && value <= 1.0) {
+      progress.value = value;
+      log("Progress: ${progress.value}");
+    }
+  }
+
+// Start the progress simulation with a Timer
+  void simulateBookRideDriverSearchProgress() {
+    progress.value = 0.0;
+    driverHasArrived.value = false;
+
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (progress.value < 0.9) {
+        updateProgress(progress.value + 0.1);
+      } else {
+        // Directly set progress to 1.0 on the last step
+        updateProgress(1.0);
+        bookDriverTimerFinished.value = true;
+        bookDriverFound.value = true;
+        update();
+        log("Timer finished: ${bookDriverTimerFinished.value}");
+        log("Driver found: ${bookDriverFound.value}");
+        cancelProgress();
+      }
+    });
+  }
+
+  // Cancel the progress simulation
+  void cancelProgress() {
+    timer?.cancel();
+  }
+
+  var cancelRequestSubmitButtonIsEnabled = false.obs;
+  var cancelRequestFormKey = GlobalKey<FormState>();
+  var isOtherSelected = false.obs;
+  var otherOptionEC = TextEditingController();
+  var otherOptionFN = FocusNode();
+  var cancelRequestReasons = [
+    "Waited for a long time",
+    "Unable to contact the driver",
+    "Wrong location inputted",
+    "Other",
+  ];
+  // List to hold the state of each checkbox
+  var cancelRequestReasonIsSelected = [false, false, false, false].obs;
+
+  // Function to toggle the state of the checkboxes
+  void toggleSelection(int index) {
+    if (index == 3) {
+      // "Other" checkbox
+      cancelRequestReasonIsSelected[0] = false;
+      cancelRequestReasonIsSelected[1] = false;
+      cancelRequestReasonIsSelected[2] = false;
+      cancelRequestReasonIsSelected[3] = !cancelRequestReasonIsSelected[3];
+      cancelRequestSubmitButtonIsEnabled.value = false;
+    } else {
+      cancelRequestReasonIsSelected[3] = false; // Uncheck "Other"
+      cancelRequestReasonIsSelected[index] =
+          !cancelRequestReasonIsSelected[index];
+      cancelRequestSubmitButtonIsEnabled.value = true;
+    }
+  }
+
+  otherOptionOnchanged(String value) {
+    if (value.isEmpty) {
+      cancelRequestSubmitButtonIsEnabled.value = false;
+    } else {
+      cancelRequestSubmitButtonIsEnabled.value = true;
+    }
+  }
+
+  Future<void> submitCancelRequestReason() async {
+    if (cancelRequestFormKey.currentState!.validate()) {
+      cancelRequestFormKey.currentState!.save();
+
+      if (cancelRequestReasonIsSelected[3] == true &&
+          otherOptionEC.text.isEmpty) {
+        ApiProcessorController.errorSnack("Field cannot be empty");
+        return;
+      }
+
+      List<String> selectedValues = [];
+
+      if (cancelRequestReasonIsSelected[0]) {
+        selectedValues.add("Waited for a long time");
+      }
+      if (cancelRequestReasonIsSelected[1]) {
+        selectedValues.add("Unable to contact the Driver");
+      }
+      if (cancelRequestReasonIsSelected[2]) {
+        selectedValues.add("Wrong location inputted");
+      }
+      if (cancelRequestReasonIsSelected[3]) {
+        selectedValues.add(otherOptionEC.text); // "Other" text
+      }
+
+      // Log or process the selected values
+      log("Selected Values: $selectedValues");
+
+      await showBookRideRequestCanceledDialog();
+    }
+  }
+
+  void cancelBookRideDriverRequest() async {
+    final media = MediaQuery.of(Get.context!).size;
+
+    // Get.close(0);
+
+    if (bookDriverFound.value == true ||
+        bookDriverTimerFinished.value == true) {
+      progress.value = 0.0;
+      bookDriverTimerFinished.value = false;
+      bookDriverFound.value = false;
+    }
+
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      enableDrag: true,
+      context: Get.context!,
+      useSafeArea: true,
+      isDismissible: false,
+      constraints:
+          BoxConstraints(maxHeight: media.height, minWidth: media.width),
+      // shape: const RoundedRectangleBorder(
+      //   borderRadius: BorderRadius.only(
+      //     topLeft: Radius.circular(32),
+      //     topRight: Radius.circular(32),
+      //   ),
+      // ),
+      builder: (context) {
+        return GestureDetector(
+          onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
+          child: const BookRideCancelRequestModal(),
+        );
+      },
+    );
+  }
+
+  showBookRideRequestCanceledDialog() {
+    showDialog(
+      context: Get.context!,
+      barrierColor: kBlackColor.withOpacity(.8),
+      builder: (context) {
+        return Dialog(
+          insetAnimationCurve: Curves.easeIn,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kDefaultPadding),
+          ),
+          alignment: Alignment.center,
+          elevation: 50,
+          child: const BookRideRequestCanceledDialog(),
+        );
+      },
+    );
+  }
+
+  goToHomeScreen() async {
+    await Get.offAll(
+      () => LoadingScreen(
+        loadData: LoadingController.instance.loadHomeScreen,
+      ),
+      routeName: "/home",
+      fullscreenDialog: true,
+      curve: Curves.easeInOut,
+      predicate: (routes) => false,
+      popGesture: false,
+      transition: Get.defaultTransition,
+    );
   }
 }

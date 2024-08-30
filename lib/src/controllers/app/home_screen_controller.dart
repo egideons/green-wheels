@@ -42,14 +42,12 @@ class HomeScreenController extends GetxController
   @override
   void onClose() {
     tabBarController.dispose();
-    timer?.cancel();
+    bookRideTimer?.cancel();
     super.onClose();
   }
 
   late TabController tabBarController;
   var selectedTabBar = 0.obs;
-  var progress = .0.obs;
-  Timer? timer;
 
   // Position? userPosition;
   CameraPosition? cameraPosition;
@@ -67,9 +65,6 @@ class HomeScreenController extends GetxController
   var isStopLocationVisible = false.obs;
   var isStopLocationTextFieldActive = false.obs;
   var mapSuggestionIsSelected = false.obs;
-  var bookDriverTimerFinished = false.obs;
-  var bookDriverFound = false.obs;
-  var driverHasArrived = false.obs;
 
   //================ Controllers =================\\
   final Completer<GoogleMapController> _googleMapController = Completer();
@@ -119,7 +114,7 @@ class HomeScreenController extends GetxController
     mapSuggestionIsSelected.value = false;
   }
 
-  pickupLocationOnChanged(value) {
+  pickupLocationOnChanged(String value) {
     mapSuggestionIsSelected.value = false;
 
     // Check if the text field is empty
@@ -139,7 +134,7 @@ class HomeScreenController extends GetxController
     }
   }
 
-  destinationOnChanged(value) {
+  destinationOnChanged(String value) {
     mapSuggestionIsSelected.value = false;
 
     // Check if the text field is empty
@@ -158,7 +153,7 @@ class HomeScreenController extends GetxController
     }
   }
 
-  stopLocationOnChanged(value) {
+  stopLocationOnChanged(String value) {
     mapSuggestionIsSelected.value = false;
 
     // Check if the text field is empty
@@ -338,6 +333,12 @@ class HomeScreenController extends GetxController
   }
 
   //==== Book Ride Section =========================================================================>
+  Timer? bookRideTimer;
+
+  var progress = .0.obs;
+  var bookDriverTimerFinished = false.obs;
+  var bookDriverFound = false.obs;
+  var driverHasArrived = false.obs;
 
   //============== Progress Indicatior =================\\
   // Method to update the progress
@@ -353,7 +354,7 @@ class HomeScreenController extends GetxController
     progress.value = 0.0;
     driverHasArrived.value = false;
 
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    bookRideTimer = Timer.periodic(const Duration(seconds: 1), (bookRideTimer) {
       if (progress.value < 0.9) {
         updateProgress(progress.value + 0.1);
       } else {
@@ -371,7 +372,7 @@ class HomeScreenController extends GetxController
 
   // Cancel the progress simulation
   void cancelProgress() {
-    timer?.cancel();
+    bookRideTimer?.cancel();
   }
 
   var cancelRequestSubmitButtonIsEnabled = false.obs;
@@ -383,6 +384,7 @@ class HomeScreenController extends GetxController
     "Waited for a long time",
     "Unable to contact the driver",
     "Wrong location inputted",
+    "Other",
   ];
   // List to hold the state of each checkbox
   var cancelRequestReasonIsSelected = [false, false, false, false].obs;
@@ -404,7 +406,7 @@ class HomeScreenController extends GetxController
     }
   }
 
-  otherOptionOnchanged(value) {
+  otherOptionOnchanged(String value) {
     if (value.isEmpty) {
       cancelRequestSubmitButtonIsEnabled.value = false;
     } else {
@@ -440,7 +442,7 @@ class HomeScreenController extends GetxController
       // Log or process the selected values
       log("Selected Values: $selectedValues");
 
-      await showTripFeedbackAppreciationDialog();
+      await showBookRideRequestCanceledDialog();
     }
   }
 
@@ -473,13 +475,13 @@ class HomeScreenController extends GetxController
       builder: (context) {
         return GestureDetector(
           onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
-          child: const BookRideCancelRequest(),
+          child: const BookRideCancelRequestModal(),
         );
       },
     );
   }
 
-  showTripFeedbackAppreciationDialog() {
+  showBookRideRequestCanceledDialog() {
     showDialog(
       context: Get.context!,
       barrierColor: kBlackColor.withOpacity(.8),
@@ -568,14 +570,14 @@ class HomeScreenController extends GetxController
 
   runDriverHasArrived() async {
     driverHasArrived.value = true;
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(milliseconds: 1000));
 
     await startTrip();
   }
 
   startTrip() async {
     Get.close(0);
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(milliseconds: 1000));
     Get.to(
       () => const RideScreen(),
       routeName: "/ride",
