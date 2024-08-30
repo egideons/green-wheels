@@ -8,8 +8,9 @@ import '../../../src/utils/textformfields/android/android_textformfield.dart';
 
 scheduleTripSelectDateTimeRouteForm(
   OutlineInputBorder defaultTextFieldBorderStyle,
-  ScheduleTripController controller,
-) {
+  ScheduleTripController controller, {
+  bool? isEnabled,
+}) {
   return Form(
     key: controller.scheduleTripFormKey,
     child: Column(
@@ -23,6 +24,7 @@ scheduleTripSelectDateTimeRouteForm(
               child: AndroidTextFormField(
                 onTap: controller.selectDateFunc,
                 readOnly: true,
+                enabled: isEnabled ?? true,
                 hintText: "Select Date",
                 controller: controller.selectedDateEC,
                 textInputAction: TextInputAction.next,
@@ -50,6 +52,7 @@ scheduleTripSelectDateTimeRouteForm(
                 hintText: "Select Time",
                 onTap: controller.selectTimeFunc,
                 readOnly: true,
+                enabled: isEnabled ?? true,
                 controller: controller.selectedTimeEC,
                 textInputAction: TextInputAction.next,
                 focusNode: controller.selectedTimeFN,
@@ -75,6 +78,7 @@ scheduleTripSelectDateTimeRouteForm(
               child: AndroidTextFormField(
                 hintText: "Select Route",
                 readOnly: true,
+                enabled: isEnabled ?? true,
                 onTap: controller.showSelectRouteModal,
                 controller: controller.selectedRouteEC,
                 textInputAction: TextInputAction.next,

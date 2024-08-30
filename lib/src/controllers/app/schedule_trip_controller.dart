@@ -6,6 +6,10 @@ import 'package:get/get.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:intl/intl.dart';
 
+import '../../../app/schedule_trip/content/schedule_trip_request_canceled_dialog.dart';
+import '../../../app/schedule_trip/modals/schedule_trip_cancel_request_modal.dart';
+import '../../../app/schedule_trip/modals/schedule_trip_ride_request_accepted_modal.dart';
+import '../../../app/schedule_trip/modals/schedule_trip_search_driver_modal.dart';
 import '../../../app/schedule_trip/modals/select_route_modal.dart';
 import '../../../app/splash/loading/screen/loading_screen.dart';
 import '../../../theme/colors.dart';
@@ -204,6 +208,40 @@ class ScheduleTripController extends GetxController {
     Get.close(0);
   }
 
+  //============== Progress Indicatior =================\\
+  // Method to update the progress
+  void updateProgress(double value) {
+    if (value >= 0.0 && value <= 1.0) {
+      progress.value = value;
+      log("Progress: ${progress.value}");
+    }
+  }
+
+// Start the progress simulation with a Timer
+  void simulateBookRideDriverSearchProgress() {
+    progress.value = 0.0;
+
+    bookRideTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (progress.value < 0.9) {
+        updateProgress(progress.value + 0.1);
+      } else {
+        // Directly set progress to 1.0 on the last step
+        updateProgress(1.0);
+        scheduleDriverTimerFinished.value = true;
+        scheduleDriverFound.value = true;
+        update();
+        log("Timer finished: ${scheduleDriverTimerFinished.value}");
+        log("Driver found: ${scheduleDriverFound.value}");
+        cancelProgress();
+      }
+    });
+  }
+
+  // Cancel the progress simulation
+  void cancelProgress() {
+    bookRideTimer?.cancel();
+  }
+
   //================ Confirm Booking =================//
   confirmBooking() async {
     if (scheduleTripFormKey.currentState!.validate()) {
@@ -215,18 +253,18 @@ class ScheduleTripController extends GetxController {
         ApiProcessorController.errorSnack("Please select a time");
         return;
       }
-
-      showSearchingForDriverModalSheet();
+      await Future.delayed(const Duration(milliseconds: 800));
+      await showSearchingForDriverModalSheet();
     }
   }
 
   Timer? bookRideTimer;
   var progress = .0.obs;
-  var bookDriverTimerFinished = false.obs;
-  var bookDriverFound = false.obs;
+  var scheduleDriverTimerFinished = false.obs;
+  var scheduleDriverFound = false.obs;
   var driverHasArrived = false.obs;
 
-  void showSearchingForDriverModalSheet() async {
+  showSearchingForDriverModalSheet() async {
     final media = MediaQuery.of(Get.context!).size;
 
     simulateBookRideDriverSearchProgress();
@@ -234,31 +272,6 @@ class ScheduleTripController extends GetxController {
     await showModalBottomSheet(
       isScrollControlled: true,
       showDragHandle: true,
-      enableDrag: true,
-      context: Get.context!,
-      useSafeArea: true,
-      isDismissible: false,
-      constraints:
-          BoxConstraints(maxHeight: media.height / 1.6, minWidth: media.width),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
-        ),
-      ),
-      builder: (context) {
-        return const BookRideSearchingForDriverModal();
-      },
-    );
-  }
-
-  void showBookRideRequestAcceptedModal() async {
-    Get.close(0);
-    final media = MediaQuery.of(Get.context!).size;
-
-    await showModalBottomSheet(
-      isScrollControlled: true,
-      showDragHandle: false,
       enableDrag: false,
       context: Get.context!,
       useSafeArea: true,
@@ -272,44 +285,34 @@ class ScheduleTripController extends GetxController {
         ),
       ),
       builder: (context) {
-        return const BookRideRequestAcceptedModal();
+        return const ScheduleTripSearchDriverModal();
       },
     );
   }
 
-  //============== Progress Indicatior =================\\
-  // Method to update the progress
-  void updateProgress(double value) {
-    if (value >= 0.0 && value <= 1.0) {
-      progress.value = value;
-      log("Progress: ${progress.value}");
-    }
-  }
+  void showScheduleRideRequestAcceptedModal() async {
+    Get.close(0);
+    final media = MediaQuery.of(Get.context!).size;
 
-// Start the progress simulation with a Timer
-  void simulateBookRideDriverSearchProgress() {
-    progress.value = 0.0;
-    driverHasArrived.value = false;
-
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (progress.value < 0.9) {
-        updateProgress(progress.value + 0.1);
-      } else {
-        // Directly set progress to 1.0 on the last step
-        updateProgress(1.0);
-        bookDriverTimerFinished.value = true;
-        bookDriverFound.value = true;
-        update();
-        log("Timer finished: ${bookDriverTimerFinished.value}");
-        log("Driver found: ${bookDriverFound.value}");
-        cancelProgress();
-      }
-    });
-  }
-
-  // Cancel the progress simulation
-  void cancelProgress() {
-    timer?.cancel();
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      showDragHandle: true,
+      enableDrag: false,
+      context: Get.context!,
+      useSafeArea: true,
+      isDismissible: false,
+      constraints:
+          BoxConstraints(maxHeight: media.height, minWidth: media.width),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(32),
+          topRight: Radius.circular(32),
+        ),
+      ),
+      builder: (context) {
+        return const ScheduleTripRideRequestAcceptedModal();
+      },
+    );
   }
 
   var cancelRequestSubmitButtonIsEnabled = false.obs;
@@ -379,20 +382,20 @@ class ScheduleTripController extends GetxController {
       // Log or process the selected values
       log("Selected Values: $selectedValues");
 
-      await showBookRideRequestCanceledDialog();
+      await showScheduleTripRequestCanceledDialog();
     }
   }
 
-  void cancelBookRideDriverRequest() async {
+  void showScheduleTripCancelRequestModal() async {
     final media = MediaQuery.of(Get.context!).size;
 
     // Get.close(0);
 
-    if (bookDriverFound.value == true ||
-        bookDriverTimerFinished.value == true) {
+    if (scheduleDriverFound.value == true ||
+        scheduleDriverTimerFinished.value == true) {
       progress.value = 0.0;
-      bookDriverTimerFinished.value = false;
-      bookDriverFound.value = false;
+      scheduleDriverTimerFinished.value = false;
+      scheduleDriverFound.value = false;
     }
 
     await showModalBottomSheet(
@@ -403,22 +406,16 @@ class ScheduleTripController extends GetxController {
       isDismissible: false,
       constraints:
           BoxConstraints(maxHeight: media.height, minWidth: media.width),
-      // shape: const RoundedRectangleBorder(
-      //   borderRadius: BorderRadius.only(
-      //     topLeft: Radius.circular(32),
-      //     topRight: Radius.circular(32),
-      //   ),
-      // ),
       builder: (context) {
         return GestureDetector(
           onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
-          child: const BookRideCancelRequestModal(),
+          child: const ScheduleTripCancelRequestModal(),
         );
       },
     );
   }
 
-  showBookRideRequestCanceledDialog() {
+  showScheduleTripRequestCanceledDialog() {
     showDialog(
       context: Get.context!,
       barrierColor: kBlackColor.withOpacity(.8),
@@ -430,7 +427,7 @@ class ScheduleTripController extends GetxController {
           ),
           alignment: Alignment.center,
           elevation: 50,
-          child: const BookRideRequestCanceledDialog(),
+          child: const ScheduleTripRequestCanceledDialog(),
         );
       },
     );

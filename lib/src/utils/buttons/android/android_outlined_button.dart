@@ -73,7 +73,7 @@ class AndroidOutlinedButton extends StatelessWidget {
         elevation: buttonElevation ?? 0,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius ?? 10)),
-        minimumSize: Size(media.width, 40),
+        minimumSize: Size(media.width, 50),
       ),
       child: isLoading
           ? CupertinoActivityIndicator(color: colorScheme.surface)
