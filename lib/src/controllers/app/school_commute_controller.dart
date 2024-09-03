@@ -4,29 +4,31 @@ import 'dart:developer';
 import 'package:board_datetime_picker/board_datetime_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/app/school_commute/modals/school_commute_ride_request_accepted_modal.dart';
+import 'package:green_wheels/app/school_commute/modals/school_commute_search_driver_modal.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:intl/intl.dart';
 
-import '../../../app/schedule_trip/content/schedule_trip_request_canceled_dialog.dart';
-import '../../../app/schedule_trip/modals/schedule_trip_cancel_request_modal.dart';
-import '../../../app/schedule_trip/modals/schedule_trip_ride_request_accepted_modal.dart';
-import '../../../app/schedule_trip/modals/schedule_trip_search_driver_modal.dart';
-import '../../../app/schedule_trip/modals/select_route_modal.dart';
+import '../../../app/school_commute/content/school_commute_request_canceled_dialog.dart';
+import '../../../app/school_commute/modals/school_commute_cancel_request_modal.dart';
+import '../../../app/school_commute/modals/school_commute_select_route_modal.dart';
 import '../../../app/splash/loading/screen/loading_screen.dart';
 import '../../../theme/colors.dart';
 import '../../constants/consts.dart';
 import '../others/loading_controller.dart';
 
-class ScheduleTripController extends GetxController {
-  static ScheduleTripController get instance {
-    return Get.find<ScheduleTripController>();
+class SchoolCommuteController extends GetxController {
+  static SchoolCommuteController get instance {
+    return Get.find<SchoolCommuteController>();
   }
 
   //================ Global =================\\
   var scheduleTripFormKey = GlobalKey<FormState>();
   var scheduleTripRouteFormKey = GlobalKey<FormState>();
-  DateTime? lastSelectedDate;
-  TimeOfDay? lastSelectedTime;
+  DateTime? startDate;
+  DateTime? endDate;
+  TimeOfDay? lastSelectedPickupTime;
+  TimeOfDay? lastSelectedDropOffTime;
   var rideAmount = 8000;
 
   //================ Booleans =================\\
@@ -40,7 +42,8 @@ class ScheduleTripController extends GetxController {
   //================ Controllers =================\\
   var scrollController = ScrollController();
   var selectedDateEC = TextEditingController();
-  var selectedTimeEC = TextEditingController();
+  var selectedPickupTimeEC = TextEditingController();
+  var selectedDropOffTimeEC = TextEditingController();
   var selectedRouteEC = TextEditingController();
 
   final pickupLocationEC =
@@ -52,7 +55,8 @@ class ScheduleTripController extends GetxController {
 
   //================ Focus Nodes =================\\
   var selectedDateFN = FocusNode();
-  var selectedTimeFN = FocusNode();
+  var selectedPickupTimeFN = FocusNode();
+  var selectedDropOffTimeFN = FocusNode();
   var selectedRouteFN = FocusNode();
   final pickupLocationFN = FocusNode();
   final stop1LocationFN = FocusNode();
@@ -63,40 +67,46 @@ class ScheduleTripController extends GetxController {
 //================ OnTap and Onchanged =================\\
   void selectDateFunc() async {
     DateTime today = DateTime.now();
+    DateTime tomorrow = today.add(const Duration(days: 1));
 
-    final selectedDate = await showBoardDateTimePicker(
-      context: Get.context!,
-      enableDrag: false,
-      showDragHandle: false,
-      pickerType: DateTimePickerType.date,
-      initialDate: lastSelectedDate ?? today,
-      minimumDate: today,
-      maximumDate: DateTime(2101),
-      isDismissible: true,
-      useSafeArea: true,
-      onChanged: (dateTime) {
-        selectedDateEC.text = DateFormat("dd/MM/yyyy").format(dateTime);
-        lastSelectedDate = dateTime;
-      },
-      options: const BoardDateTimeOptions(
-        inputable: true,
-        showDateButton: true,
-        startDayOfWeek: DateTime.sunday,
-      ),
-    );
+    final selectedDate = await showBoardDateTimeMultiPicker(
+        context: Get.context!,
+        enableDrag: false,
+        showDragHandle: false,
+        pickerType: DateTimePickerType.date,
+        startDate: startDate ?? today,
+        endDate: endDate ?? tomorrow,
+        minimumDate: DateTime.now(),
+        maximumDate: DateTime(2101),
+        isDismissible: true,
+        useSafeArea: true,
+        onChanged: (dateTime) {
+          selectedDateEC.text =
+              "${DateFormat("dd/MM/yyyy").format(dateTime.start)} to ${DateFormat("dd/MM/yyyy").format(dateTime.end)}";
+
+          startDate = dateTime.start;
+          endDate = dateTime.end;
+        },
+        options: const BoardDateTimeOptions(
+          inputable: true,
+          showDateButton: true,
+          startDayOfWeek: DateTime.sunday,
+        ));
 
     if (selectedDate != null) {
-      selectedDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
-      lastSelectedDate = selectedDate;
+      selectedDateEC.text =
+          "${DateFormat("dd/MM/yyyy").format(selectedDate.start)} to ${DateFormat("dd/MM/yyyy").format(selectedDate.end)}";
+      startDate = selectedDate.start;
+      endDate = selectedDate.end;
     }
   }
 
-  void selectTimeFunc() async {
+  void selectPickupTimeFunc() async {
     TimeOfDay now = TimeOfDay.now();
 
     var selectedTime = await showTimePicker(
       context: Get.context!,
-      initialTime: lastSelectedTime ?? now,
+      initialTime: lastSelectedPickupTime ?? now,
       cancelText: "Cancel",
       confirmText: "Confirm",
     );
@@ -110,12 +120,36 @@ class ScheduleTripController extends GetxController {
         selectedTime.hour,
         selectedTime.minute,
       ));
-      selectedTimeEC.text = formattedTime;
-      lastSelectedTime = selectedTime;
+      selectedPickupTimeEC.text = formattedTime;
+      lastSelectedPickupTime = selectedTime;
     }
   }
 
-  void showSchedulteTripSelectRouteModal() async {
+  void selectDropOffTimeFunc() async {
+    TimeOfDay now = TimeOfDay.now();
+
+    var selectedTime = await showTimePicker(
+      context: Get.context!,
+      initialTime: lastSelectedDropOffTime ?? now,
+      cancelText: "Cancel",
+      confirmText: "Confirm",
+    );
+
+    if (selectedTime != null) {
+      final now = DateTime.now();
+      final formattedTime = DateFormat("hh:mm a").format(DateTime(
+        now.year,
+        now.month,
+        now.day,
+        selectedTime.hour,
+        selectedTime.minute,
+      ));
+      selectedDropOffTimeEC.text = formattedTime;
+      lastSelectedDropOffTime = selectedTime;
+    }
+  }
+
+  void showSelectRouteModal() async {
     final media = MediaQuery.of(Get.context!).size;
 
     await showModalBottomSheet(
@@ -136,7 +170,7 @@ class ScheduleTripController extends GetxController {
       builder: (context) {
         return GestureDetector(
           onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
-          child: const SchedulteTripSelectRouteModal(),
+          child: const SchoolCommuteSelectRouteModal(),
         );
       },
     );
@@ -267,8 +301,11 @@ class ScheduleTripController extends GetxController {
       if (selectedDateEC.text.isEmpty) {
         ApiProcessorController.errorSnack("Please select a date");
         return;
-      } else if (selectedTimeEC.text.isEmpty) {
-        ApiProcessorController.errorSnack("Please select a time");
+      } else if (selectedPickupTimeEC.text.isEmpty) {
+        ApiProcessorController.errorSnack("Please select a pick-up time");
+        return;
+      } else if (selectedDropOffTimeEC.text.isEmpty) {
+        ApiProcessorController.errorSnack("Please select a drop-off time");
         return;
       }
       await Future.delayed(const Duration(milliseconds: 800));
@@ -303,7 +340,7 @@ class ScheduleTripController extends GetxController {
         ),
       ),
       builder: (context) {
-        return const ScheduleTripSearchDriverModal();
+        return const SchoolCommuteSearchDriverModal();
       },
     );
   }
@@ -328,7 +365,7 @@ class ScheduleTripController extends GetxController {
         ),
       ),
       builder: (context) {
-        return const ScheduleTripRideRequestAcceptedModal();
+        return const SchoolCommuteRideRequestAcceptedModal();
       },
     );
   }
@@ -427,7 +464,7 @@ class ScheduleTripController extends GetxController {
       builder: (context) {
         return GestureDetector(
           onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
-          child: const ScheduleTripCancelRequestModal(),
+          child: const SchoolCommuteCancelRequestModal(),
         );
       },
     );
@@ -445,7 +482,7 @@ class ScheduleTripController extends GetxController {
           ),
           alignment: Alignment.center,
           elevation: 50,
-          child: const ScheduleTripRequestCanceledDialog(),
+          child: const SchoolCommuteRequestCanceledDialog(),
         );
       },
     );

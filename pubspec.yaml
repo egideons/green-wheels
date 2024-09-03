@@ -29,6 +29,7 @@ dependencies:
   # geolocator:
   url_launcher:
   sliding_up_panel: ^2.0.0+1
+  board_datetime_picker: ^2.1.1
 
 dev_dependencies:
   flutter_test:

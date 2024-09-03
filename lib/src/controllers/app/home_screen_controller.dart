@@ -11,11 +11,13 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../../../app/home/content/book_a_ride/book_ride_request_canceled_dialog.dart';
 import '../../../app/home/content/schedule_a_trip/schedule_trip_intro_dialog.dart';
+import '../../../app/home/content/school_commute/school_commute_intro_dialog.dart';
 import '../../../app/home/modals/book_ride_cancel_request_modal.dart';
 import '../../../app/home/modals/book_ride_request_accepted_modal.dart';
 import '../../../app/home/modals/book_ride_searching_for_driver_modal.dart';
 import '../../../app/ride/screen/ride_screen.dart';
 import '../../../app/schedule_trip/screen/schedule_trip_screen.dart';
+import '../../../app/school_commute/screen/school_commute_screen.dart';
 import '../../../app/splash/loading/screen/loading_screen.dart';
 import '../../../main.dart';
 import '../../constants/assets.dart';
@@ -646,6 +648,70 @@ class HomeScreenController extends GetxController
     {
       'icon': Assets.clockIconSvg,
       'label': 'Choose a time at your convenience',
+    },
+    {
+      'icon': Assets.routeIconSvg,
+      'label': 'Choose a route you prefer',
+    },
+  ];
+
+  //==== School Commutes =========================================================================>
+
+  scheduleACommute() async {
+    bool hasViewedScheduleTripIntro =
+        prefs.getBool("viewedSchoolCommuteIntro") ?? false;
+    if (hasViewedScheduleTripIntro) {
+      // User has viewed intro already, navigate to the schedule trip screen
+      await closePanel();
+      goToSchoolCommuteScreen();
+      log("User has viewed");
+    } else {
+      closePanel();
+      showSchoolCommuteIntroDialog();
+      log("User has not viewed");
+    }
+  }
+
+  goToSchoolCommuteScreen() async {
+    prefs.setBool("viewedSchoolCommuteIntro", true);
+
+    Get.to(
+      () => const SchoolCommuteScreen(),
+      transition: Transition.rightToLeft,
+      routeName: "/schedule-trip",
+      curve: Curves.easeInOut,
+      fullscreenDialog: true,
+      popGesture: true,
+      preventDuplicates: true,
+    );
+  }
+
+  showSchoolCommuteIntroDialog() {
+    showDialog(
+      context: Get.context!,
+      builder: (context) {
+        return Dialog(
+          insetAnimationCurve: Curves.easeIn,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kDefaultPadding),
+          ),
+          insetPadding: const EdgeInsets.all(20),
+          alignment: Alignment.center,
+          elevation: 50,
+          child: const SchoolCommuteIntroDialog(),
+        );
+      },
+    );
+  }
+
+  List<Map<String, String>> schoolCommuteIntroInfo = [
+    {
+      'icon': Assets.calendarOutlineIconSvg,
+      'label': 'Schedule pick-up days',
+    },
+    {
+      'icon': Assets.clockIconSvg,
+      'label': 'Choose a pick-up/drop-off time at your convenience',
     },
     {
       'icon': Assets.routeIconSvg,

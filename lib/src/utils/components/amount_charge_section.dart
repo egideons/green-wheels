@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:green_wheels/theme/colors.dart';
 
 import '../../constants/consts.dart';
 
@@ -11,8 +12,8 @@ amountChargeSection(ColorScheme colorScheme, {int? amount}) {
         child: Text(
           "Amount Charge",
           style: defaultTextStyle(
-            color: colorScheme.primary,
-            fontSize: 16,
+            color: kTextBlackColor,
+            fontSize: 20,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -21,8 +22,8 @@ amountChargeSection(ColorScheme colorScheme, {int? amount}) {
         TextSpan(
           text: "$nairaSign ",
           style: defaultTextStyle(
-            color: colorScheme.primary,
-            fontSize: 16,
+            color: kTextBlackColor,
+            fontSize: 20,
             fontFamily: "",
             fontWeight: FontWeight.w500,
           ),
@@ -30,8 +31,8 @@ amountChargeSection(ColorScheme colorScheme, {int? amount}) {
             TextSpan(
               text: intFormattedText(amount ?? 0),
               style: defaultTextStyle(
-                color: colorScheme.primary,
-                fontSize: 16,
+                color: kTextBlackColor,
+                fontSize: 20,
                 fontWeight: FontWeight.w500,
               ),
             ),

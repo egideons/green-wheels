@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/assets.dart';
+import 'package:green_wheels/src/controllers/app/school_commute_controller.dart';
 import 'package:green_wheels/theme/colors.dart';
 
 import '../../../../src/constants/consts.dart';
-import '../../../src/controllers/app/schedule_trip_controller.dart';
 
-class ScheduleTripRequestCanceledDialog
-    extends GetView<ScheduleTripController> {
-  const ScheduleTripRequestCanceledDialog({super.key});
+class SchoolCommuteRequestCanceledDialog
+    extends GetView<SchoolCommuteController> {
+  const SchoolCommuteRequestCanceledDialog({super.key});
 
   @override
   Widget build(BuildContext context) {

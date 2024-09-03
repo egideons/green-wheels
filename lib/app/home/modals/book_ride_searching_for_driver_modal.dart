@@ -46,7 +46,7 @@ class BookRideSearchingForDriverModal extends GetView<HomeScreenController> {
                     estimatedTime: "${intFormattedText(10)}mins",
                   ),
                   kSizedBox,
-                  paymentTypeSection(colorScheme),
+                  paymentTypeSection(),
                 ],
               ),
             ),

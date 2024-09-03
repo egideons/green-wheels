@@ -6,58 +6,72 @@ import '../../constants/consts.dart';
 
 timeAndDateSection(
   ColorScheme colorScheme, {
-  DateTime? date,
-  DateTime? time,
+  String? date,
+  String? time,
+  String? dropOffTime,
 }) {
-  return Row(
+  return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      Row(
         children: [
           Icon(
             Iconsax.calendar_2,
             color: colorScheme.primary,
             size: 26,
           ),
-          kHalfSizedBox,
+          kHalfWidthSizedBox,
+          Text(
+            date ?? formatDate(DateTime.now()),
+            softWrap: true,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: defaultTextStyle(
+              color: kBlackColor,
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
+      ),
+      kHalfSizedBox,
+      Row(
+        children: [
           Icon(
             Iconsax.clock,
             color: colorScheme.primary,
             size: 26,
           ),
+          kHalfWidthSizedBox,
+          Column(
+            children: [
+              Text(
+                time ?? format12HrTime(DateTime.now()),
+                softWrap: true,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: defaultTextStyle(
+                  color: kBlackColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              dropOffTime != null
+                  ? Text(
+                      dropOffTime,
+                      softWrap: true,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: defaultTextStyle(
+                        color: kBlackColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    )
+                  : const SizedBox()
+            ],
+          ),
         ],
-      ),
-      kHalfWidthSizedBox,
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              formatDate(date ?? DateTime.now()),
-              softWrap: true,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: defaultTextStyle(
-                color: kBlackColor,
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            kHalfSizedBox,
-            Text(
-              format12HrTime(time ?? DateTime.now()),
-              softWrap: true,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: defaultTextStyle(
-                color: kBlackColor,
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
       ),
     ],
   );

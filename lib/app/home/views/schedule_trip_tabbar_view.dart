@@ -9,19 +9,13 @@ scheduleTripTabBarView(HomeScreenController controller) {
     children: [
       kBigSizedBox,
       AndroidElevatedButton(
-          title: "Schedule a Ride",
-          onPressed:
-              // controller
-              //         .userHasViewedScheduleTripIntro
-              //     ?
-              controller.scheduleATrip
-          // : controller
-          //     .goToScheduleTripScreen,
-          ),
+        title: "Schedule a Ride",
+        onPressed: controller.scheduleATrip,
+      ),
       kSizedBox,
       AndroidElevatedButton(
         title: "School Commutes",
-        onPressed: () {},
+        onPressed: controller.scheduleACommute,
       ),
     ],
   );

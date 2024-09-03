@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/src/controllers/app/school_commute_controller.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 import 'package:green_wheels/theme/colors.dart';
 
 import '../../../../src/utils/components/default_info_container.dart';
 import '../../../src/constants/consts.dart';
-import '../../../src/controllers/app/schedule_trip_controller.dart';
 import '../../../src/utils/buttons/android/android_outlined_button.dart';
 import '../../../src/utils/components/amount_charge_section.dart';
 import '../../../src/utils/components/payment_type_section.dart';
-import '../content/schedule_trip_select_date_time_route_form.dart';
+import '../content/school_commute_select_date_time_route_form.dart';
 
-class ScheduleTripSearchDriverModal extends GetView<ScheduleTripController> {
-  const ScheduleTripSearchDriverModal({super.key});
+class SchoolCommuteSearchDriverModal extends GetView<SchoolCommuteController> {
+  const SchoolCommuteSearchDriverModal({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -55,12 +55,9 @@ class ScheduleTripSearchDriverModal extends GetView<ScheduleTripController> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Column(
                 children: [
-                  amountChargeSection(
-                    colorScheme,
-                    amount: controller.rideAmount,
-                  ),
+                  amountChargeSection(colorScheme, amount: 8000),
                   kSizedBox,
-                  scheduleTripSelectDateTimeRouteForm(
+                  schoolCommuteSelectDateTimeRouteForm(
                     defaultTextFieldBorderStyle,
                     controller,
                     isEnabled: false,

@@ -141,7 +141,7 @@ class TripCompletedModal extends GetView<RideController> {
                     estimatedTime: "${intFormattedText(10)}mins",
                   ),
                   kSizedBox,
-                  paymentTypeSection(colorScheme),
+                  paymentTypeSection(),
                 ],
               ),
             ),

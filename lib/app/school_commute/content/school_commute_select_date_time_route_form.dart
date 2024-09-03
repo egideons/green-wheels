@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:green_wheels/src/controllers/app/school_commute_controller.dart';
 
 import '../../../src/constants/assets.dart';
 import '../../../src/constants/consts.dart';
-import '../../../src/controllers/app/schedule_trip_controller.dart';
 import '../../../src/utils/textformfields/android/android_textformfield.dart';
 
-scheduleTripSelectDateTimeRouteForm(
+schoolCommuteSelectDateTimeRouteForm(
   OutlineInputBorder defaultTextFieldBorderStyle,
-  ScheduleTripController controller, {
+  SchoolCommuteController controller, {
   bool? isEnabled,
 }) {
   return Form(
@@ -48,22 +48,44 @@ scheduleTripSelectDateTimeRouteForm(
             SvgPicture.asset(Assets.clockIconSvg),
             kHalfWidthSizedBox,
             Expanded(
-              child: AndroidTextFormField(
-                hintText: "Select Time",
-                onTap: controller.selectTimeFunc,
-                readOnly: true,
-                enabled: isEnabled ?? true,
-                controller: controller.selectedTimeEC,
-                textInputAction: TextInputAction.next,
-                focusNode: controller.selectedTimeFN,
-                textCapitalization: TextCapitalization.none,
-                filled: true,
-                inputBorder: defaultTextFieldBorderStyle,
-                focusedBorder: defaultTextFieldBorderStyle,
-                enabledBorder: defaultTextFieldBorderStyle,
-                validator: (value) {
-                  return null;
-                },
+              child: Column(
+                children: [
+                  AndroidTextFormField(
+                    hintText: "Select Pickup Time",
+                    onTap: controller.selectPickupTimeFunc,
+                    readOnly: true,
+                    enabled: isEnabled ?? true,
+                    controller: controller.selectedPickupTimeEC,
+                    textInputAction: TextInputAction.next,
+                    focusNode: controller.selectedPickupTimeFN,
+                    textCapitalization: TextCapitalization.none,
+                    filled: true,
+                    inputBorder: defaultTextFieldBorderStyle,
+                    focusedBorder: defaultTextFieldBorderStyle,
+                    enabledBorder: defaultTextFieldBorderStyle,
+                    validator: (value) {
+                      return null;
+                    },
+                  ),
+                  kHalfSizedBox,
+                  AndroidTextFormField(
+                    hintText: "Select Drop-off Time",
+                    onTap: controller.selectDropOffTimeFunc,
+                    readOnly: true,
+                    enabled: isEnabled ?? true,
+                    controller: controller.selectedDropOffTimeEC,
+                    textInputAction: TextInputAction.next,
+                    focusNode: controller.selectedDropOffTimeFN,
+                    textCapitalization: TextCapitalization.none,
+                    filled: true,
+                    inputBorder: defaultTextFieldBorderStyle,
+                    focusedBorder: defaultTextFieldBorderStyle,
+                    enabledBorder: defaultTextFieldBorderStyle,
+                    validator: (value) {
+                      return null;
+                    },
+                  ),
+                ],
               ),
             ),
           ],
@@ -79,7 +101,7 @@ scheduleTripSelectDateTimeRouteForm(
                 hintText: "Select Route",
                 readOnly: true,
                 enabled: isEnabled ?? true,
-                onTap: controller.showSchedulteTripSelectRouteModal,
+                onTap: controller.showSelectRouteModal,
                 controller: controller.selectedRouteEC,
                 textInputAction: TextInputAction.next,
                 focusNode: controller.selectedRouteFN,

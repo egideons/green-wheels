@@ -15,7 +15,6 @@ class LoadingController extends GetxController {
 //============= Load BottomNavView =============\\
   loadHomeScreen() async {
     isLoading.value = true;
-    update();
 
     await Future.delayed(const Duration(seconds: 3));
 
@@ -29,14 +28,12 @@ class LoadingController extends GetxController {
       transition: Get.defaultTransition,
     );
 
-    isLoading.value = true;
-    update();
+    isLoading.value = false;
   }
 
 //============= Logout =============\\
   logout() async {
     isLoading.value = true;
-    update();
 
     await Future.delayed(const Duration(seconds: 2));
 
@@ -51,7 +48,6 @@ class LoadingController extends GetxController {
     );
 
     isLoading.value = true;
-    update();
   }
 
 //============= Load  =============\\

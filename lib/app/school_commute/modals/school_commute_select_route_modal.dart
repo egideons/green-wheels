@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/src/controllers/app/school_commute_controller.dart';
 import 'package:green_wheels/src/utils/components/trip_icons_section.dart';
 import 'package:green_wheels/theme/colors.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../../src/constants/consts.dart';
-import '../../../src/controllers/app/schedule_trip_controller.dart';
 import '../../../src/utils/buttons/android/android_elevated_button.dart';
-import '../content/schedule_trip_destination_map_suggestions.dart';
-import '../content/schedule_trip_pickup_location_map_suggestions.dart';
-import '../content/schedule_trip_route_form.dart';
-import '../content/schedule_trip_stop_location_map_suggestions.dart';
+import '../content/school_commute_destination_map_suggestions.dart';
+import '../content/school_commute_pickup_location_map_suggestions.dart';
+import '../content/school_commute_route_form.dart';
+import '../content/school_commute_stop_location_map_suggestions.dart';
 
-class SchedulteTripSelectRouteModal extends GetView<ScheduleTripController> {
-  const SchedulteTripSelectRouteModal({super.key});
+class SchoolCommuteSelectRouteModal extends GetView<SchoolCommuteController> {
+  const SchoolCommuteSelectRouteModal({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +71,8 @@ class SchedulteTripSelectRouteModal extends GetView<ScheduleTripController> {
                     tripIconsSection(colorScheme, controller),
                     kHalfWidthSizedBox,
                     Expanded(
-                      child:
-                          scheduleTripRouteForm(controller, colorScheme, media),
+                      child: schoolCommuteRouteForm(
+                          controller, colorScheme, media),
                     ),
                   ],
                 ),
@@ -94,7 +94,7 @@ class SchedulteTripSelectRouteModal extends GetView<ScheduleTripController> {
                     ];
                   } else if (controller.isPickupLocationTextFieldActive.value) {
                     return <Widget>[
-                      scheduleTripPickupLocationMapSuggestions(
+                      schoolCommutePickupLocationMapSuggestions(
                         colorScheme,
                         controller,
                         media,
@@ -102,7 +102,7 @@ class SchedulteTripSelectRouteModal extends GetView<ScheduleTripController> {
                     ];
                   } else if (controller.isDestinationTextFieldActive.value) {
                     return <Widget>[
-                      scheduleTripDestinationMapSuggestions(
+                      schoolCommuteDestinationMapSuggestions(
                         colorScheme,
                         controller,
                         media,
@@ -110,7 +110,7 @@ class SchedulteTripSelectRouteModal extends GetView<ScheduleTripController> {
                     ];
                   } else if (controller.isStopLocationTextFieldActive.value) {
                     return <Widget>[
-                      scheduleTripStopLocationMapSuggestions(
+                      schoolCommuteStopLocationMapSuggestions(
                         colorScheme,
                         controller,
                         media,

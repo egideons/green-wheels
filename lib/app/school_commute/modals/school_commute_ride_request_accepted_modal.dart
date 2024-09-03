@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/src/controllers/app/school_commute_controller.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_outlined_button.dart';
-import 'package:green_wheels/src/utils/components/time_and_date_section.dart';
 
 import '../../../../src/constants/consts.dart';
 import '../../../../src/utils/components/chat_and_call_section.dart';
 import '../../../../src/utils/components/ride_address_section.dart';
 import '../../../../theme/colors.dart';
-import '../../../src/controllers/app/schedule_trip_controller.dart';
 import '../../../src/controllers/others/url_launcher_controller.dart';
 import '../../../src/utils/components/amount_charge_section.dart';
 import '../../../src/utils/components/default_info_container.dart';
 import '../../../src/utils/components/driver_avatar_name_and_rating.dart';
+import '../../../src/utils/components/time_and_date_section.dart';
 
-class ScheduleTripRideRequestAcceptedModal
-    extends GetView<ScheduleTripController> {
-  const ScheduleTripRideRequestAcceptedModal({super.key});
+class SchoolCommuteRideRequestAcceptedModal
+    extends GetView<SchoolCommuteController> {
+  const SchoolCommuteRideRequestAcceptedModal({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +132,7 @@ class ScheduleTripRideRequestAcceptedModal
                 ],
               ),
             ),
-            kBigSizedBox,
+            kSizedBox,
             defaultInfoContainer(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,7 +140,8 @@ class ScheduleTripRideRequestAcceptedModal
                   timeAndDateSection(
                     colorScheme,
                     date: controller.selectedDateEC.text,
-                    time: controller.selectedTimeEC.text,
+                    time: controller.selectedPickupTimeEC.text,
+                    dropOffTime: controller.selectedDropOffTimeEC.text,
                   ),
                   kSizedBox,
                   rideAddressSection(

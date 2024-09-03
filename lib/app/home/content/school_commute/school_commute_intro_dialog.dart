@@ -9,8 +9,8 @@ import 'package:iconsax/iconsax.dart';
 import '../../../../src/controllers/app/home_screen_controller.dart';
 import '../../../../theme/colors.dart';
 
-class ScheduleTripIntroDialog extends GetView<HomeScreenController> {
-  const ScheduleTripIntroDialog({super.key});
+class SchoolCommuteIntroDialog extends GetView<HomeScreenController> {
+  const SchoolCommuteIntroDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +45,9 @@ class ScheduleTripIntroDialog extends GetView<HomeScreenController> {
           kBigSizedBox,
           Column(
             children: List.generate(
-              controller.scheduleTripIntroInfo.length,
+              controller.schoolCommuteIntroInfo.length,
               (index) {
-                final infoTab = controller.scheduleTripIntroInfo[index];
+                final infoTab = controller.schoolCommuteIntroInfo[index];
                 return Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 2, vertical: 10),
@@ -82,7 +82,7 @@ class ScheduleTripIntroDialog extends GetView<HomeScreenController> {
               title: "Proceed",
               onPressed: () {
                 Get.close(0);
-                controller.goToScheduleTripScreen();
+                controller.goToSchoolCommuteScreen();
               },
             ),
           ),

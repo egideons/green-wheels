@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:green_wheels/theme/colors.dart';
 
 import '../../constants/consts.dart';
 
-paymentTypeSection(ColorScheme colorScheme) {
+paymentTypeSection() {
   return Row(
     mainAxisSize: MainAxisSize.max,
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -11,7 +12,7 @@ paymentTypeSection(ColorScheme colorScheme) {
         child: Text(
           "Payment Type",
           style: defaultTextStyle(
-            color: colorScheme.primary,
+            color: kTextBlackColor,
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
@@ -22,7 +23,7 @@ paymentTypeSection(ColorScheme colorScheme) {
           "Green Wallet",
           textAlign: TextAlign.end,
           style: defaultTextStyle(
-            color: colorScheme.primary,
+            color: kTextBlackColor,
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),

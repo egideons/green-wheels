@@ -14,7 +14,6 @@ homePanelSection(
   BuildContext context,
   // ScrollController scrollController,
 ) {
-  var overlayPortalController = OverlayPortalController();
   return GetBuilder<HomeScreenController>(
     init: HomeScreenController(),
     builder: (controller) {

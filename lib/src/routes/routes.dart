@@ -54,7 +54,7 @@ class Routes {
   //Profile Section
   static const profileScreen = "/profile";
   static const scheduleTripScreen = "/schedule-trip";
-  static const schoolCommutesScreen = "/school-commutes";
+  static const schoolCommuteScreen = "/school-commute";
   static const support = "/support";
   static const settingsScreen = "/settings";
 
@@ -88,7 +88,7 @@ class Routes {
       page: () => const ScheduleTripScreen(),
     ),
     // GetPage(
-    //   name: schoolCommutesScreen,
+    //   name: schoolCommuteScreen,
     //   page: () => const SchoolCommutesScreen(),
     // ),
     // GetPage(name: settingsScreen, page: () => const SettingsScreen()),
