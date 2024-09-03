@@ -22,6 +22,7 @@ myAppBar(
   PreferredSizeWidget? bottom,
   List<Widget>? actions,
   Color? titleColor,
+  double? titleFontSize,
 }) {
   return AppBar(
     backgroundColor: backgroundColor ?? colorScheme.surface,
@@ -57,7 +58,7 @@ myAppBar(
             textAlign: TextAlign.center,
             style: defaultTextStyle(
               color: titleColor ?? kTextBlackColor,
-              fontSize: 16,
+              fontSize: titleFontSize ?? 16,
               fontWeight: FontWeight.w600,
             ),
           ),

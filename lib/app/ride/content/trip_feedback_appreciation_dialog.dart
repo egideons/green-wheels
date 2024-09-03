@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/assets.dart';
-import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 import 'package:green_wheels/theme/colors.dart';
 import 'package:iconsax/iconsax.dart';
 
@@ -19,7 +18,7 @@ class TripFeedbackAppreciationDialog extends GetView<RideController> {
     final media = MediaQuery.of(context).size;
     var colorScheme = Theme.of(context).colorScheme;
 
-    Timer(const Duration(seconds: 3), () async {
+    Timer(const Duration(milliseconds: 1000), () async {
       controller.goToHomeScreen();
     });
 
@@ -54,12 +53,6 @@ class TripFeedbackAppreciationDialog extends GetView<RideController> {
               fontSize: 20,
               fontWeight: FontWeight.w500,
             ),
-          ),
-          kSizedBox,
-          kBigSizedBox,
-          AndroidElevatedButton(
-            title: "Done",
-            onPressed: controller.goToHomeScreen,
           ),
           kBigSizedBox,
         ],

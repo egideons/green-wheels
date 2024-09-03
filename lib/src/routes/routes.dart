@@ -8,10 +8,12 @@ import '../../app/auth/phone_otp/screen/phone_otp.dart';
 import '../../app/auth/phone_signup/screen/phone_signup_screen.dart';
 import '../../app/auth/provide_name/screen/provide_name_screen.dart';
 import '../../app/auth/provide_phone/screen/provide_phone.dart';
+import '../../app/home/content/rent_ride/choose_available_vehicle_scaffold.dart';
 import '../../app/home/screen/home_screen.dart';
 import '../../app/onboarding/screen/onboarding_screen.dart';
 import '../../app/ride/screen/ride_screen.dart';
 import '../../app/schedule_trip/screen/schedule_trip_screen.dart';
+import '../../app/school_commute/screen/school_commute_screen.dart';
 import '../../app/splash/startup/screen/splash_screen.dart';
 import '../../app/splash/success/screen/success_screen.dart';
 // import '../../app/home/screen/home_screen.dart';
@@ -50,11 +52,12 @@ class Routes {
   //Home Section
   static const homeScreen = "/home";
   static const rideScreen = "/ride";
+  static const scheduleTripScreen = "/schedule-trip";
+  static const schoolCommuteScreen = "/school-commute";
+  static const chooseAvailableVehicle = "/choose-available-vehicle";
 
   //Profile Section
   static const profileScreen = "/profile";
-  static const scheduleTripScreen = "/schedule-trip";
-  static const schoolCommuteScreen = "/school-commute";
   static const support = "/support";
   static const settingsScreen = "/settings";
 
@@ -87,10 +90,14 @@ class Routes {
       name: scheduleTripScreen,
       page: () => const ScheduleTripScreen(),
     ),
-    // GetPage(
-    //   name: schoolCommuteScreen,
-    //   page: () => const SchoolCommutesScreen(),
-    // ),
+    GetPage(
+      name: schoolCommuteScreen,
+      page: () => const SchoolCommuteScreen(),
+    ),
+    GetPage(
+      name: chooseAvailableVehicle,
+      page: () => const ChooseAvailableVehicleScaffold(),
+    ),
     // GetPage(name: settingsScreen, page: () => const SettingsScreen()),
 
     //Drawer Section

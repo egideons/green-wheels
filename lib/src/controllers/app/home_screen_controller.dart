@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:board_datetime_picker/board_datetime_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:green_wheels/app/home/content/rent_ride/choose_available_vehicle_scaffold.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:green_wheels/theme/colors.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -22,6 +25,7 @@ import '../../../app/splash/loading/screen/loading_screen.dart';
 import '../../../main.dart';
 import '../../constants/assets.dart';
 import '../../constants/consts.dart';
+import '../../models/rent_ride_vehicle_model.dart';
 import '../others/loading_controller.dart';
 
 class HomeScreenController extends GetxController
@@ -71,22 +75,8 @@ class HomeScreenController extends GetxController
   //================ Controllers =================\\
   final Completer<GoogleMapController> _googleMapController = Completer();
   GoogleMapController? newGoogleMapController;
-  var scrollController = ScrollController();
+
   var panelController = PanelController();
-
-  final pickupLocationEC =
-      TextEditingController(text: "Pin Plaza, 1st Avenue, Festac");
-  final stop1LocationEC = TextEditingController();
-  final stop2LocationEC = TextEditingController();
-  final stop3LocationEC = TextEditingController();
-  final destinationEC = TextEditingController();
-
-  //================ Focus Nodes =================\\
-  final pickupLocationFN = FocusNode();
-  final stop1LocationFN = FocusNode();
-  final stop2LocationFN = FocusNode();
-  final stop3LocationFN = FocusNode();
-  final destinationFN = FocusNode();
 
 //================ Panel Functions =================\\
   togglePanel() => panelController.isPanelOpen
@@ -95,88 +85,6 @@ class HomeScreenController extends GetxController
 
   openPanel() => panelController.open();
   closePanel() => panelController.close();
-
-//================ OnTap and Onchanged =================\\
-  void selectPickupSuggestion() async {
-    FocusManager.instance.primaryFocus?.unfocus();
-  }
-
-  void selectStopLocationSuggestion() async {
-    FocusManager.instance.primaryFocus?.unfocus();
-  }
-
-  void selectDestinationSuggestion() async {
-    mapSuggestionIsSelected.value = true;
-    // FocusScope.of(Get.context!).unfocus();
-    FocusManager.instance.primaryFocus?.unfocus();
-  }
-
-  void destinationOnTap() async {
-    isStopLocationVisible.value = true;
-    mapSuggestionIsSelected.value = false;
-  }
-
-  pickupLocationOnChanged(String value) {
-    mapSuggestionIsSelected.value = false;
-
-    // Check if the text field is empty
-    if (value.isEmpty) {
-      isPickupLocationTextFieldActive.value = false;
-      isDestinationTextFieldActive.value = false;
-    } else {
-      if (stop1LocationEC.text.isEmpty) {
-        isDestinationTextFieldActive.value = false;
-        isStopLocationTextFieldActive.value = false;
-        isPickupLocationTextFieldActive.value = true;
-      } else {
-        isDestinationTextFieldActive.value = false;
-        isStopLocationTextFieldActive.value = true;
-        isPickupLocationTextFieldActive.value = true;
-      }
-    }
-  }
-
-  destinationOnChanged(String value) {
-    mapSuggestionIsSelected.value = false;
-
-    // Check if the text field is empty
-    if (value.isEmpty) {
-      isDestinationTextFieldActive.value = false;
-    } else {
-      if (stop1LocationEC.text.isEmpty) {
-        isStopLocationTextFieldActive.value = false;
-        isPickupLocationTextFieldActive.value = false;
-        isDestinationTextFieldActive.value = true;
-      } else {
-        isStopLocationTextFieldActive.value = true;
-        isPickupLocationTextFieldActive.value = false;
-        isDestinationTextFieldActive.value = true;
-      }
-    }
-  }
-
-  stopLocationOnChanged(String value) {
-    mapSuggestionIsSelected.value = false;
-
-    // Check if the text field is empty
-    if (value.isEmpty) {
-      isStopLocationTextFieldActive.value = false;
-    } else {
-      isDestinationTextFieldActive.value = false;
-      isPickupLocationTextFieldActive.value = false;
-      isStopLocationTextFieldActive.value = true;
-    }
-  }
-
-//================ on Field Submitted =================\\
-  onFieldSubmitted(value) {
-    submitForm();
-  }
-
-//================ Submit Form =================\\
-  Future<void> submitForm() async {
-    await Future.delayed(const Duration(seconds: 1));
-  }
 
 //=================================== Ride tabs ==========================================\\
   List<Map<String, dynamic>> tabData(ColorScheme colorScheme) => [
@@ -335,12 +243,110 @@ class HomeScreenController extends GetxController
   }
 
   //==== Book Ride Section =========================================================================>
+
+  //================ Controllers =================\\
+  final pickupLocationEC =
+      TextEditingController(text: "Pin Plaza, 1st Avenue, Festac");
+  final stop1LocationEC = TextEditingController();
+  final stop2LocationEC = TextEditingController();
+  final stop3LocationEC = TextEditingController();
+  final destinationEC = TextEditingController();
+
+  //================ Focus Nodes =================\\
+  final pickupLocationFN = FocusNode();
+  final stop1LocationFN = FocusNode();
+  final stop2LocationFN = FocusNode();
+  final stop3LocationFN = FocusNode();
+  final destinationFN = FocusNode();
+
   Timer? bookRideTimer;
 
   var progress = .0.obs;
   var bookDriverTimerFinished = false.obs;
   var bookDriverFound = false.obs;
   var driverHasArrived = false.obs;
+
+  //================ OnTap and Onchanged =================\\
+  void selectPickupSuggestion() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  void selectStopLocationSuggestion() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  void selectDestinationSuggestion() async {
+    mapSuggestionIsSelected.value = true;
+    // FocusScope.of(Get.context!).unfocus();
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  void destinationOnTap() async {
+    isStopLocationVisible.value = true;
+    mapSuggestionIsSelected.value = false;
+  }
+
+  pickupLocationOnChanged(String value) {
+    mapSuggestionIsSelected.value = false;
+
+    // Check if the text field is empty
+    if (value.isEmpty) {
+      isPickupLocationTextFieldActive.value = false;
+      isDestinationTextFieldActive.value = false;
+    } else {
+      if (stop1LocationEC.text.isEmpty) {
+        isDestinationTextFieldActive.value = false;
+        isStopLocationTextFieldActive.value = false;
+        isPickupLocationTextFieldActive.value = true;
+      } else {
+        isDestinationTextFieldActive.value = false;
+        isStopLocationTextFieldActive.value = true;
+        isPickupLocationTextFieldActive.value = true;
+      }
+    }
+  }
+
+  destinationOnChanged(String value) {
+    mapSuggestionIsSelected.value = false;
+
+    // Check if the text field is empty
+    if (value.isEmpty) {
+      isDestinationTextFieldActive.value = false;
+    } else {
+      if (stop1LocationEC.text.isEmpty) {
+        isStopLocationTextFieldActive.value = false;
+        isPickupLocationTextFieldActive.value = false;
+        isDestinationTextFieldActive.value = true;
+      } else {
+        isStopLocationTextFieldActive.value = true;
+        isPickupLocationTextFieldActive.value = false;
+        isDestinationTextFieldActive.value = true;
+      }
+    }
+  }
+
+  stopLocationOnChanged(String value) {
+    mapSuggestionIsSelected.value = false;
+
+    // Check if the text field is empty
+    if (value.isEmpty) {
+      isStopLocationTextFieldActive.value = false;
+    } else {
+      isDestinationTextFieldActive.value = false;
+      isPickupLocationTextFieldActive.value = false;
+      isStopLocationTextFieldActive.value = true;
+    }
+  }
+
+  //================ on Field Submitted =================\\
+  onFieldSubmitted(value) {
+    submitForm();
+  }
+
+//================ Submit Form =================\\
+  Future<void> submitForm() async {
+    // await Future.delayed(const Duration(seconds: 1));
+  }
 
   //============== Progress Indicatior =================\\
   // Method to update the progress
@@ -527,7 +533,7 @@ class HomeScreenController extends GetxController
     await showModalBottomSheet(
       isScrollControlled: true,
       showDragHandle: true,
-      enableDrag: true,
+      enableDrag: false,
       context: Get.context!,
       useSafeArea: true,
       isDismissible: false,
@@ -720,4 +726,172 @@ class HomeScreenController extends GetxController
   ];
 
   //==== Rent Ride =========================================================================>
+
+  //================ Variables =================\\
+  var rentRideFormKey = GlobalKey<FormState>();
+  DateTime? lastSelectedRentRideDate;
+  TimeOfDay? lastSelectedRentRidePickupTime;
+  var rentRideAmount = 80000;
+  var rentRideAvailableVehicles = [
+    const RentRideVehicleModel(
+      vehicleName: "BMW Cabrio",
+      vehicleImage: Assets.car1Png,
+      vehicleGearType: "Automatic",
+      vehicleFuelType: "Electric",
+      model: "Cabrio",
+      numOfSeats: 4,
+      acceleration: 3.0,
+      maxHorsePower: 2000,
+      maxSpeed: 200,
+      capacity: 600,
+      numOfReviews: 50,
+      rating: 4.5,
+    ),
+    const RentRideVehicleModel(
+      vehicleName: "Mustang Shelby GT",
+      vehicleImage: Assets.car3Png,
+      vehicleGearType: "Automatic",
+      vehicleFuelType: "Electric",
+      model: "GT 500",
+      numOfSeats: 4,
+      acceleration: 2.3,
+      maxHorsePower: 2500,
+      maxSpeed: 230,
+      capacity: 760,
+      numOfReviews: 53,
+      rating: 4.9,
+    ),
+    const RentRideVehicleModel(
+      vehicleName: "BMW i8",
+      vehicleImage: Assets.car2Png,
+      vehicleGearType: "Automatic",
+      vehicleFuelType: "Electric",
+      model: "I-Series",
+      numOfSeats: 2,
+      acceleration: 2.2,
+      maxHorsePower: 2600,
+      maxSpeed: 260,
+      capacity: 760,
+      numOfReviews: 60,
+      rating: 4.9,
+    ),
+    const RentRideVehicleModel(
+      vehicleName: "Jaguar Silber",
+      vehicleImage: Assets.car3Png,
+      vehicleGearType: "Automatic",
+      vehicleFuelType: "Electric",
+      model: "Silber",
+      numOfSeats: 4,
+      acceleration: 2.0,
+      maxHorsePower: 2800,
+      maxSpeed: 240,
+      capacity: 800,
+      numOfReviews: 81,
+      rating: 4.8,
+    ),
+  ];
+
+  //================ Booleans =================\\
+  var chooseAvailableVehicleTextFieldIsVisible = false.obs;
+  var confirmRentRideBookingButtonIsEnabled = false.obs;
+
+  //================ Controllers =================\\
+  var rentRideDateEC = TextEditingController();
+  var rentRidePickupTimeEC = TextEditingController();
+  var chooseAvailableVehicleEC = TextEditingController();
+
+  //================ Focus Nodes =================\\
+  var rentRideDateFN = FocusNode();
+  var rentRidePickupTimeFN = FocusNode();
+  var chooseAvailableVehicleFN = FocusNode();
+
+  void selectRentRideDate() async {
+    DateTime today = DateTime.now();
+
+    final selectedDate = await showBoardDateTimePickerForDate(
+        context: Get.context!,
+        enableDrag: false,
+        showDragHandle: false,
+        initialDate: lastSelectedRentRideDate ?? today,
+        minimumDate: DateTime.now(),
+        maximumDate: DateTime(2101),
+        isDismissible: true,
+        useSafeArea: true,
+        onChanged: (dateTime) {
+          rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(dateTime);
+        },
+        options: const BoardDateTimeOptions(
+          inputable: true,
+          showDateButton: true,
+          startDayOfWeek: DateTime.sunday,
+        ));
+
+    if (selectedDate != null) {
+      rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
+    }
+  }
+
+  void selectRentRidePickupTime() async {
+    TimeOfDay now = TimeOfDay.now();
+
+    var selectedTime = await showTimePicker(
+      context: Get.context!,
+      initialTime: lastSelectedRentRidePickupTime ?? now,
+      cancelText: "Cancel",
+      confirmText: "Confirm",
+    );
+
+    if (selectedTime != null) {
+      final now = DateTime.now();
+      final formattedTime = DateFormat("hh:mm a").format(DateTime(
+        now.year,
+        now.month,
+        now.day,
+        selectedTime.hour,
+        selectedTime.minute,
+      ));
+      rentRidePickupTimeEC.text = formattedTime;
+      lastSelectedRentRidePickupTime = selectedTime;
+      chooseAvailableVehicleTextFieldIsVisible.value = true;
+    }
+  }
+
+  void chooseAvailableVehicle() async {
+    Get.to(
+      () => const ChooseAvailableVehicleScaffold(),
+      transition: Transition.rightToLeft,
+      routeName: "/choose-available-vehicle",
+      curve: Curves.easeInOut,
+      fullscreenDialog: true,
+      popGesture: true,
+      preventDuplicates: true,
+    );
+  }
+
+  Future<void> confirmRentRideBooking() async {}
+
+  void bookingConfirmed() async {
+    final media = MediaQuery.of(Get.context!).size;
+
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      showDragHandle: false,
+      enableDrag: false,
+      context: Get.context!,
+      useSafeArea: true,
+      isDismissible: false,
+      constraints:
+          BoxConstraints(maxHeight: media.height, minWidth: media.width),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(32),
+          topRight: Radius.circular(32),
+        ),
+      ),
+      builder: (context) {
+        // return const BookRideRequestAcceptedModal();
+        return Container();
+      },
+    );
+  }
 }

@@ -6,6 +6,7 @@ import '../../../src/controllers/app/home_screen_controller.dart';
 import '../../../src/utils/components/drag_handle.dart';
 import '../content/book_a_ride/book_ride_option_tabbar.dart';
 import 'book_a_ride_tabbar_view.dart';
+import 'rent_ride_tabbar_view.dart';
 import 'schedule_trip_tabbar_view.dart';
 
 homePanelSection(
@@ -120,8 +121,10 @@ homePanelSection(
                                 )
                               : controller.selectedTabBar.value == 1
                                   ? scheduleTripTabBarView(controller)
-                                  : const Column(
-                                      children: [],
+                                  : rentRideTabBarView(
+                                      media,
+                                      colorScheme,
+                                      controller,
                                     ),
                         ],
                       ),

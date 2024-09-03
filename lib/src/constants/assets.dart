@@ -24,15 +24,25 @@ class Assets {
       "assets/icons/svg/car_calendar-outline.svg";
   static const carClockIconOutlineSvg =
       "assets/icons/svg/car_clock_outline.svg";
+  static const carFrontViewOutlineSvg =
+      "assets/icons/svg/car_front_view-outline.svg";
+  static const smartCarFrontViewOutlineSvg =
+      "assets/icons/svg/smart_car_front_view-outline.svg";
 
 //=================== Images ===================\\
 
 //======== PNG =========\\
+  static const car1Png = "assets/images/png/car_1.png";
+  static const car2Png = "assets/images/png/car_2.png";
+  static const car3Png = "assets/images/png/car_3.png";
 
 //======== SVG =========\\
   static const onboarding1Svg = "assets/images/svg/onboarding_1.svg";
   static const onboarding2Svg = "assets/images/svg/onboarding_2.svg";
   static const onboarding3Svg = "assets/images/svg/onboarding_3.svg";
+  static const car1Svg = "assets/images/svg/car_1.svg";
+  static const car2Svg = "assets/images/svg/car_2.svg";
+  static const car3Svg = "assets/images/svg/car_3.svg";
 
 //Placeholder Image
   static const placeholderImage = "assets/images/png/placeholder_image.png";

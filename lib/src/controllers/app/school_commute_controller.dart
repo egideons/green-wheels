@@ -64,7 +64,7 @@ class SchoolCommuteController extends GetxController {
   final stop3LocationFN = FocusNode();
   final destinationFN = FocusNode();
 
-//================ OnTap and Onchanged =================\\
+//================ Select Data, Time and Route =================\\
   void selectDateFunc() async {
     DateTime today = DateTime.now();
     DateTime tomorrow = today.add(const Duration(days: 1));
