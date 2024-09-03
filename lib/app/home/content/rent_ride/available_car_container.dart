@@ -82,7 +82,7 @@ availableCarContainer({
                 ],
               ),
             ),
-            Image.asset(vehicleImage ?? ""),
+            Image.asset(vehicleImage ?? "", height: 66),
           ],
         ),
         kSizedBox,

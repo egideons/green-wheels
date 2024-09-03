@@ -8,11 +8,14 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_wheels/app/home/content/rent_ride/choose_available_vehicle_scaffold.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:green_wheels/theme/colors.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../../../app/home/content/book_a_ride/book_ride_request_canceled_dialog.dart';
+import '../../../app/home/content/rent_ride/rent_ride_booking_canceled_dialog.dart';
+import '../../../app/home/content/rent_ride/rent_ride_booking_confirmed_modal.dart';
 import '../../../app/home/content/schedule_a_trip/schedule_trip_intro_dialog.dart';
 import '../../../app/home/content/school_commute/school_commute_intro_dialog.dart';
 import '../../../app/home/modals/book_ride_cancel_request_modal.dart';
@@ -731,7 +734,12 @@ class HomeScreenController extends GetxController
   var rentRideFormKey = GlobalKey<FormState>();
   DateTime? lastSelectedRentRideDate;
   TimeOfDay? lastSelectedRentRidePickupTime;
-  var rentRideAmount = 80000;
+  var rentRideAmountPerHour = 1500.obs;
+  var selectedVehicleImage = "".obs;
+  var selectedVehicleName = "".obs;
+  var selectedVehiclePlateNumber = "".obs;
+  var selectedVehicleNumOfStars = 0.obs;
+
   var rentRideAvailableVehicles = [
     const RentRideVehicleModel(
       vehicleName: "BMW Cabrio",
@@ -739,11 +747,13 @@ class HomeScreenController extends GetxController
       vehicleGearType: "Automatic",
       vehicleFuelType: "Electric",
       model: "Cabrio",
+      vehiclePlateNumber: "ABJ23 456",
       numOfSeats: 4,
       acceleration: 3.0,
       maxHorsePower: 2000,
       maxSpeed: 200,
       capacity: 600,
+      numOfstars: 4,
       numOfReviews: 50,
       rating: 4.5,
     ),
@@ -753,12 +763,14 @@ class HomeScreenController extends GetxController
       vehicleGearType: "Automatic",
       vehicleFuelType: "Electric",
       model: "GT 500",
+      vehiclePlateNumber: "ABJ23 456",
       numOfSeats: 4,
       acceleration: 2.3,
       maxHorsePower: 2500,
       maxSpeed: 230,
       capacity: 760,
       numOfReviews: 53,
+      numOfstars: 4,
       rating: 4.9,
     ),
     const RentRideVehicleModel(
@@ -767,12 +779,14 @@ class HomeScreenController extends GetxController
       vehicleGearType: "Automatic",
       vehicleFuelType: "Electric",
       model: "I-Series",
+      vehiclePlateNumber: "ABJ23 456",
       numOfSeats: 2,
       acceleration: 2.2,
       maxHorsePower: 2600,
       maxSpeed: 260,
       capacity: 760,
       numOfReviews: 60,
+      numOfstars: 4,
       rating: 4.9,
     ),
     const RentRideVehicleModel(
@@ -781,12 +795,14 @@ class HomeScreenController extends GetxController
       vehicleGearType: "Automatic",
       vehicleFuelType: "Electric",
       model: "Silber",
+      vehiclePlateNumber: "ABJ23 456",
       numOfSeats: 4,
       acceleration: 2.0,
       maxHorsePower: 2800,
       maxSpeed: 240,
       capacity: 800,
       numOfReviews: 81,
+      numOfstars: 4,
       rating: 4.8,
     ),
   ];
@@ -794,6 +810,7 @@ class HomeScreenController extends GetxController
   //================ Booleans =================\\
   var chooseAvailableVehicleTextFieldIsVisible = false.obs;
   var confirmRentRideBookingButtonIsEnabled = false.obs;
+  var confirmRentRideBookingButtonIsLoading = false.obs;
 
   //================ Controllers =================\\
   var rentRideDateEC = TextEditingController();
@@ -868,14 +885,95 @@ class HomeScreenController extends GetxController
     );
   }
 
-  Future<void> confirmRentRideBooking() async {}
+  List<Map<String, dynamic>> vehicleSpecificationsInfo(
+    RentRideVehicleModel vehicle,
+  ) =>
+      [
+        {
+          'icon': Iconsax.battery_charging,
+          'title': "Max. power",
+          'subtitle': "${vehicle.maxHorsePower}hp",
+        },
+        {
+          'icon': Iconsax.speedometer,
+          'title': "Max. speed",
+          'subtitle': "${vehicle.maxSpeed}kph",
+        },
+        {
+          'icon': Iconsax.radar,
+          'title': "0-60mph",
+          'subtitle': "${vehicle.acceleration}sec",
+        },
+      ];
+  List<Map<String, dynamic>> vehicleFeaturesInfo(
+    RentRideVehicleModel vehicle,
+  ) =>
+      [
+        {
+          'title': "Model",
+          'subtitle': vehicle.model,
+        },
+        {
+          'title': "Capacity",
+          'subtitle': "${vehicle.capacity}hp",
+        },
+        {
+          'title': "Color",
+          'subtitle': "${vehicle.acceleration}sec",
+        },
+        {
+          'title': "Fuel type",
+          'subtitle': vehicle.vehicleFuelType,
+        },
+        {
+          'title': "Gear type",
+          'subtitle': vehicle.vehicleGearType,
+        },
+      ];
 
-  void bookingConfirmed() async {
+  cancelSelectAvailableRide() async {
+    Get.back();
+    chooseAvailableVehicleEC.clear();
+    confirmRentRideBookingButtonIsEnabled.value = false;
+  }
+
+  selectAvailableRide(RentRideVehicleModel vehicle) async {
+    Get.close(2);
+    chooseAvailableVehicleEC.text = vehicle.vehicleName;
+    confirmRentRideBookingButtonIsEnabled.value = true;
+    selectedVehicleName.value = chooseAvailableVehicleEC.text;
+    selectedVehiclePlateNumber.value = vehicle.vehiclePlateNumber;
+    selectedVehicleNumOfStars.value = vehicle.numOfstars;
+    selectedVehicleImage.value = vehicle.vehicleImage;
+  }
+
+  Future<void> confirmRentRideBooking() async {
+    if (rentRideFormKey.currentState!.validate()) {
+      rentRideFormKey.currentState!.save();
+      if (rentRideDateEC.text.isEmpty) {
+        ApiProcessorController.errorSnack("Please select a date");
+        return;
+      } else if (rentRidePickupTimeEC.text.isEmpty) {
+        ApiProcessorController.errorSnack("Please select a pick-up time");
+        return;
+      } else if (chooseAvailableVehicleEC.text.isEmpty) {
+        ApiProcessorController.errorSnack("Please select a vehicle");
+        return;
+      }
+      confirmRentRideBookingButtonIsLoading.value = true;
+      await Future.delayed(const Duration(milliseconds: 500));
+      confirmRentRideBookingButtonIsLoading.value = false;
+
+      showBookingConfirmedModal();
+    }
+  }
+
+  void showBookingConfirmedModal() async {
     final media = MediaQuery.of(Get.context!).size;
 
     await showModalBottomSheet(
       isScrollControlled: true,
-      showDragHandle: false,
+      showDragHandle: true,
       enableDrag: false,
       context: Get.context!,
       useSafeArea: true,
@@ -889,8 +987,33 @@ class HomeScreenController extends GetxController
         ),
       ),
       builder: (context) {
-        // return const BookRideRequestAcceptedModal();
-        return Container();
+        return const RentRideBookingConfirmedModal();
+      },
+    );
+  }
+
+  doneRentingRide() {
+    goToHomeScreen();
+  }
+
+  cancelRentRideBooking() async {
+    Get.back();
+    chooseAvailableVehicleEC.clear();
+    confirmRentRideBookingButtonIsEnabled.value = false;
+
+    showDialog(
+      context: Get.context!,
+      barrierColor: kBlackColor.withOpacity(.8),
+      builder: (context) {
+        return Dialog(
+          insetAnimationCurve: Curves.easeIn,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kDefaultPadding),
+          ),
+          alignment: Alignment.center,
+          elevation: 50,
+          child: const RentRideBookingCanceledDialog(),
+        );
       },
     );
   }

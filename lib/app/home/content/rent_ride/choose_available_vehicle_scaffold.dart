@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/consts.dart';
@@ -31,36 +32,25 @@ class ChooseAvailableVehicleScaffold extends GetView<HomeScreenController> {
             separatorBuilder: (context, index) => kSizedBox,
             itemBuilder: (context, index) {
               var vehicle = controller.rentRideAvailableVehicles[index];
-              return availableCarContainer(
-                vehicleName: vehicle.vehicleName,
-                vehicleImage: vehicle.vehicleImage,
-                vehicleFuelType: vehicle.vehicleFuelType,
-                vehicleGearType: vehicle.vehicleGearType,
-                numOfSeats: vehicle.numOfSeats,
-                goToAvailableVehicleDetails: () {
-                  Get.to(
-                    () => AvailableVehicleDetailsScaffold(
-                      vehicleImage: vehicle.vehicleImage,
-                      vehicleGearType: vehicle.vehicleGearType,
-                      vehicleFuelType: vehicle.vehicleFuelType,
-                      vehicleName: vehicle.vehicleName,
-                      numOfSeats: vehicle.numOfSeats,
-                      model: vehicle.model,
-                      maxHorsePower: vehicle.maxHorsePower,
-                      maxSpeed: vehicle.maxSpeed,
-                      capacity: vehicle.capacity,
-                      numOfReviews: vehicle.numOfReviews,
-                      acceleration: vehicle.acceleration,
-                      rating: vehicle.rating,
-                    ),
-                    transition: Transition.rightToLeft,
-                    routeName: "/available-vehicle-details",
-                    curve: Curves.easeInOut,
-                    fullscreenDialog: true,
-                    popGesture: true,
-                    preventDuplicates: true,
-                  );
-                },
+              return FadeInRight(
+                child: availableCarContainer(
+                  vehicleName: vehicle.vehicleName,
+                  vehicleImage: vehicle.vehicleImage,
+                  vehicleFuelType: vehicle.vehicleFuelType,
+                  vehicleGearType: vehicle.vehicleGearType,
+                  numOfSeats: vehicle.numOfSeats,
+                  goToAvailableVehicleDetails: () {
+                    Get.to(
+                      () => AvailableVehicleDetailsScaffold(vehicle: vehicle),
+                      transition: Transition.rightToLeft,
+                      routeName: "/available-vehicle-details",
+                      curve: Curves.easeInOut,
+                      fullscreenDialog: true,
+                      popGesture: true,
+                      preventDuplicates: true,
+                    );
+                  },
+                ),
               );
             },
           ),

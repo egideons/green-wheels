@@ -19,15 +19,21 @@ class Assets {
   static const clockIconSvg = "assets/icons/svg/clock_outline.svg";
   static const routeIconSvg = "assets/icons/svg/route.svg";
   static const supportIconSvg = "assets/icons/svg/support.svg";
-  static const carOutlineIconSvg = "assets/icons/svg/car-outline.svg";
+  static const carOutlineIconSvg = "assets/icons/svg/car_outline.svg";
   static const carCalendarOutlineIconSvg =
-      "assets/icons/svg/car_calendar-outline.svg";
+      "assets/icons/svg/car_calendar_outline.svg";
   static const carClockIconOutlineSvg =
       "assets/icons/svg/car_clock_outline.svg";
   static const carFrontViewOutlineSvg =
-      "assets/icons/svg/car_front_view-outline.svg";
+      "assets/icons/svg/car_front_view_outline.svg";
   static const smartCarFrontViewOutlineSvg =
-      "assets/icons/svg/smart_car_front_view-outline.svg";
+      "assets/icons/svg/smart_car_front_view_outline.svg";
+  static const carBatteryOutlineSvg =
+      "assets/icons/svg/car_battery_outline.svg";
+  static const speedometerOutlineSvg =
+      "assets/icons/svg/speedometer_outline.svg";
+  static const accelerometerOutlineSvg =
+      "assets/icons/svg/accelerometer_outline.svg";
 
 //=================== Images ===================\\
 

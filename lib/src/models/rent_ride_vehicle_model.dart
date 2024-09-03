@@ -3,9 +3,15 @@ class RentRideVehicleModel {
       vehicleImage,
       vehicleGearType,
       vehicleFuelType,
-      model;
+      model,
+      vehiclePlateNumber;
 
-  final int numOfSeats, numOfReviews, capacity, maxHorsePower, maxSpeed;
+  final int numOfSeats,
+      numOfstars,
+      numOfReviews,
+      capacity,
+      maxHorsePower,
+      maxSpeed;
   final double rating, acceleration;
 
   const RentRideVehicleModel({
@@ -15,6 +21,8 @@ class RentRideVehicleModel {
     required this.vehicleFuelType,
     required this.numOfSeats,
     required this.model,
+    required this.vehiclePlateNumber,
+    required this.numOfstars,
     required this.numOfReviews,
     required this.maxHorsePower,
     required this.maxSpeed,

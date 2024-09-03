@@ -86,7 +86,6 @@ rentRideTabBarView(
                   return controller
                           .chooseAvailableVehicleTextFieldIsVisible.value
                       ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             kSizedBox,
                             Row(
@@ -95,33 +94,28 @@ rentRideTabBarView(
                                 SvgPicture.asset(Assets.carFrontViewOutlineSvg),
                                 kHalfWidthSizedBox,
                                 Expanded(
-                                  child: Expanded(
-                                    child: AndroidTextFormField(
-                                      hintText: "Choose your vehicle",
-                                      onTap: controller.chooseAvailableVehicle,
-                                      readOnly: true,
-                                      enabled: true,
-                                      controller:
-                                          controller.chooseAvailableVehicleEC,
-                                      textInputAction: TextInputAction.next,
-                                      focusNode:
-                                          controller.chooseAvailableVehicleFN,
-                                      textCapitalization:
-                                          TextCapitalization.none,
-                                      filled: true,
-                                      inputBorder: defaultTextFieldBorderStyle,
-                                      focusedBorder:
-                                          defaultTextFieldBorderStyle,
-                                      enabledBorder:
-                                          defaultTextFieldBorderStyle,
-                                      suffixIcon: const Icon(
-                                        Icons.chevron_right,
-                                        color: kBlackColor,
-                                      ),
-                                      validator: (value) {
-                                        return null;
-                                      },
+                                  child: AndroidTextFormField(
+                                    hintText: "Choose your vehicle",
+                                    onTap: controller.chooseAvailableVehicle,
+                                    readOnly: true,
+                                    enabled: true,
+                                    controller:
+                                        controller.chooseAvailableVehicleEC,
+                                    textInputAction: TextInputAction.next,
+                                    focusNode:
+                                        controller.chooseAvailableVehicleFN,
+                                    textCapitalization: TextCapitalization.none,
+                                    filled: true,
+                                    inputBorder: defaultTextFieldBorderStyle,
+                                    focusedBorder: defaultTextFieldBorderStyle,
+                                    enabledBorder: defaultTextFieldBorderStyle,
+                                    suffixIcon: const Icon(
+                                      Icons.chevron_right,
+                                      color: kBlackColor,
                                     ),
+                                    validator: (value) {
+                                      return null;
+                                    },
                                   ),
                                 ),
                               ],
