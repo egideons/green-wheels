@@ -82,7 +82,7 @@ class SchoolCommuteController extends GetxController {
         useSafeArea: true,
         onChanged: (dateTime) {
           selectedDateEC.text =
-              "${DateFormat("dd/MM/yyyy").format(dateTime.start)} to ${DateFormat("dd/MM/yyyy").format(dateTime.end)}";
+              "${DateFormat("dd/MM/yyyy").format(dateTime.start)} - ${DateFormat("dd/MM/yyyy").format(dateTime.end)}";
 
           startDate = dateTime.start;
           endDate = dateTime.end;
@@ -95,7 +95,7 @@ class SchoolCommuteController extends GetxController {
 
     if (selectedDate != null) {
       selectedDateEC.text =
-          "${DateFormat("dd/MM/yyyy").format(selectedDate.start)} to ${DateFormat("dd/MM/yyyy").format(selectedDate.end)}";
+          "${DateFormat("dd/MM/yyyy").format(selectedDate.start)} - ${DateFormat("dd/MM/yyyy").format(selectedDate.end)}";
       startDate = selectedDate.start;
       endDate = selectedDate.end;
     }
