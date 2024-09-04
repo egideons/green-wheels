@@ -10,10 +10,12 @@ import '../../app/auth/provide_name/screen/provide_name_screen.dart';
 import '../../app/auth/provide_phone/screen/provide_phone.dart';
 import '../../app/home/content/rent_ride/choose_available_vehicle_scaffold.dart';
 import '../../app/home/screen/home_screen.dart';
+import '../../app/menu/screen/menu_screen.dart';
 import '../../app/onboarding/screen/onboarding_screen.dart';
 import '../../app/ride/screen/ride_screen.dart';
 import '../../app/schedule_trip/screen/schedule_trip_screen.dart';
 import '../../app/school_commute/screen/school_commute_screen.dart';
+import '../../app/splash/loading/screen/loading_screen.dart';
 import '../../app/splash/startup/screen/splash_screen.dart';
 import '../../app/splash/success/screen/success_screen.dart';
 // import '../../app/home/screen/home_screen.dart';
@@ -57,7 +59,8 @@ class Routes {
   static const chooseAvailableVehicle = "/choose-available-vehicle";
 
   //Profile Section
-  static const profileScreen = "/profile";
+  static const menu = "/menu";
+  static const profile = "/profile";
   static const support = "/support";
   static const settingsScreen = "/settings";
 
@@ -70,7 +73,7 @@ class Routes {
     //   page: () => const CongratulationsSplashScreen(),
     // ),
     GetPage(name: successScreen, page: () => const SuccessScreen()),
-    // GetPage(name: loadingScreen, page: () => const LoadingScreen()),
+    GetPage(name: loadingScreen, page: () => const LoadingScreen()),
 
     //Auth Pages
     GetPage(name: onboarding, page: () => const OnboardingScreen()),
@@ -102,6 +105,6 @@ class Routes {
 
     //Drawer Section
     // GetPage(name: notificationsScreen, page: () => const NotificationsScreen()),
-    // GetPage(name: profileScreen, page: () => const ProfileScreen()),
+    GetPage(name: menu, page: () => const MenuScreen()),
   ];
 }
