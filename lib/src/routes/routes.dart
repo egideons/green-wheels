@@ -58,11 +58,17 @@ class Routes {
   static const schoolCommuteScreen = "/school-commute";
   static const chooseAvailableVehicle = "/choose-available-vehicle";
 
-  //Profile Section
+  //Menu Section
   static const menu = "/menu";
-  static const profile = "/profile";
-  static const support = "/support";
-  static const settingsScreen = "/settings";
+  static const profile = "/profile-menu";
+  static const rideHistoryMenu = "/ride-history-menu";
+  static const scheduledTripsMenu = "/scheduled-trips-menu";
+  static const scheduledRidesMenu = "/scheduled-ride-menu";
+  static const schoolCommutesMenu = "/school-commutes-menu";
+  static const carRentalsMenu = "/car-rentals-menu";
+  static const greenWalletPaymentMenu = "/green-wallet-payment-menu";
+  static const faqMenu = "/faq-menu";
+  static const settingsMenu = "/settings-menu";
 
   //========================= GET PAGES ==========================\\
   static final getPages = [

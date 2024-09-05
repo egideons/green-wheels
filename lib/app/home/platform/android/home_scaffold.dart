@@ -20,13 +20,6 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
       key: controller.scaffoldKey,
       extendBody: true,
       appBar: AppBar(toolbarHeight: 0),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {},
-      //   backgroundColor: colorScheme.surface,
-      //   foregroundColor: colorScheme.primary,
-      //   shape: const CircleBorder(),
-      //   child: const Icon(Iconsax.gps),
-      // ),
       body: GetBuilder<HomeScreenController>(
         init: HomeScreenController(),
         builder: (controller) {
@@ -70,7 +63,7 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
                   top: 15,
                   left: 15,
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: controller.goToMenu,
                     icon: const Icon(Icons.menu),
                     color: colorScheme.secondary,
                     style: IconButton.styleFrom(

@@ -21,6 +21,7 @@ import '../../../app/home/content/school_commute/school_commute_intro_dialog.dar
 import '../../../app/home/modals/book_ride_cancel_request_modal.dart';
 import '../../../app/home/modals/book_ride_request_accepted_modal.dart';
 import '../../../app/home/modals/book_ride_searching_for_driver_modal.dart';
+import '../../../app/menu/screen/menu_screen.dart';
 import '../../../app/ride/screen/ride_screen.dart';
 import '../../../app/schedule_trip/screen/schedule_trip_screen.dart';
 import '../../../app/school_commute/screen/school_commute_screen.dart';
@@ -115,17 +116,17 @@ class HomeScreenController extends GetxController
 
   //=============================== Open Drawer =====================================\\
 
-  // void goToProfile() {
-  //   Get.to(
-  //     () => const ProfileScreen(),
-  //     transition: Transition.rightToLeft,
-  //     routeName: "/profile-screen",
-  //     curve: Curves.easeInOut,
-  //     fullscreenDialog: true,
-  //     popGesture: true,
-  //     preventDuplicates: true,
-  //   );
-  // }
+  void goToMenu() {
+    Get.to(
+      () => const MenuScreen(),
+      transition: Transition.rightToLeft,
+      routeName: "/menu",
+      curve: Curves.easeInOut,
+      fullscreenDialog: true,
+      popGesture: true,
+      preventDuplicates: true,
+    );
+  }
 
   //=============================== Display Info =====================================\\
   displayInfo() async {

@@ -15,7 +15,7 @@ Widget circleAvatarImage(
     child: FittedBox(
       fit: BoxFit.contain,
       child: CircleAvatar(
-        backgroundColor: colorScheme.inversePrimary,
+        backgroundColor: kAvatarBackgroundColor,
         radius: radius ?? 64,
         foregroundImage:
             foregroundImage ?? const NetworkImage(Assets.userPlaceholderImage),

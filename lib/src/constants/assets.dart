@@ -38,6 +38,7 @@ class Assets {
 //=================== Images ===================\\
 
 //======== PNG =========\\
+  static const avatarImagePng = "assets/images/png/avatar_image.png";
   static const car1Png = "assets/images/png/car_1.png";
   static const car2Png = "assets/images/png/car_2.png";
   static const car3Png = "assets/images/png/car_3.png";
