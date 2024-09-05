@@ -11,8 +11,16 @@ import '../../../../../src/utils/components/my_app_bar.dart';
 
 class SuccessScreenScaffold extends GetView<SuccessScreenController> {
   final Function()? loadScreen;
+  final String? title;
   final String? subtitle;
-  const SuccessScreenScaffold({this.subtitle, super.key, this.loadScreen});
+  final Widget? subtitleWidget;
+  const SuccessScreenScaffold({
+    this.title,
+    this.subtitleWidget,
+    this.subtitle,
+    super.key,
+    this.loadScreen,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,16 +44,17 @@ class SuccessScreenScaffold extends GetView<SuccessScreenController> {
                   width: 170,
                 ),
                 kSizedBox,
-                const Text(
-                  'Successful!',
+                Text(
+                  title ?? 'Successful!',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w400,
                     color: kDarkBlackColor,
                   ),
                 ),
                 kSizedBox,
+                subtitleWidget ?? const SizedBox(),
                 Text(
                   subtitle ?? "",
                   textAlign: TextAlign.center,

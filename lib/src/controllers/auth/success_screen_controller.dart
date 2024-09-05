@@ -19,4 +19,8 @@ class SuccessScreenController extends GetxController {
       transition: Get.defaultTransition,
     );
   }
+
+  goToGreenWalletScreen() {
+    Get.close(0);
+  }
 }

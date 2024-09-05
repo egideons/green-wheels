@@ -6,8 +6,15 @@ import '../platform/android/success_scaffold.dart';
 
 class SuccessScreen extends StatelessWidget {
   final Function()? loadScreen;
+  final String? title;
   final String? subtitle;
-  const SuccessScreen({super.key, this.loadScreen, this.subtitle});
+  final Widget? subtitleWidget;
+  const SuccessScreen(
+      {super.key,
+      this.loadScreen,
+      this.subtitle,
+      this.title,
+      this.subtitleWidget});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +26,12 @@ class SuccessScreen extends StatelessWidget {
     // }
     return GestureDetector(
       onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
-      child: SuccessScreenScaffold(loadScreen: loadScreen, subtitle: subtitle),
+      child: SuccessScreenScaffold(
+        loadScreen: loadScreen,
+        subtitle: subtitle,
+        subtitleWidget: subtitleWidget,
+        title: title,
+      ),
     );
   }
 }

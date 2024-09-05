@@ -49,5 +49,4 @@ class LoadingController extends GetxController {
 
     isLoading.value = true;
   }
-
 }

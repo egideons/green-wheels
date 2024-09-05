@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/app/splash/success/screen/success_screen.dart';
 
 import '../../../main.dart';
+import '../../../theme/colors.dart';
+import '../../constants/consts.dart';
 import '../../routes/routes.dart';
+import '../auth/success_screen_controller.dart';
 import '../others/api_processor_controller.dart';
 
 class GreenWalletPaymentMenuController extends GetxController {
@@ -166,10 +170,41 @@ class GreenWalletPaymentMenuController extends GetxController {
       await Future.delayed(const Duration(seconds: 2));
 
       isFunding.value = false;
-      ApiProcessorController.successSnack(
-        "Your account has been successfully funded",
+      Get.off(
+        () => SuccessScreen(
+          loadScreen: SuccessScreenController.instance.goToGreenWalletScreen,
+          title: "Wallet credited!",
+          subtitleWidget: Text.rich(
+            textAlign: TextAlign.end,
+            TextSpan(
+              text: '$nairaSign ',
+              style: defaultTextStyle(
+                color: kTextBlackColor,
+                fontSize: 18,
+                fontFamily: "",
+                fontWeight: FontWeight.w600,
+              ),
+              children: [
+                TextSpan(
+                  text: intFormattedText(
+                      int.tryParse(unformattedAmountText.value) ?? 0),
+                  style: defaultTextStyle(
+                    color: kTextBlackColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        transition: Transition.rightToLeft,
+        routeName: "/success-screen",
+        curve: Curves.easeInOut,
+        fullscreenDialog: true,
+        popGesture: true,
+        preventDuplicates: true,
       );
-      Get.close(0);
     }
   }
 }
