@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/consts.dart';
+import 'package:green_wheels/src/controllers/auth/success_screen_controller.dart';
 import 'package:green_wheels/src/controllers/menu/green_wallet_payment_menu_controller.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 import 'package:green_wheels/src/utils/components/my_app_bar.dart';
@@ -18,6 +19,8 @@ class FundWalletMenuScaffold extends GetView<GreenWalletPaymentMenuController> {
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     var colorScheme = Theme.of(context).colorScheme;
+
+    Get.put(SuccessScreenController());
 
     return GestureDetector(
       onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),

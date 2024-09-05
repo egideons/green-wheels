@@ -9,12 +9,13 @@ class SuccessScreen extends StatelessWidget {
   final String? title;
   final String? subtitle;
   final Widget? subtitleWidget;
-  const SuccessScreen(
-      {super.key,
-      this.loadScreen,
-      this.subtitle,
-      this.title,
-      this.subtitleWidget});
+  const SuccessScreen({
+    super.key,
+    this.loadScreen,
+    this.subtitle,
+    this.title,
+    this.subtitleWidget,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -77,7 +77,7 @@ class GreenWalletPaymentMenuController extends GetxController {
   }
 
   goToFundGreenWallet() async {
-    Get.toNamed(Routes.fundWalletMenu, preventDuplicates: true);
+    await Get.toNamed(Routes.fundWalletMenu, preventDuplicates: true);
   }
 
   List<Map<String, dynamic>> greenWalletPaymentMenuCards = [
@@ -157,7 +157,7 @@ class GreenWalletPaymentMenuController extends GetxController {
 
   fundWallet() async {
     if (fundWalletFormkey.currentState!.validate()) {
-      fundWalletFormkey.currentState!.save();
+      // fundWalletFormkey.currentState!.save();
       if (amountEC.text.isEmpty) {
         ApiProcessorController.errorSnack("Please enter an amount");
         return;
@@ -174,28 +174,40 @@ class GreenWalletPaymentMenuController extends GetxController {
         () => SuccessScreen(
           loadScreen: SuccessScreenController.instance.goToGreenWalletScreen,
           title: "Wallet credited!",
-          subtitleWidget: Text.rich(
-            textAlign: TextAlign.end,
-            TextSpan(
-              text: '$nairaSign ',
-              style: defaultTextStyle(
-                color: kTextBlackColor,
-                fontSize: 18,
-                fontFamily: "",
-                fontWeight: FontWeight.w600,
+          subtitleWidget: Column(
+            children: [
+              Text(
+                "Amount Paid",
+                style: defaultTextStyle(
+                  color: kTextBlackColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              children: [
+              Text.rich(
+                textAlign: TextAlign.end,
                 TextSpan(
-                  text: intFormattedText(
-                      int.tryParse(unformattedAmountText.value) ?? 0),
+                  text: '$nairaSign ',
                   style: defaultTextStyle(
                     color: kTextBlackColor,
                     fontSize: 18,
+                    fontFamily: "",
                     fontWeight: FontWeight.w600,
                   ),
+                  children: [
+                    TextSpan(
+                      text: intFormattedText(
+                          int.tryParse(unformattedAmountText.value) ?? 0),
+                      style: defaultTextStyle(
+                        color: kTextBlackColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         transition: Transition.rightToLeft,

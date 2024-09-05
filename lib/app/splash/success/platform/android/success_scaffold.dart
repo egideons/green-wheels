@@ -27,7 +27,7 @@ class SuccessScreenScaffold extends GetView<SuccessScreenController> {
     var media = MediaQuery.of(context).size;
     var colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: myAppBar(colorScheme, media),
+      appBar: myAppBar(colorScheme, media, leadingIsVisible: false),
       backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: ListView(
