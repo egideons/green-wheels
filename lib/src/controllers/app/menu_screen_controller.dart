@@ -85,10 +85,10 @@ class MenuScreenController extends GetxController {
   }
 
   goToGreenWalletPayment() async {
-    // Get.toNamed(
-    //   Routes.greenWalletPaymentMenu,
-    //   preventDuplicates: true,
-    // );
+    Get.toNamed(
+      Routes.greenWalletPaymentMenu,
+      preventDuplicates: true,
+    );
   }
 
   goToFAQs() async {

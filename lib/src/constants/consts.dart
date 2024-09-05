@@ -235,6 +235,21 @@ String maskString(String phoneNumber) {
   return maskedPart + lastFour;
 }
 
+String maskWalletBalance(String walletBalance) {
+  if (walletBalance.contains('.')) {
+    // Split the walletBalance string into two parts: before and after the decimal point
+    List<String> parts = walletBalance.split('.');
+    // Create masked versions of both parts
+    String maskedBeforeDecimal = parts[0].replaceAll(RegExp(r'[0-9]'), '*');
+    String maskedAfterDecimal = parts[1].replaceAll(RegExp(r'[0-9]'), '*');
+    // Combine both masked parts with the decimal point
+    return '$maskedBeforeDecimal.$maskedAfterDecimal';
+  } else {
+    // If no decimal point, mask the entire walletBalance string
+    return walletBalance.replaceAll(RegExp(r'[0-9]'), '*');
+  }
+}
+
 String shortenId(String id) {
   if (id.length <= 8) {
     return id;

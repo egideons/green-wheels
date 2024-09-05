@@ -12,6 +12,8 @@ import '../../app/home/content/rent_ride/choose_available_vehicle_scaffold.dart'
 import '../../app/home/screen/home_screen.dart';
 import '../../app/menu/screen/menu_screen.dart';
 import '../../app/menu/views/car_rentals/screen/car_rentals_menu_screen.dart';
+import '../../app/menu/views/green_wallet_payment/screen/green_wallet_payment_menu_screen.dart';
+import '../../app/menu/views/green_wallet_payment/views/fund_wallet_scaffold.dart';
 import '../../app/menu/views/ride_history/screen/ride_history_menu_screen.dart';
 import '../../app/menu/views/scheduled_trips/screen/scheduled_trips_menu_screen.dart';
 import '../../app/menu/views/scheduled_trips/views/scheduled_rides/screen/scheduled_rides_menu_screen.dart';
@@ -72,6 +74,7 @@ class Routes {
   static const schoolCommutesMenu = "/school-commutes-menu";
   static const carRentalsMenu = "/car-rentals-menu";
   static const greenWalletPaymentMenu = "/green-wallet-payment-menu";
+  static const fundWalletMenu = "/fund-wallet-menu";
   static const faqMenu = "/faq-menu";
   static const settingsMenu = "/settings-menu";
 
@@ -130,9 +133,14 @@ class Routes {
       page: () => const SchoolCommutesMenuScreen(),
     ),
     GetPage(name: carRentalsMenu, page: () => const CarRentalMenuScreen()),
-    // GetPage(
-    // name: greenWalletPaymentMenu,
-    // page: () => const GreenWalletPaymentMenuScreen(),),
+    GetPage(
+      name: greenWalletPaymentMenu,
+      page: () => const GreenWalletPaymentMenuScreen(),
+    ),
+    GetPage(
+      name: fundWalletMenu,
+      page: () => const FundWalletMenuScaffold(),
+    ),
     // GetPage(name: faqMenu, page: () => const FAQMenuScreen()),
     // GetPage(name: settingsMenu, page: () => const SettingsMenuScreen()),
   ];
