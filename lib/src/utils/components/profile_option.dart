@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../constants/consts.dart';
 
@@ -25,8 +24,6 @@ profileOption(
         children: [
           Row(
             children: [
-              SvgPicture.asset(icon ?? ""),
-              kHalfWidthSizedBox,
               Text(
                 title ?? "",
                 overflow: TextOverflow.ellipsis,

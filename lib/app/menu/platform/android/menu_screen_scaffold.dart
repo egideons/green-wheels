@@ -61,23 +61,21 @@ class MenuScreenScaffold extends GetView<MenuScreenController> {
                   ),
                 ),
                 kSizedBox,
-                Expanded(
-                  child: ListView.separated(
-                    itemCount: controller.menuOptions.length,
-                    shrinkWrap: true,
-                    physics: const BouncingScrollPhysics(),
-                    separatorBuilder: (context, index) => kSizedBox,
-                    itemBuilder: (context, index) {
-                      var menuItem = controller.menuOptions[index];
-                      return menuOption(
-                        colorScheme,
-                        controller,
-                        nav: menuItem["nav"],
-                        icon: menuItem["icon"],
-                        title: menuItem["label"],
-                      );
-                    },
-                  ),
+                ListView.separated(
+                  itemCount: controller.menuOptions.length,
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  separatorBuilder: (context, index) => kSizedBox,
+                  itemBuilder: (context, index) {
+                    var menuItem = controller.menuOptions[index];
+                    return menuOption(
+                      colorScheme,
+                      controller,
+                      nav: menuItem["nav"],
+                      icon: menuItem["icon"],
+                      title: menuItem["label"],
+                    );
+                  },
                 ),
                 kSizedBox,
               ],

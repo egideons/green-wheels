@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:green_wheels/src/controllers/menu/car_rentals_menu_controller.dart';
 
-import '../../../../../../../src/controllers/menu/scheduled_rides_menu_controller.dart';
 import '../../../../../../../theme/colors.dart';
 
-scheduledRidesTabs(
+carRentalMenuTabs(
   ColorScheme colorScheme,
-  ScheduledRidesMenuController controller,
+  CarRentalMenuController controller,
 ) {
   return Padding(
     padding: const EdgeInsets.all(10),
@@ -41,7 +41,7 @@ scheduledRidesTabs(
                     ),
         ),
         tabs: const [
-          Tab(text: "Pending"),
+          Tab(text: "Ongoing"),
           Tab(text: "Completed"),
           Tab(text: "Cancelled"),
         ],

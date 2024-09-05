@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class CarRentalsMenuController extends GetxController
+class CarRentalMenuController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  static CarRentalsMenuController get instance {
-    return Get.find<CarRentalsMenuController>();
+  static CarRentalMenuController get instance {
+    return Get.find<CarRentalMenuController>();
   }
 
   late TabController tabBarController;
   var selectedTabBar = 0.obs;
   var isLoading = false.obs;
+  var rentRideAmountPerHour = 1500.obs;
 
   //================ controllers =================\\
   var scrollController = ScrollController();

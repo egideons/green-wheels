@@ -113,30 +113,31 @@ class RentRideBookingConfirmedModal extends GetView<HomeScreenController> {
                         ),
                       ),
                       Expanded(
-                          child: Text.rich(
-                        textAlign: TextAlign.end,
-                        TextSpan(
-                          text: '$nairaSign ',
-                          style: defaultTextStyle(
-                            color: kTextBlackColor,
-                            fontSize: 16,
-                            fontFamily: "",
-                            fontWeight: FontWeight.w600,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: intFormattedText(
-                                controller.rentRideAmountPerHour.value,
-                              ),
-                              style: defaultTextStyle(
-                                color: kTextBlackColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
+                        child: Text.rich(
+                          textAlign: TextAlign.end,
+                          TextSpan(
+                            text: '$nairaSign ',
+                            style: defaultTextStyle(
+                              color: kTextBlackColor,
+                              fontSize: 16,
+                              fontFamily: "",
+                              fontWeight: FontWeight.w600,
                             ),
-                          ],
+                            children: [
+                              TextSpan(
+                                text: intFormattedText(
+                                  controller.rentRideAmountPerHour.value,
+                                ),
+                                style: defaultTextStyle(
+                                  color: kTextBlackColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      )),
+                      ),
                     ],
                   ),
                 ],

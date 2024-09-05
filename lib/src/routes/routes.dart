@@ -11,6 +11,7 @@ import '../../app/auth/provide_phone/screen/provide_phone.dart';
 import '../../app/home/content/rent_ride/choose_available_vehicle_scaffold.dart';
 import '../../app/home/screen/home_screen.dart';
 import '../../app/menu/screen/menu_screen.dart';
+import '../../app/menu/views/car_rentals/screen/car_rentals_menu_screen.dart';
 import '../../app/menu/views/ride_history/screen/ride_history_menu_screen.dart';
 import '../../app/menu/views/scheduled_trips/screen/scheduled_trips_menu_screen.dart';
 import '../../app/menu/views/scheduled_trips/views/scheduled_rides/screen/scheduled_rides_menu_screen.dart';
@@ -128,7 +129,7 @@ class Routes {
       name: schoolCommutesMenu,
       page: () => const SchoolCommutesMenuScreen(),
     ),
-    // GetPage(name: carRentalsMenu, page: () => const CarRentalsMenuScreen()),
+    GetPage(name: carRentalsMenu, page: () => const CarRentalMenuScreen()),
     // GetPage(
     // name: greenWalletPaymentMenu,
     // page: () => const GreenWalletPaymentMenuScreen(),),

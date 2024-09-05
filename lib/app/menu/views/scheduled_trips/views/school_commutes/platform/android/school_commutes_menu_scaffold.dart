@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../../../../../src/constants/consts.dart';
 import '../../../../../../../../src/controllers/menu/school_commutes_menu_controller.dart';
@@ -56,105 +57,46 @@ class SchoolCommutesMenuScaffold extends GetView<SchoolCommutesMenuController> {
                             colorScheme: colorScheme.primary,
                           )
                         : const SizedBox(),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: schoolCommutesTabs(colorScheme, controller),
-                    ),
-                    Expanded(
-                      child: ListView(
-                        controller: controller.scrollController,
-                        padding: const EdgeInsets.all(kDefaultPadding),
-                        physics: const BouncingScrollPhysics(),
-                        shrinkWrap: true,
-                        children: [
-                          Container(
-                            child: controller.isLoading.value
-                                ? const SizedBox()
-                                : controller.selectedTabBar.value == 0
-                                    ? ListView.separated(
-                                        itemCount: 10,
-                                        shrinkWrap: true,
-                                        physics: const ScrollPhysics(),
-                                        separatorBuilder: (context, index) =>
-                                            kHalfSizedBox,
-                                        itemBuilder: (context, index) {
-                                          return scheduledTripContainer(
-                                            colorScheme,
-                                            child:
-                                                pendingSchoolCommuteContainer(
-                                              colorScheme,
-                                              media,
-                                              driverName: "John Kennedy",
-                                              vehicleName: "Mustang Shelby GT",
-                                              pickup: "Festac Shopping Mall",
-                                              amount: 8000,
-                                              destination:
-                                                  "Holy Family Catholic church, 22 road, Festac Town",
-                                              viewPendingScheduledRide: () {},
-                                            ),
-                                          );
-                                        },
-                                      )
-                                    : controller.selectedTabBar.value == 1
-                                        ? ListView.separated(
-                                            itemCount: 10,
-                                            shrinkWrap: true,
-                                            physics: const ScrollPhysics(),
-                                            separatorBuilder:
-                                                (context, index) =>
-                                                    kHalfSizedBox,
-                                            itemBuilder: (context, index) {
-                                              return scheduledTripContainer(
-                                                colorScheme,
-                                                child:
-                                                    completedSchoolCommuteContainer(
-                                                  colorScheme,
-                                                  media,
-                                                  driverName: "John Kennedy",
-                                                  vehicleName:
-                                                      "Mustang Shelby GT",
-                                                  pickup:
-                                                      "Festac Shopping Mall",
-                                                  amount: 8000,
-                                                  destination:
-                                                      "Holy Family Catholic church, 22 road, Festac Town",
-                                                  viewPendingScheduledRide:
-                                                      () {},
-                                                ),
-                                              );
-                                            },
-                                          )
-                                        : ListView.separated(
-                                            itemCount: 10,
-                                            shrinkWrap: true,
-                                            physics: const ScrollPhysics(),
-                                            separatorBuilder:
-                                                (context, index) =>
-                                                    kHalfSizedBox,
-                                            itemBuilder: (context, index) {
-                                              return scheduledTripContainer(
-                                                colorScheme,
-                                                child:
-                                                    cancelledSchoolCommuteContainer(
-                                                  colorScheme,
-                                                  media,
-                                                  driverName: "John Kennedy",
-                                                  vehicleName:
-                                                      "Mustang Shelby GT",
-                                                  pickup:
-                                                      "Festac Shopping Mall",
-                                                  amount: 8000,
-                                                  destination:
-                                                      "Holy Family Catholic church, 22 road, Festac Town",
-                                                  viewPendingScheduledRide:
-                                                      () {},
-                                                ),
-                                              );
-                                            },
-                                          ),
-                          ),
-                        ],
-                      ),
+                    schoolCommutesTabs(colorScheme, controller),
+                    GetBuilder<SchoolCommutesMenuController>(
+                      init: SchoolCommutesMenuController(),
+                      builder: (controller) {
+                        return controller.selectedTabBar.value == 0
+                            ? Expanded(
+                                child: Obx(
+                                  () => Skeletonizer(
+                                    enabled: controller.isLoading.value,
+                                    child: buildPendingSchoolCommuteList(
+                                      colorScheme,
+                                      media,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : controller.selectedTabBar.value == 1
+                                ? Expanded(
+                                    child: Obx(
+                                      () => Skeletonizer(
+                                        enabled: controller.isLoading.value,
+                                        child: buildCompletedSchoolCommuteList(
+                                          colorScheme,
+                                          media,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Expanded(
+                                    child: Obx(
+                                      () => Skeletonizer(
+                                        enabled: controller.isLoading.value,
+                                        child: buildCancelledSchoolCommuteList(
+                                          colorScheme,
+                                          media,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                      },
                     ),
                   ],
                 ),
@@ -163,6 +105,84 @@ class SchoolCommutesMenuScaffold extends GetView<SchoolCommutesMenuController> {
           );
         },
       ),
+    );
+  }
+
+  buildPendingSchoolCommuteList(ColorScheme colorScheme, Size media) {
+    return ListView.separated(
+      itemCount: 10,
+      shrinkWrap: true,
+      controller: controller.scrollController,
+      physics: const ScrollPhysics(),
+      padding: const EdgeInsets.all(10),
+      separatorBuilder: (context, index) => kHalfSizedBox,
+      itemBuilder: (context, index) {
+        return scheduledTripContainer(
+          colorScheme,
+          child: pendingSchoolCommuteContainer(
+            colorScheme,
+            media,
+            driverName: "John Kennedy",
+            vehicleName: "Mustang Shelby GT",
+            pickup: "Festac Shopping Mall",
+            amount: 8000,
+            destination: "Holy Family Catholic church, 22 road, Festac Town",
+            viewPendingScheduledRide: () {},
+          ),
+        );
+      },
+    );
+  }
+
+  buildCompletedSchoolCommuteList(ColorScheme colorScheme, Size media) {
+    return ListView.separated(
+      itemCount: 10,
+      shrinkWrap: true,
+      physics: const ScrollPhysics(),
+      padding: const EdgeInsets.all(10),
+      controller: controller.scrollController,
+      separatorBuilder: (context, index) => kHalfSizedBox,
+      itemBuilder: (context, index) {
+        return scheduledTripContainer(
+          colorScheme,
+          child: completedSchoolCommuteContainer(
+            colorScheme,
+            media,
+            driverName: "John Kennedy",
+            vehicleName: "Mustang Shelby GT",
+            pickup: "Festac Shopping Mall",
+            amount: 8000,
+            destination: "Holy Family Catholic church, 22 road, Festac Town",
+            viewPendingScheduledRide: () {},
+          ),
+        );
+      },
+    );
+  }
+
+  buildCancelledSchoolCommuteList(ColorScheme colorScheme, Size media) {
+    return ListView.separated(
+      itemCount: 10,
+      shrinkWrap: true,
+      controller: controller.scrollController,
+      physics: const ScrollPhysics(),
+      padding: const EdgeInsets.all(10),
+      separatorBuilder: (context, index) => kHalfSizedBox,
+      itemBuilder: (context, index) {
+        return scheduledTripContainer(
+          colorScheme,
+          child: cancelledSchoolCommuteContainer(
+            colorScheme,
+            media,
+            driverName: "John Kennedy",
+            vehicleName: "Mustang Shelby GT",
+            pickup: "Festac Shopping Mall",
+            amount: 8000,
+            destination: "Holy Family Catholic church, 22 road, Festac Town",
+            viewPendingScheduledRide: () {},
+          ),
+        );
+      },
     );
   }
 }

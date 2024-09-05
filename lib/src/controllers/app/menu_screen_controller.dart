@@ -78,10 +78,10 @@ class MenuScreenController extends GetxController {
   }
 
   goToCarRentals() async {
-    // Get.toNamed(
-    //   Routes.carRentalsMenu,
-    //   preventDuplicates: true,
-    // );
+    Get.toNamed(
+      Routes.carRentalsMenu,
+      preventDuplicates: true,
+    );
   }
 
   goToGreenWalletPayment() async {

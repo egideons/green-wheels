@@ -5,7 +5,7 @@ import 'package:green_wheels/src/utils/components/my_app_bar.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../../../src/constants/consts.dart';
-import '../../../../../../theme/colors.dart';
+import '../../content/ride_history_detail.dart';
 import '../../content/ride_history_menu_tabs.dart';
 
 class RideHistoryMenuScaffold extends GetView<RideHistoryMenuController> {
@@ -42,8 +42,8 @@ class RideHistoryMenuScaffold extends GetView<RideHistoryMenuController> {
           color: colorScheme.secondary,
           backgroundColor: colorScheme.primary,
           child: Scrollbar(
-            child: Obx(() {
-              return Column(
+            child: Obx(
+              () => Column(
                 children: [
                   rideHistoryMenuTabs(colorScheme, controller),
                   GetBuilder<RideHistoryMenuController>(
@@ -54,22 +54,8 @@ class RideHistoryMenuScaffold extends GetView<RideHistoryMenuController> {
                               child: Obx(
                                 () => Skeletonizer(
                                   enabled: controller.isLoading.value,
-                                  child: ListView.separated(
-                                    itemCount: 10,
-                                    controller: controller.scrollController,
-                                    padding: const EdgeInsets.all(10),
-                                    physics: const BouncingScrollPhysics(),
-                                    separatorBuilder: (context, index) =>
-                                        kSizedBox,
-                                    itemBuilder: (context, index) {
-                                      return rideHistoryDetail(
-                                        colorScheme,
-                                        driverName: "John Kennedy",
-                                        vehicleName: "Mustang Shelby GT",
-                                        isCompleted: true,
-                                      );
-                                    },
-                                  ),
+                                  child: buildCompletedRideHistoryMenuList(
+                                      controller, colorScheme),
                                 ),
                               ),
                             )
@@ -77,22 +63,8 @@ class RideHistoryMenuScaffold extends GetView<RideHistoryMenuController> {
                               child: Obx(
                                 () => Skeletonizer(
                                   enabled: controller.isLoading.value,
-                                  child: ListView.separated(
-                                    itemCount: 10,
-                                    controller: controller.scrollController,
-                                    padding: const EdgeInsets.all(10),
-                                    physics: const BouncingScrollPhysics(),
-                                    separatorBuilder: (context, index) =>
-                                        kSizedBox,
-                                    itemBuilder: (context, index) {
-                                      return rideHistoryDetail(
-                                        colorScheme,
-                                        driverName: "John Kennedy",
-                                        vehicleName: "Mustang Shelby GT",
-                                        isCompleted: false,
-                                      );
-                                    },
-                                  ),
+                                  child: buildCancelledRideHistoryMenuList(
+                                      controller, colorScheme),
                                 ),
                               ),
                             );
@@ -100,66 +72,53 @@ class RideHistoryMenuScaffold extends GetView<RideHistoryMenuController> {
                   ),
                   kSizedBox,
                 ],
-              );
-            }),
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  rideHistoryDetail(
-    ColorScheme colorScheme, {
-    String? driverName,
-    String? vehicleName,
-    bool? isCompleted,
-  }) {
-    return Container(
+  buildCancelledRideHistoryMenuList(
+    RideHistoryMenuController controller,
+    ColorScheme colorScheme,
+  ) {
+    return ListView.separated(
+      itemCount: 10,
+      controller: controller.scrollController,
       padding: const EdgeInsets.all(10),
-      decoration: ShapeDecoration(
-        color: kFrameBackgroundColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-          side: BorderSide(
-            width: .8,
-            color: colorScheme.primary,
-          ),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                driverName ?? "",
-                style: defaultTextStyle(
-                  color: kTextBlackColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Text(
-                vehicleName ?? "",
-                style: defaultTextStyle(
-                  color: kTextBlackColor,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          Text(
-            isCompleted ?? true ? "Done" : "Cancelled",
-            style: defaultTextStyle(
-              color: isCompleted ?? true ? kSuccessColor : kErrorColor,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
+      physics: const BouncingScrollPhysics(),
+      separatorBuilder: (context, index) => kSizedBox,
+      itemBuilder: (context, index) {
+        return rideHistoryDetail(
+          colorScheme,
+          driverName: "John Kennedy",
+          vehicleName: "Mustang Shelby GT",
+          isCompleted: false,
+        );
+      },
+    );
+  }
+
+  buildCompletedRideHistoryMenuList(
+    RideHistoryMenuController controller,
+    ColorScheme colorScheme,
+  ) {
+    return ListView.separated(
+      itemCount: 10,
+      controller: controller.scrollController,
+      padding: const EdgeInsets.all(10),
+      physics: const BouncingScrollPhysics(),
+      separatorBuilder: (context, index) => kSizedBox,
+      itemBuilder: (context, index) {
+        return rideHistoryDetail(
+          colorScheme,
+          driverName: "John Kennedy",
+          vehicleName: "Mustang Shelby GT",
+          isCompleted: true,
+        );
+      },
     );
   }
 }
