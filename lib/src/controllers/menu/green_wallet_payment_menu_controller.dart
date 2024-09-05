@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/app/menu/views/green_wallet_payment/views/fund_wallet_scaffold.dart';
 import 'package:green_wheels/app/splash/success/screen/success_screen.dart';
 
 import '../../../main.dart';
 import '../../../theme/colors.dart';
 import '../../constants/consts.dart';
-import '../../routes/routes.dart';
 import '../auth/success_screen_controller.dart';
 import '../others/api_processor_controller.dart';
 
@@ -77,7 +77,16 @@ class GreenWalletPaymentMenuController extends GetxController {
   }
 
   goToFundGreenWallet() async {
-    await Get.toNamed(Routes.fundWalletMenu, preventDuplicates: true);
+    Get.to(
+      () => const FundWalletMenuScaffold(),
+      transition: Transition.rightToLeft,
+      routeName: "/fund-wallet",
+      curve: Curves.easeInOut,
+      fullscreenDialog: true,
+      popGesture: true,
+      preventDuplicates: true,
+    );
+    // await Get.toNamed(Routes.fundWalletMenu, preventDuplicates: true);
   }
 
   List<Map<String, dynamic>> greenWalletPaymentMenuCards = [

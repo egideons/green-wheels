@@ -22,5 +22,14 @@ class SuccessScreenController extends GetxController {
 
   goToGreenWalletScreen() {
     Get.close(0);
+    // Get.off(
+    //   () => const GreenWalletPaymentMenuScreen(),
+    //   transition: Transition.rightToLeft,
+    //   routeName: "/green-wallet-payment-menu",
+    //   curve: Curves.easeInOut,
+    //   fullscreenDialog: true,
+    //   popGesture: true,
+    //   preventDuplicates: true,
+    // );
   }
 }
