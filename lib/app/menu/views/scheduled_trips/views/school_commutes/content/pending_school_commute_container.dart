@@ -15,7 +15,7 @@ pendingSchoolCommuteContainer(
   String? pickup,
   String? destination,
   int? amount,
-  void Function()? viewPendingScheduledRide,
+  void Function()? viewPendingSchoolCommute,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +63,7 @@ pendingSchoolCommuteContainer(
           buttonIcon: Icons.chevron_right_rounded,
           buttonIconSize: 24,
           mainAxisAlignment: MainAxisAlignment.center,
-          onPressed: viewPendingScheduledRide ?? () {},
+          onPressed: viewPendingSchoolCommute ?? () {},
         ),
       ),
     ],

@@ -14,7 +14,6 @@ cancelledSchoolCommuteContainer(
   String? pickup,
   int? amount,
   String? destination,
-  void Function()? viewPendingScheduledRide,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
