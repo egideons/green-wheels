@@ -19,6 +19,7 @@ class MenuScreenScaffold extends GetView<MenuScreenController> {
     var colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: myAppBar(
         colorScheme,
         media,

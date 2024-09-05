@@ -37,7 +37,7 @@ class MenuScreenController extends GetxController {
       {
         "icon": Iconsax.calendar_1,
         "nav": goToScheduledTrips,
-        "label": "Scheduled TRips",
+        "label": "Scheduled Trips",
       },
       {
         "icon": Iconsax.car,
@@ -70,13 +70,38 @@ class MenuScreenController extends GetxController {
     );
   }
 
-  goToScheduledTrips() async {}
+  goToScheduledTrips() async {
+    Get.toNamed(
+      Routes.scheduledTripsMenu,
+      preventDuplicates: true,
+    );
+  }
 
-  goToCarRentals() async {}
+  goToCarRentals() async {
+    // Get.toNamed(
+    //   Routes.carRentalsMenu,
+    //   preventDuplicates: true,
+    // );
+  }
 
-  goToGreenWalletPayment() async {}
+  goToGreenWalletPayment() async {
+    // Get.toNamed(
+    //   Routes.greenWalletPaymentMenu,
+    //   preventDuplicates: true,
+    // );
+  }
 
-  goToFAQs() async {}
+  goToFAQs() async {
+    // Get.toNamed(
+    //   Routes.faqMenu,
+    //   preventDuplicates: true,
+    // );
+  }
 
-  goToSettings() async {}
+  goToSettings() async {
+    // Get.toNamed(
+    //   Routes.settingsMenu,
+    //   preventDuplicates: true,
+    // );
+  }
 }

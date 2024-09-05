@@ -26,7 +26,7 @@ myAppBar(
 }) {
   return AppBar(
     backgroundColor: backgroundColor ?? colorScheme.surface,
-    centerTitle: centerTitle ?? true,
+    centerTitle: centerTitle ?? false,
     automaticallyImplyLeading: automaticallyImplyLeading ?? false,
     flexibleSpace: flexibleSpace ?? Container(),
     elevation: elevation ?? 0,
@@ -55,10 +55,10 @@ myAppBar(
           width: media.width / 1.6,
           child: Text(
             title ?? "",
-            textAlign: TextAlign.center,
+            textAlign: centerTitle == true ? TextAlign.center : TextAlign.start,
             style: defaultTextStyle(
               color: titleColor ?? kTextBlackColor,
-              fontSize: titleFontSize ?? 16,
+              fontSize: titleFontSize ?? 18,
               fontWeight: FontWeight.w600,
             ),
           ),

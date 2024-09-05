@@ -13,7 +13,7 @@ class ProfileController extends GetxController {
   //==To Scheduled Rides==>
   // goToScheduledTrips() async {
   //   Get.to(
-  //     () => const ScheduledTripsScreen(),
+  //     () => const ScheduledTripsMenuScreen(),
   //     transition: Transition.rightToLeft,
   //     routeName: "/scheduled-trips-screen",
   //     curve: Curves.easeInOut,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class RideHistoryMenuController extends GetxController
+class ScheduledRidesMenuController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  static RideHistoryMenuController get instance {
-    return Get.find<RideHistoryMenuController>();
+  static ScheduledRidesMenuController get instance {
+    return Get.find<ScheduledRidesMenuController>();
   }
 
   late TabController tabBarController;
@@ -31,9 +31,8 @@ class RideHistoryMenuController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    onRefresh();
     scrollController.addListener(_scrollListener);
-    tabBarController = TabController(length: 2, vsync: this);
+    tabBarController = TabController(length: 3, vsync: this);
     tabBarController.addListener(() {
       selectedTabBar.value = tabBarController.index;
     });
@@ -42,11 +41,13 @@ class RideHistoryMenuController extends GetxController
   //================ Handle refresh ================\\
 
   Future<void> onRefresh() async {
-    setLoading(true);
+    isLoading.value = true;
+    update();
 
     await Future.delayed(const Duration(seconds: 2));
 
-    setLoading(false);
+    isLoading.value = false;
+    update();
   }
 
   //================ Scroll to Top =================//
@@ -65,10 +66,12 @@ class RideHistoryMenuController extends GetxController
     //========= Show action button ========//
     if (scrollController.position.pixels >= 150) {
       isScrollToTopBtnVisible.value = true;
+      update();
     }
     //========= Hide action button ========//
     else if (scrollController.position.pixels < 150) {
       isScrollToTopBtnVisible.value = false;
+      update();
     }
   }
 }

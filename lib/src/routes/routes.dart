@@ -11,6 +11,10 @@ import '../../app/auth/provide_phone/screen/provide_phone.dart';
 import '../../app/home/content/rent_ride/choose_available_vehicle_scaffold.dart';
 import '../../app/home/screen/home_screen.dart';
 import '../../app/menu/screen/menu_screen.dart';
+import '../../app/menu/views/ride_history/screen/ride_history_menu_screen.dart';
+import '../../app/menu/views/scheduled_trips/screen/scheduled_trips_menu_screen.dart';
+import '../../app/menu/views/scheduled_trips/views/scheduled_rides/screen/scheduled_rides_menu_screen.dart';
+import '../../app/menu/views/scheduled_trips/views/school_commutes/screen/school_commutes_menu_screen.dart';
 import '../../app/onboarding/screen/onboarding_screen.dart';
 import '../../app/ride/screen/ride_screen.dart';
 import '../../app/schedule_trip/screen/schedule_trip_screen.dart';
@@ -107,10 +111,28 @@ class Routes {
       name: chooseAvailableVehicle,
       page: () => const ChooseAvailableVehicleScaffold(),
     ),
-    // GetPage(name: settingsScreen, page: () => const SettingsScreen()),
 
-    //Drawer Section
+    //Menu Section
     // GetPage(name: notificationsScreen, page: () => const NotificationsScreen()),
     GetPage(name: menu, page: () => const MenuScreen()),
+    GetPage(name: rideHistoryMenu, page: () => const RideHistoryMenuScreen()),
+    GetPage(
+      name: scheduledTripsMenu,
+      page: () => const ScheduledTripsMenuScreen(),
+    ),
+    GetPage(
+      name: scheduledRidesMenu,
+      page: () => const ScheduledRidesMenuScreen(),
+    ),
+    GetPage(
+      name: schoolCommutesMenu,
+      page: () => const SchoolCommutesMenuScreen(),
+    ),
+    // GetPage(name: carRentalsMenu, page: () => const CarRentalsMenuScreen()),
+    // GetPage(
+    // name: greenWalletPaymentMenu,
+    // page: () => const GreenWalletPaymentMenuScreen(),),
+    // GetPage(name: faqMenu, page: () => const FAQMenuScreen()),
+    // GetPage(name: settingsMenu, page: () => const SettingsMenuScreen()),
   ];
 }
