@@ -123,7 +123,6 @@ class ScheduledRidesMenuScaffold extends GetView<ScheduledRidesMenuController> {
             pickup: "Festac Shopping Mall",
             amount: 8000,
             destination: "Holy Family Catholic church, 22 road, Festac Town",
-            viewPendingScheduledRide: () {},
           ),
         );
       },
@@ -149,7 +148,6 @@ class ScheduledRidesMenuScaffold extends GetView<ScheduledRidesMenuController> {
             pickup: "Festac Shopping Mall",
             amount: 8000,
             destination: "Holy Family Catholic church, 22 road, Festac Town",
-            viewPendingScheduledRide: () {},
           ),
         );
       },
@@ -175,7 +173,6 @@ class ScheduledRidesMenuScaffold extends GetView<ScheduledRidesMenuController> {
             pickup: "Festac Shopping Mall",
             amount: 8000,
             destination: "Holy Family Catholic church, 22 road, Festac Town",
-            viewPendingScheduledRide: () {},
           ),
         );
       },

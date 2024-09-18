@@ -6,7 +6,7 @@ import '../../../../../../../src/utils/components/ride_address_section.dart';
 import '../../../../../../../src/utils/components/time_and_date_section.dart';
 import '../../../../../../../theme/colors.dart';
 
-cancelledScheduledRideContainer(
+completedScheduledRideContainer(
   ColorScheme colorScheme,
   Size media, {
   String? driverName,
@@ -14,12 +14,12 @@ cancelledScheduledRideContainer(
   String? pickup,
   int? amount,
   String? destination,
-  void Function()? viewPendingScheduledRide,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
@@ -47,10 +47,10 @@ cancelledScheduledRideContainer(
             ],
           ),
           Text(
-            "Cancelled",
+            "Completed",
             textAlign: TextAlign.start,
             style: defaultTextStyle(
-              color: kErrorColor,
+              color: kSuccessColor,
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
