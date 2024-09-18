@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:green_wheels/app/menu/views/scheduled_trips_menu/views/scheduled_rides/screen/scheduled_rides_menu_screen.dart';
 
 import '../../app/auth/email_login/screen/email_login_screen.dart';
 import '../../app/auth/email_otp/screen/email_otp.dart';
@@ -15,9 +16,8 @@ import '../../app/menu/views/car_rentals/screen/car_rentals_menu_screen.dart';
 import '../../app/menu/views/green_wallet_payment/screen/green_wallet_payment_menu_screen.dart';
 import '../../app/menu/views/green_wallet_payment/views/fund_wallet_scaffold.dart';
 import '../../app/menu/views/ride_history/screen/ride_history_menu_screen.dart';
-import '../../app/menu/views/scheduled_trips/screen/scheduled_trips_menu_screen.dart';
-import '../../app/menu/views/scheduled_trips/views/scheduled_rides/screen/scheduled_rides_menu_screen.dart';
-import '../../app/menu/views/scheduled_trips/views/school_commutes/screen/school_commutes_menu_screen.dart';
+import '../../app/menu/views/scheduled_trips_menu/screen/scheduled_trips_menu_screen.dart';
+import '../../app/menu/views/scheduled_trips_menu/views/school_commutes/screen/school_commutes_menu_screen.dart';
 import '../../app/onboarding/screen/onboarding_screen.dart';
 import '../../app/ride/screen/ride_screen.dart';
 import '../../app/schedule_trip/screen/schedule_trip_screen.dart';
