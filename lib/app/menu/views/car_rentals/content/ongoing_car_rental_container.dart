@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../src/constants/consts.dart';
-import '../../../../../src/utils/buttons/android/android_elevated_button.dart';
 import '../../../../../src/utils/components/amount_charge_per_hour.dart';
 import '../../../../../src/utils/components/car_name_and_rating.dart';
 import '../../../../../src/utils/components/time_and_date_section.dart';
@@ -59,18 +58,18 @@ ongoingCarRentalContainer(
           timeAndDateSection(colorScheme),
           kSizedBox,
           amountChargePerHr(rideAmount: amount ?? 0),
-          kSizedBox,
-          SizedBox(
-            width: media.width / 2.8,
-            child: AndroidElevatedButton(
-              title: "View",
-              isRowVisible: true,
-              buttonIcon: Icons.chevron_right_rounded,
-              buttonIconSize: 24,
-              mainAxisAlignment: MainAxisAlignment.center,
-              onPressed: view ?? () {},
-            ),
-          ),
+          // kSizedBox,
+          // SizedBox(
+          //   width: media.width / 2.8,
+          //   child: AndroidElevatedButton(
+          //     title: "View",
+          //     isRowVisible: true,
+          //     buttonIcon: Icons.chevron_right_rounded,
+          //     buttonIconSize: 24,
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     onPressed: view ?? () {},
+          //   ),
+          // ),
         ],
       ),
     ),

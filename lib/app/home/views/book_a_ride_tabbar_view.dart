@@ -32,6 +32,7 @@ bookRideTabBarView(
                 controller,
                 media,
               ),
+              SizedBox(height: media.height * .4),
             ];
           } else if (controller.isDestinationTextFieldActive.value) {
             return <Widget>[
@@ -39,7 +40,8 @@ bookRideTabBarView(
                 colorScheme,
                 controller,
                 media,
-              )
+              ),
+              SizedBox(height: media.height * .4),
             ];
           } else if (controller.isStopLocationTextFieldActive.value) {
             return <Widget>[
@@ -47,7 +49,8 @@ bookRideTabBarView(
                 colorScheme,
                 controller,
                 media,
-              )
+              ),
+              SizedBox(height: media.height * .4),
             ];
           }
           return <Widget>[

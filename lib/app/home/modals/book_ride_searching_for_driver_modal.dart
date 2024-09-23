@@ -64,6 +64,7 @@ class BookRideSearchingForDriverModal extends GetView<HomeScreenController> {
                 child: LinearProgressIndicator(
                   value: controller.progress.value,
                   minHeight: 10,
+                  borderRadius: BorderRadius.circular(8),
                   backgroundColor: kFrameBackgroundColor,
                   valueColor: AlwaysStoppedAnimation<Color>(
                     colorScheme.primary,

@@ -249,6 +249,9 @@ class HomeScreenController extends GetxController
   //==== Book Ride Section =========================================================================>
 
   //================ Controllers =================\\
+  var pickupLocation = "Pin Plaza, 1st Avenue, Festac".obs;
+  var stopLocation1 = "22 Festac Town".obs;
+  var destinationLocation = "Holy Family Catholic Church".obs;
   final pickupLocationEC =
       TextEditingController(text: "Pin Plaza, 1st Avenue, Festac");
   final stop1LocationEC = TextEditingController();
@@ -272,15 +275,19 @@ class HomeScreenController extends GetxController
 
   //================ OnTap and Onchanged =================\\
   void selectPickupSuggestion() async {
-    FocusManager.instance.primaryFocus?.unfocus();
+    pickupLocationEC.text = pickupLocation.value;
+    FocusManager.instance.primaryFocus?.nextFocus();
   }
 
   void selectStopLocationSuggestion() async {
-    FocusManager.instance.primaryFocus?.unfocus();
+    stop1LocationEC.text = stopLocation1.value;
+    // FocusManager.instance.primaryFocus?.unfocus();
+    FocusManager.instance.primaryFocus?.nextFocus();
   }
 
   void selectDestinationSuggestion() async {
     mapSuggestionIsSelected.value = true;
+    destinationEC.text = destinationLocation.value;
     // FocusScope.of(Get.context!).unfocus();
     FocusManager.instance.primaryFocus?.unfocus();
   }
@@ -530,6 +537,8 @@ class HomeScreenController extends GetxController
   void showSearchingForDriverModalSheet() async {
     final media = MediaQuery.of(Get.context!).size;
 
+    bookDriverFound.value = false;
+
     await closePanel();
 
     simulateBookRideDriverSearchProgress();
@@ -582,9 +591,33 @@ class HomeScreenController extends GetxController
 
   runDriverHasArrived() async {
     driverHasArrived.value = true;
-    await Future.delayed(const Duration(milliseconds: 1000));
+    await Future.delayed(const Duration(seconds: 3));
 
     await startTrip();
+  }
+
+  showCancellationFeeModal() async {
+    final media = MediaQuery.of(Get.context!).size;
+
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      showDragHandle: false,
+      enableDrag: false,
+      context: Get.context!,
+      useSafeArea: true,
+      isDismissible: false,
+      constraints:
+          BoxConstraints(maxHeight: media.height, minWidth: media.width),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(32),
+          topRight: Radius.circular(32),
+        ),
+      ),
+      builder: (context) {
+        return const BookRideRequestAcceptedModal();
+      },
+    );
   }
 
   startTrip() async {

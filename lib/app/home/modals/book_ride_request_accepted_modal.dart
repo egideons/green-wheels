@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:green_wheels/src/utils/buttons/android/android_outlined_button.dart';
 import 'package:green_wheels/src/utils/components/drag_handle.dart';
 
 import '../../../../src/constants/consts.dart';
@@ -192,11 +191,11 @@ class BookRideRequestAcceptedModal extends GetView<HomeScreenController> {
               ),
             ),
             kSizedBox,
-            AndroidOutlinedButton(
-              title: "Cancel request",
-              onPressed: controller.cancelBookRideDriverRequest,
-            ),
-            kSizedBox,
+            // AndroidOutlinedButton(
+            //   title: "Cancel request",
+            //   onPressed: controller.cancelBookRideDriverRequest,
+            // ),
+            // kSizedBox,
           ],
         ),
       ),

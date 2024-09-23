@@ -14,6 +14,7 @@ pendingScheduledRideContainer(
   String? pickup,
   int? amount,
   String? destination,
+  void Function()? viewPendingScheduledRide,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,6 +53,18 @@ pendingScheduledRideContainer(
         pickup: pickup ?? "",
         destination: destination ?? "",
       ),
+      // kSizedBox,
+      // SizedBox(
+      //   width: media.width / 2.8,
+      //   child: AndroidElevatedButton(
+      //     title: "View",
+      //     isRowVisible: true,
+      //     buttonIcon: Icons.chevron_right_rounded,
+      //     buttonIconSize: 24,
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     onPressed: viewPendingScheduledRide ?? () {},
+      //   ),
+      // ),
     ],
   );
 }

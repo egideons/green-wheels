@@ -11,7 +11,7 @@ bookRideStopLocationMapSuggestions(
   Size media,
 ) {
   return ListView.separated(
-    itemCount: 20,
+    itemCount: 10,
     shrinkWrap: true,
     physics: const BouncingScrollPhysics(),
     separatorBuilder: (context, index) => kSmallSizedBox,
@@ -44,7 +44,7 @@ bookRideStopLocationMapSuggestions(
                   SizedBox(
                     width: media.width - 100,
                     child: Text(
-                      "Stop Location: Holy Family Catholic Church",
+                      "Stop Location: ${controller.stopLocation1.value}",
                       style: defaultTextStyle(
                         color: kTextBlackColor,
                         fontSize: 20,
@@ -52,15 +52,15 @@ bookRideStopLocationMapSuggestions(
                       ),
                     ),
                   ),
-                  kSmallSizedBox,
-                  Text(
-                    "22 Road, Festac Town",
-                    style: defaultTextStyle(
-                      color: kTextBlackColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
+                  // kSmallSizedBox,
+                  // Text(
+                  //   "22 Road, Festac Town",
+                  //   style: defaultTextStyle(
+                  //     color: kTextBlackColor,
+                  //     fontSize: 12,
+                  //     fontWeight: FontWeight.w500,
+                  //   ),
+                  // )
                 ],
               ),
             ],

@@ -11,7 +11,7 @@ bookRidePickupLocationMapSuggestions(
   Size media,
 ) {
   return ListView.separated(
-    itemCount: 20,
+    itemCount: 10,
     shrinkWrap: true,
     physics: const BouncingScrollPhysics(),
     separatorBuilder: (context, index) => kSmallSizedBox,
@@ -45,7 +45,7 @@ bookRidePickupLocationMapSuggestions(
                   SizedBox(
                     width: media.width - 100,
                     child: Text(
-                      "Pickup: Holy Family Catholic Church",
+                      "Pickup: ${controller.pickupLocation.value}",
                       overflow: TextOverflow.ellipsis,
                       style: defaultTextStyle(
                         color: kTextBlackColor,
@@ -54,15 +54,15 @@ bookRidePickupLocationMapSuggestions(
                       ),
                     ),
                   ),
-                  kSmallSizedBox,
-                  Text(
-                    "22 Road, Festac Town",
-                    style: defaultTextStyle(
-                      color: kTextBlackColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
+                  // kSmallSizedBox,
+                  // Text(
+                  //   "22 Road, Festac Town",
+                  //   style: defaultTextStyle(
+                  //     color: kTextBlackColor,
+                  //     fontSize: 12,
+                  //     fontWeight: FontWeight.w500,
+                  //   ),
+                  // )
                 ],
               ),
             ],
