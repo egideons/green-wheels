@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_wheels/app/home/content/rent_ride/choose_available_vehicle_scaffold.dart';
+import 'package:green_wheels/app/home/modals/book_ride_cancel_ride_fee_modal.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:green_wheels/theme/colors.dart';
 import 'package:iconsax/iconsax.dart';
@@ -465,6 +466,38 @@ class HomeScreenController extends GetxController
     }
   }
 
+  Future<void> submitCancelRideReason() async {
+    if (cancelRequestFormKey.currentState!.validate()) {
+      cancelRequestFormKey.currentState!.save();
+
+      if (cancelRequestReasonIsSelected[3] == true &&
+          otherOptionEC.text.isEmpty) {
+        ApiProcessorController.errorSnack("Field cannot be empty");
+        return;
+      }
+
+      List<String> selectedValues = [];
+
+      if (cancelRequestReasonIsSelected[0]) {
+        selectedValues.add("Waited for a long time");
+      }
+      if (cancelRequestReasonIsSelected[1]) {
+        selectedValues.add("Unable to contact the Driver");
+      }
+      if (cancelRequestReasonIsSelected[2]) {
+        selectedValues.add("Wrong location inputted");
+      }
+      if (cancelRequestReasonIsSelected[3]) {
+        selectedValues.add(otherOptionEC.text); // "Other" text
+      }
+
+      // Log or process the selected values
+      log("Selected Values: $selectedValues");
+
+      await showBookRideRequestCanceledDialog();
+    }
+  }
+
   void cancelBookRideDriverRequest() async {
     final media = MediaQuery.of(Get.context!).size;
 
@@ -593,7 +626,7 @@ class HomeScreenController extends GetxController
     driverHasArrived.value = true;
     await Future.delayed(const Duration(seconds: 3));
 
-    await startTrip();
+    // await startTrip();
   }
 
   showCancellationFeeModal() async {
@@ -615,7 +648,7 @@ class HomeScreenController extends GetxController
         ),
       ),
       builder: (context) {
-        return const BookRideRequestAcceptedModal();
+        return const BookRideCancelRideFeeModal();
       },
     );
   }
