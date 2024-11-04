@@ -626,7 +626,7 @@ class HomeScreenController extends GetxController
     driverHasArrived.value = true;
     await Future.delayed(const Duration(seconds: 3));
 
-    // await startTrip();
+    await startTrip();
   }
 
   showCancellationFeeModal() async {

@@ -192,12 +192,16 @@ class BookRideRequestAcceptedModal extends GetView<HomeScreenController> {
               ),
             ),
             kSizedBox,
-            AndroidOutlinedButton(
-              title: "Cancel request",
-              onPressed: controller.driverHasArrived.value
-                  ? controller.showCancellationFeeModal
-                  : controller.cancelBookRideDriverRequest,
-            ),
+            Obx(() {
+              return AndroidOutlinedButton(
+                title: controller.driverHasArrived.value
+                    ? "Cancel ride"
+                    : "Cancel request",
+                onPressed: controller.driverHasArrived.value
+                    ? controller.showCancellationFeeModal
+                    : controller.cancelBookRideDriverRequest,
+              );
+            }),
             kSizedBox,
           ],
         ),
