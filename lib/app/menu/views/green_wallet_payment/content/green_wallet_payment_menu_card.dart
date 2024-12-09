@@ -40,7 +40,7 @@ greenWalletPaymentMenuCard(
             children: [
               TextSpan(
                 text: controller.hideBalance.value
-                    ? "***********"
+                    ? "XXX"
                     : intFormattedText(amount ?? 0),
                 style: defaultTextStyle(
                   color: kTextBlackColor,

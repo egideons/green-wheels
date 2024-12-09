@@ -1,4 +1,13 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:get/get.dart';
+import 'package:green_wheels/main.dart';
+import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.dart';
+import 'package:green_wheels/src/models/rider/registration_rider_model.dart';
+import 'package:green_wheels/src/services/api/api_url.dart';
+import 'package:green_wheels/src/services/client/http_client_service.dart';
+import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
 
 import '../../routes/routes.dart';
@@ -8,21 +17,37 @@ class MenuScreenController extends GetxController {
     return Get.find<MenuScreenController>();
   }
 
+  @override
+  void onInit() {
+    getRiderProfile();
+    super.onInit();
+  }
+
+  //================ Variables =================\\
+  var walletBalance = "".obs;
+  //================ Booleans =================\\
+  var isLoadingRiderProfile = false.obs;
+
+  //================ Models =================\\
+  var getRiderProfileResponseModel =
+      GetRiderProfileResponseModel.fromJson(null).obs;
+  var registrationRiderModel = RegistrationRiderModel.fromJson(null).obs;
+
   //===================== Variable ========================\\
   List<Map<String, dynamic>> menuTotalInfo = [
     {
       "icon": Iconsax.routing,
-      "number": 10,
+      "number": 0,
       "label": "Ride bookings",
     },
     {
       "icon": Iconsax.calendar_1,
-      "number": 5,
+      "number": 0,
       "label": "Scheduled Rides",
     },
     {
       "icon": Iconsax.car,
-      "number": 1,
+      "number": 0,
       "label": "Car rentals",
     },
   ];
@@ -88,6 +113,7 @@ class MenuScreenController extends GetxController {
     Get.toNamed(
       Routes.greenWalletPaymentMenu,
       preventDuplicates: true,
+      arguments: {"wallet_ballance": walletBalance.value},
     );
   }
 
@@ -103,5 +129,48 @@ class MenuScreenController extends GetxController {
     //   Routes.settingsMenu,
     //   preventDuplicates: true,
     // );
+  }
+
+  //Get Rider  Details
+  Future<void> getRiderProfile() async {
+    isLoadingRiderProfile.value = true;
+    var url = ApiUrl.baseUrl + ApiUrl.getRiderProfile;
+    var userToken = prefs.getString("userToken");
+
+    log("URL=> $url\nUSERTOKEN=>$userToken");
+
+    //HTTP Client Service
+    http.Response? response =
+        await HttpClientService.getRequest(url, userToken);
+
+    if (response == null) {
+      isLoadingRiderProfile.value = false;
+      return;
+    }
+
+    try {
+      if (response.statusCode == 200) {
+        // log("Response body=> ${response.body}");
+
+        // Convert to json
+        dynamic responseJson;
+
+        responseJson = jsonDecode(response.body);
+
+        getRiderProfileResponseModel.value =
+            GetRiderProfileResponseModel.fromJson(responseJson);
+
+        registrationRiderModel.value = getRiderProfileResponseModel.value.data;
+        walletBalance.value = registrationRiderModel.value.walletBalance;
+
+        log(getRiderProfileResponseModel.value.message);
+        log(jsonEncode(registrationRiderModel.value));
+      } else {
+        log("An error occured, Response body: ${response.body}");
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    isLoadingRiderProfile.value = false;
   }
 }

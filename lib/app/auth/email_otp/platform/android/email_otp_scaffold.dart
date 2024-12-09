@@ -269,8 +269,8 @@ class EmailOTPScaffold extends GetView<EmailOTPController> {
             kSizedBox,
             emailOTPResendCode(colorScheme, controller),
             const SizedBox(height: kDefaultPadding * 2),
-            GetBuilder<EmailOTPController>(
-              builder: (controller) {
+            Obx(
+              () {
                 return AndroidElevatedButton(
                   title: "Continue",
                   isLoading: controller.isLoading.value ? true : false,

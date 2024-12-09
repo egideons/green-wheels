@@ -1,6 +1,14 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/consts.dart';
+import 'package:green_wheels/src/models/rider/get_registration_rider_response_model.dart';
+import 'package:green_wheels/src/models/rider/registration_rider_model.dart';
+import 'package:green_wheels/src/services/api/api_url.dart';
+import 'package:green_wheels/src/services/client/http_client_service.dart';
+import 'package:http/http.dart' as http;
 
 import '../../../app/home/screen/home_screen.dart';
 import '../../../main.dart';
@@ -10,6 +18,16 @@ class ProvidePhoneController extends GetxController {
   static ProvidePhoneController get instance {
     return Get.find<ProvidePhoneController>();
   }
+
+  //=========== Models ===========\\
+  var registrationRiderModel = RegistrationRiderModel.fromJson(null).obs;
+
+  var getRegistrationRiderModel =
+      GetRegistrationRiderResponseModel.fromJson(null).obs;
+
+  //=========== Variables ===========\\
+  var riderId = Get.arguments?["riderId"] ?? "";
+  var fullName = Get.arguments?["fullName"] ?? "";
 
   //=========== Form Key ===========\\
   final formKey = GlobalKey<FormState>();
@@ -47,7 +65,6 @@ class ProvidePhoneController extends GetxController {
     } else {
       setFormIsValid();
     }
-    update();
   }
 
   //=========== Form is invalid ===========\\
@@ -77,24 +94,68 @@ class ProvidePhoneController extends GetxController {
       }
 
       isLoading.value = true;
-      update();
 
-      await Future.delayed(const Duration(seconds: 3));
+      var url = ApiUrl.baseUrl + ApiUrl.completeRegistration;
 
-      //Save state that the user has entered their phone number
-      prefs.setBool("hasEnteredPhoneNumber", true);
+      Map data = {
+        "rider_id": riderId.toString(),
+        "full_name": fullName,
+        "phone": phoneNumberEC.text,
+      };
 
-      await Get.to(
-        () => const HomeScreen(),
-        routeName: "/home",
-        fullscreenDialog: true,
-        curve: Curves.easeInOut,
-        preventDuplicates: true,
-        popGesture: false,
-        transition: Get.defaultTransition,
-      );
+      var userToken = prefs.getString("userToken");
+      log(userToken.toString());
+      log("This is the Url: $url");
+      log("This is the email otp data: $data");
+
+      //HTTP Client Service
+      http.Response? response =
+          await HttpClientService.postRequest(url, null, data);
+
+      if (response == null) {
+        isLoading.value = false;
+        return;
+      }
+
+      try {
+        // Convert to json
+        dynamic responseJson;
+
+        responseJson = jsonDecode(response.body);
+
+        log("This is the response body ====> ${response.body}");
+
+        getRegistrationRiderModel.value =
+            GetRegistrationRiderResponseModel.fromJson(responseJson);
+
+        registrationRiderModel.value = getRegistrationRiderModel.value.data;
+
+        if (response.statusCode == 200) {
+          ApiProcessorController.successSnack(responseJson["message"]);
+
+          //Save state that the user has entered their phone number
+          prefs.setBool("hasEnteredPhoneNumber", true);
+          await Future.delayed(const Duration(seconds: 1));
+
+          await Get.offAll(
+            () => const HomeScreen(),
+            routeName: "/home",
+            fullscreenDialog: true,
+            curve: Curves.easeInOut,
+            predicate: (routes) => false,
+            popGesture: false,
+            transition: Get.defaultTransition,
+          );
+        } else {
+          ApiProcessorController.warningSnack(responseJson["message"]);
+          log(responseJson["message"]);
+        }
+        //Map the response json to the model provided
+      } catch (e) {
+        log(e.toString());
+      }
     }
+
     isLoading.value = false;
-    update();
   }
 }

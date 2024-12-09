@@ -1,5 +1,5 @@
 import '../../../src/constants/assets.dart';
-import '../../../src/models/onboard_model.dart';
+import '../../../src/models/onboard/onboard_model.dart';
 
 class OnboardContent {
   List<OnboardModel> items = [

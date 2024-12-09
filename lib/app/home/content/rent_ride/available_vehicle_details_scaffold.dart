@@ -2,7 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/consts.dart';
-import 'package:green_wheels/src/models/rent_ride_vehicle_model.dart';
+import 'package:green_wheels/src/models/ride/rent_ride_vehicle_model.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_outlined_button.dart';
 import 'package:green_wheels/src/utils/components/my_app_bar.dart';

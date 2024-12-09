@@ -7,6 +7,7 @@ import '../../../../../../../../theme/colors.dart';
 myAppBar(
   ColorScheme colorScheme,
   Size media, {
+  void Function()? backIconFunction,
   Color? backgroundColor,
   bool? centerTitle,
   bool? leadingIsVisible = true,
@@ -40,9 +41,10 @@ myAppBar(
               padding: const EdgeInsets.only(left: 4.0),
               child: IconButton(
                 tooltip: "Go back",
-                onPressed: () {
-                  Get.back();
-                },
+                onPressed: backIconFunction ??
+                    () {
+                      Get.back();
+                    },
                 icon: const Icon(
                   Icons.chevron_left,
                   size: 26,

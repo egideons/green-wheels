@@ -1,10 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/app/auth/provide_name/screen/provide_name_screen.dart';
+import 'package:green_wheels/src/models/auth/verify_otp_response_model.dart';
+import 'package:green_wheels/src/services/api/api_url.dart';
+import 'package:green_wheels/src/services/client/http_client_service.dart';
+import 'package:http/http.dart' as http;
 
-// import '../../../app/home/screen/home_screen.dart';
-import '../../../app/auth/provide_name/screen/provide_name_screen.dart';
 import '../../../app/home/screen/home_screen.dart';
 import '../../../main.dart';
 import '../others/api_processor_controller.dart';
@@ -14,9 +19,22 @@ class EmailOTPController extends GetxController {
     return Get.find<EmailOTPController>();
   }
 
+  @override
+  void onInit() {
+    startTimer();
+    pin1FN.requestFocus();
+    super.onInit();
+  }
+
   //=========== Variables ===========\\
 
   late Timer _timer;
+  var userEmail = Get.arguments?["userEmail"] ?? "";
+  var riderId = Get.arguments?["riderId"] ?? "";
+  String userToken = "";
+
+  //=========== Models ===========\\
+  var verifyOTPResponse = VerifyOTPResponseModel.fromJson(null).obs;
 
   //=========== Form Key ===========\\
 
@@ -48,13 +66,6 @@ class EmailOTPController extends GetxController {
     String minutesStr = minutes.toString().padLeft(2, '0');
     String secondsStr = remainingSeconds.toString().padLeft(2, '0');
     return '$minutesStr:$secondsStr';
-  }
-
-  @override
-  void onInit() {
-    startTimer();
-    pin1FN.requestFocus();
-    super.onInit();
   }
 
   // //=========== on Submitted ===========\\
@@ -120,15 +131,6 @@ class EmailOTPController extends GetxController {
     update();
   }
 
-  //================= Resend OTP ======================\\
-  void requestOTP() async {
-    secondsRemaining.value = 60;
-    timerComplete.value = false;
-    startTimer();
-    update();
-    ApiProcessorController.successSnack("An OTP has been sent to your email");
-  }
-
   setFormIsInvalid() {
     formIsValid.value = false;
   }
@@ -149,6 +151,45 @@ class EmailOTPController extends GetxController {
         _timer.cancel();
       }
     });
+  }
+
+  //================= Resend OTP ======================\\
+  void requestOTP() async {
+    secondsRemaining.value = 60;
+    timerComplete.value = false;
+    var url = ApiUrl.baseUrl + ApiUrl.resendOtp;
+
+    Map data = {"email": userEmail};
+
+    log("This is the Url: $url");
+    log("User Email: $userEmail");
+
+    // Client service
+    var response = await HttpClientService.postRequest(url, null, data);
+
+    if (response == null) {
+      isLoading.value = false;
+      return;
+    }
+    try {
+      // Convert to json
+      dynamic responseJson;
+      responseJson = jsonDecode(response.body);
+
+      log("This is the response json ====> $responseJson");
+
+      if (response.statusCode == 200) {
+        ApiProcessorController.successSnack(responseJson["message"]);
+        await Future.delayed(const Duration(milliseconds: 500));
+        await startTimer();
+      } else {
+        log("Request failed with status: ${response.statusCode}");
+        log("Response body: ${response.body}");
+        ApiProcessorController.warningSnack(responseJson["message"]);
+      }
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   //================= submit OTP Signup ======================\\
@@ -196,25 +237,70 @@ class EmailOTPController extends GetxController {
     pauseTimer();
     timerComplete.value = false;
 
-    //Save state that the user has logged in
-    prefs.setBool("isLoggedIn", true);
+    var url = ApiUrl.baseUrl + ApiUrl.verifyOtp;
 
-    await Future.delayed(const Duration(seconds: 3));
-    ApiProcessorController.successSnack("Verification successful");
-    Get.to(
-      () => const ProvideNameScreen(isEmailSignup: true),
-      routeName: "/provide-name",
-      fullscreenDialog: true,
-      curve: Curves.easeInOut,
-      preventDuplicates: true,
-      popGesture: false,
-      transition: Get.defaultTransition,
-    );
+    var otpCode = pin1EC.text + pin2EC.text + pin3EC.text + pin4EC.text;
+
+    Map data = {
+      "rider_id": riderId.toString(),
+      "otp": otpCode,
+    };
+
+    log("This is the Url: $url");
+    log("This is the email otp data: $data");
+
+    //HTTP Client Service
+    http.Response? response =
+        await HttpClientService.postRequest(url, null, data);
+
+    if (response == null) {
+      isLoading.value = false;
+      //Continue the timer and enable resend button
+      startTimer();
+      return;
+    }
+
+    try {
+      // Convert to json
+      dynamic responseJson;
+
+      responseJson = jsonDecode(response.body);
+
+      // log("This is the response body ====> ${response.body}");
+
+      if (response.statusCode == 200) {
+        // Map the response json to the model provided
+        verifyOTPResponse.value = VerifyOTPResponseModel.fromJson(responseJson);
+        prefs.setString("userToken", verifyOTPResponse.value.data.token);
+
+        //Save state that the user has logged in
+        prefs.setBool("isLoggedIn", true);
+
+        await Future.delayed(const Duration(seconds: 2));
+        ApiProcessorController.successSnack(responseJson["message"]);
+        Get.to(
+          () => const ProvideNameScreen(isEmailSignup: true),
+          routeName: "/provide-name",
+          arguments: {"riderId": riderId},
+          fullscreenDialog: true,
+          curve: Curves.easeInOut,
+          preventDuplicates: true,
+          popGesture: false,
+          transition: Get.defaultTransition,
+        );
+      } else {
+        ApiProcessorController.warningSnack(responseJson["message"]);
+
+        log("Request failed with status: ${response.statusCode}");
+        log("Response body: ${response.body}");
+      }
+    } catch (e) {
+      log(e.toString());
+    }
 
     isLoading.value = false;
-    update();
 
     //Continue the timer and enable resend button
-    onInit();
+    startTimer();
   }
 }

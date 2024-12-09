@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/src/controllers/others/connectivity_status_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'src/controllers/others/loading_controller.dart';
@@ -25,6 +26,7 @@ void main() async {
 
   Get.put(ThemeController());
   Get.put(LoadingController());
+  Get.put(ConnectivityStatusController());
 
   //This is to handle widget errors by showing a custom error widget screen
   if (kReleaseMode) ErrorWidget.builder = (_) => const AppErrorWidget();

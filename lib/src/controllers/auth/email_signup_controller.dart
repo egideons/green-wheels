@@ -1,5 +1,13 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/main.dart';
+import 'package:green_wheels/src/models/auth/initiate_signup_response_model.dart';
+import 'package:green_wheels/src/services/api/api_url.dart';
+import 'package:green_wheels/src/services/client/http_client_service.dart';
+import 'package:http/http.dart' as http;
 
 import '../../../app/auth/email_otp/screen/email_otp.dart';
 import '../others/api_processor_controller.dart';
@@ -25,11 +33,20 @@ class EmailSignupController extends GetxController {
   var isChecked = false.obs;
   var responseMessage = "".obs;
 
+  //=========== Models ===========\\
+  var initiateSignupResponseModel =
+      InitiateSignupResponseModel.fromJson(null).obs;
+  var rideID = 0.obs;
+
   @override
   void onInit() {
     super.onInit();
-
     emailFN.requestFocus();
+  }
+
+  //=========== onChanged Functions ===========\\
+  toggleCheck(value) {
+    isChecked.value = !isChecked.value;
   }
 
   //=========== Submit ===========\\
@@ -54,30 +71,72 @@ class EmailSignupController extends GetxController {
       }
 
       isLoading.value = true;
-      update();
+
+      var url = ApiUrl.baseUrl + ApiUrl.initiate;
+
+      Map data = {"identifier": emailEC.text, "type": "email"};
+
+      log("This is the Url: $url");
+      log("This is the login Data: $data");
+
+      //HTTP Client Service
+      http.Response? response =
+          await HttpClientService.postRequest(url, null, data);
+
+      if (response == null) {
+        isLoading.value = false;
+        update();
+        return;
+      }
+      try {
+        // Convert to json
+        dynamic responseJson;
+
+        responseJson = jsonDecode(response.body);
+
+        log("This is the response body ====> ${response.body}");
+
+        if (response.statusCode == 200) {
+          initiateSignupResponseModel.value =
+              InitiateSignupResponseModel.fromJson(responseJson);
+          responseMessage.value = initiateSignupResponseModel.value.message;
+
+          var riderId = initiateSignupResponseModel.value.data.riderId;
+
+          prefs.setString("userEmail", emailEC.text);
+          await Future.delayed(const Duration(seconds: 1));
+          prefs.setString("riderId", riderId.toString());
+          await Future.delayed(const Duration(seconds: 1));
+
+          //Display Snackbar
+          ApiProcessorController.successSnack(responseMessage.value);
+
+          // Get.put(EmailOTPController());
+          await Get.to(
+            () => EmailOTP(
+              loadData: EmailOTPController.instance.submitOTPSignup,
+            ),
+            binding: BindingsBuilder.put(() => EmailOTPController()),
+            arguments: {"email": emailEC.text, "riderId": riderId},
+            routeName: "/email-otp",
+            fullscreenDialog: true,
+            curve: Curves.easeInOut,
+            preventDuplicates: true,
+            popGesture: false,
+            transition: Get.defaultTransition,
+          );
+        } else {
+          //Display Snackbar
+          ApiProcessorController.warningSnack(responseJson["message"]);
+          log(responseJson);
+        }
+      } catch (e) {
+        log(e.toString());
+      }
 
       await Future.delayed(const Duration(seconds: 3));
-
-      Get.put(EmailOTPController());
-      await Get.to(
-        () => EmailOTP(
-          userEmail: emailEC.text,
-          loadData: EmailOTPController.instance.submitOTPSignup,
-        ),
-        routeName: "/email-otp",
-        fullscreenDialog: true,
-        curve: Curves.easeInOut,
-        preventDuplicates: true,
-        popGesture: false,
-        transition: Get.defaultTransition,
-      );
     }
     isLoading.value = false;
     update();
-  }
-
-  //=========== onChanged Functions ===========\\
-  toggleCheck(value) {
-    isChecked.value = !isChecked.value;
   }
 }

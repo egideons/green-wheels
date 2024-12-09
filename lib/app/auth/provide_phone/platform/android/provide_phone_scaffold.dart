@@ -44,11 +44,11 @@ class ProvidePhoneScaffold extends GetView<ProvidePhoneController> {
                     ),
                   ),
                   kSizedBox,
-                  AndroidElevatedButton(
-                    title: "Sign In",
-                    isLoading: controller.isLoading.value,
-                    onPressed: controller.toHomeScreen,
-                  ),
+                  Obx(() => AndroidElevatedButton(
+                        title: "Sign In",
+                        isLoading: controller.isLoading.value,
+                        onPressed: controller.toHomeScreen,
+                      )),
                   kSizedBox,
                 ],
               ),

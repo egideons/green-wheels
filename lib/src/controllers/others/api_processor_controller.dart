@@ -3,71 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/route_manager.dart';
+import 'package:green_wheels/src/constants/consts.dart';
 
 import '../../../theme/colors.dart';
-import '../../constants/consts.dart';
 
 class ApiProcessorController extends GetxController {
-  static void errorSnack(msg) {
-    Get.showSnackbar(
-      GetSnackBar(
-        titleText: SizedBox(
-          width: Get.width,
-          child: Text(
-            "ERROR",
-            overflow: TextOverflow.ellipsis,
-            style: defaultTextStyle(
-              color: kTextWhiteColor,
-              fontSize: 18.0,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -0.40,
-            ),
-          ),
-        ),
-        messageText: SizedBox(
-          width: Get.width,
-          child: Text(
-            msg,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 4,
-            style: defaultTextStyle(
-              color: kTextWhiteColor,
-              fontSize: 14.0,
-              fontWeight: FontWeight.w500,
-              letterSpacing: -0.40,
-            ),
-          ),
-        ),
-        icon: const Icon(
-          Icons.error_rounded,
-          size: 18,
-          color: kTextWhiteColor,
-        ),
-        shouldIconPulse: true,
-        isDismissible: true,
-        barBlur: 2.0,
-        borderRadius: 10,
-        snackPosition: SnackPosition.TOP,
-        // backgroundGradient: LinearGradient(
-        //   colors: [kSuccessColor, kSuccessColor.withOpacity(0.6)],
-        // ),
-        margin: const EdgeInsets.all(10),
-        backgroundColor: kErrorColor,
-        duration: const Duration(milliseconds: 1000),
-        mainButton: IconButton(
-          onPressed: () {
-            Get.back();
-          },
-          icon: const Icon(
-            Icons.cancel,
-            size: 14,
-            color: kTextWhiteColor,
-          ),
-        ),
-      ),
-    );
-  }
-
   static Future<dynamic> errorState(data) async {
     try {
       if (data.statusCode == 200) {
@@ -81,60 +21,209 @@ class ApiProcessorController extends GetxController {
     }
   }
 
-  static void successSnack(msg) {
+  static void successSnack(String? msg) {
+    var colorScheme = Theme.of(Get.context!).colorScheme;
+    var media = MediaQuery.of(Get.context!).size;
     Get.showSnackbar(
       GetSnackBar(
-        titleText: SizedBox(
-          width: Get.width,
-          child: Text(
-            "SUCCESS",
-            overflow: TextOverflow.ellipsis,
-            style: defaultTextStyle(
-              color: kTextWhiteColor,
-              fontSize: 18.0,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ),
-        messageText: SizedBox(
-          width: Get.width,
-          child: Text(
-            msg,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 4,
-            style: defaultTextStyle(
-              color: kTextWhiteColor,
-              fontSize: 14.0,
-              fontWeight: FontWeight.w500,
-            ),
+        // titleText: SizedBox(
+        //   width: Get.width,
+        //   child: Text(
+        //     "",
+        //     overflow: TextOverflow.ellipsis,
+        //     maxLines: 4,
+        //     style: defaultTextStyle(
+        //       color: kWhiteBackgroundColor,
+        //       fontSize: 14.0,
+        //       fontWeight: FontWeight.w500,
+        //     ),
+        //   ),
+        // ),
+        messageText: Text(
+          msg ?? "",
+          overflow: TextOverflow.ellipsis,
+          maxLines: 10,
+          style: defaultTextStyle(
+            color: kSuccessColor,
+            fontSize: 12.0,
+            fontWeight: FontWeight.w500,
           ),
         ),
         icon: const Icon(
           Icons.check_circle,
           size: 16,
-          color: kTextWhiteColor,
+          color: kSuccessColor,
         ),
         shouldIconPulse: true,
         isDismissible: true,
-        backgroundColor: kSuccessColor,
+        backgroundColor: colorScheme.surface,
         barBlur: 2.0,
         borderRadius: 10,
         snackPosition: SnackPosition.TOP,
+        maxWidth: media.width - 40,
+        duration: const Duration(seconds: 2),
+        boxShadows: [
+          BoxShadow(
+            color: colorScheme.inversePrimary.withOpacity(.2),
+            offset: const Offset(0, 4),
+            blurRadius: 10,
+            spreadRadius: 2,
+          ),
+        ],
         // backgroundGradient: LinearGradient(
         //   colors: [kSuccessColor, kSuccessColor.withOpacity(0.6)],
         // ),
-        margin: const EdgeInsets.all(10),
-        duration: const Duration(milliseconds: 1000),
-        mainButton: IconButton(
-          onPressed: () {
-            Get.back();
-          },
-          color: kTextWhiteColor,
-          icon: const Icon(
-            Icons.cancel,
-            size: 14,
+        // margin: const EdgeInsets.all(60),
+        // mainButton: IconButton(
+        //   onPressed: () {
+        //     Get.back();
+        //   },
+        //   color: kWhiteBackgroundColor,
+        //   icon: const Icon(
+        //     Icons.cancel,
+        //     size: 14,
+        //   ),
+        // ),
+      ),
+    );
+  }
+
+  static void errorSnack(String? msg) {
+    var colorScheme = Theme.of(Get.context!).colorScheme;
+    var media = MediaQuery.of(Get.context!).size;
+
+    Get.showSnackbar(
+      GetSnackBar(
+        // titleText: SizedBox(
+        //   width: Get.width,
+        //   child: Text(
+        //     msg,
+        //     overflow: TextOverflow.ellipsis,
+        //     maxLines: 4,
+        //     style: defaultTextStyle(
+        //       color: kWhiteBackgroundColor,
+        //       fontSize: 14.0,
+        //       fontWeight: FontWeight.w500,
+        //       letterSpacing: -0.40,
+        //     ),
+        //   ),
+        // ),
+        messageText: Text(
+          msg ?? "",
+          overflow: TextOverflow.ellipsis,
+          maxLines: 4,
+          style: defaultTextStyle(
+            color: kErrorColor,
+            fontSize: 14.0,
+            fontWeight: FontWeight.w500,
+            letterSpacing: -0.40,
           ),
         ),
+        icon: const Icon(
+          Icons.error_rounded,
+          size: 18,
+          color: kErrorColor,
+        ),
+        shouldIconPulse: true,
+        isDismissible: true,
+        barBlur: 2.0,
+        borderRadius: 10,
+        snackPosition: SnackPosition.TOP,
+        maxWidth: media.width - 40,
+        backgroundColor: colorScheme.surface,
+        duration: const Duration(seconds: 2),
+        boxShadows: [
+          BoxShadow(
+            color: colorScheme.inversePrimary.withOpacity(.2),
+            offset: const Offset(0, 4),
+            blurRadius: 10,
+            spreadRadius: 2,
+          ),
+        ],
+        // backgroundGradient: LinearGradient(
+        //   colors: [kSuccessColor, kSuccessColor.withOpacity(0.6)],
+        // ),
+        // margin: const EdgeInsets.all(60),
+        // mainButton: IconButton(
+        //   onPressed: () {
+        //     Get.back();
+        //   },
+        //   icon: Icon(
+        //     Icons.cancel,
+        //     size: 14,
+        //     color: kErrorColor,
+        //   ),
+        // ),
+      ),
+    );
+  }
+
+  static void warningSnack(String? msg) {
+    var colorScheme = Theme.of(Get.context!).colorScheme;
+    var media = MediaQuery.of(Get.context!).size;
+
+    Get.showSnackbar(
+      GetSnackBar(
+        // titleText: SizedBox(
+        //   width: Get.width,
+        //   child: Text(
+        //     msg,
+        //     overflow: TextOverflow.ellipsis,
+        //     maxLines: 4,
+        //     style: defaultTextStyle(
+        //       color: kWhiteBackgroundColor,
+        //       fontSize: 14.0,
+        //       fontWeight: FontWeight.w500,
+        //       letterSpacing: -0.40,
+        //     ),
+        //   ),
+        // ),
+        messageText: Text(
+          msg ?? "",
+          overflow: TextOverflow.ellipsis,
+          maxLines: 4,
+          style: defaultTextStyle(
+            color: kWarningColor,
+            fontSize: 14.0,
+            fontWeight: FontWeight.w500,
+            letterSpacing: -0.40,
+          ),
+        ),
+        icon: const Icon(
+          Icons.warning_rounded,
+          size: 18,
+          color: kWarningColor,
+        ),
+        shouldIconPulse: true,
+        isDismissible: true,
+        barBlur: 2.0,
+        borderRadius: 10,
+        snackPosition: SnackPosition.TOP,
+        maxWidth: media.width - 40,
+        backgroundColor: colorScheme.surface,
+        duration: const Duration(seconds: 2),
+        boxShadows: [
+          BoxShadow(
+            color: colorScheme.inversePrimary.withOpacity(.2),
+            offset: const Offset(0, 4),
+            blurRadius: 10,
+            spreadRadius: 2,
+          ),
+        ],
+        // backgroundGradient: LinearGradient(
+        //   colors: [kSuccessColor, kSuccessColor.withOpacity(0.6)],
+        // ),
+        // margin: const EdgeInsets.all(60),
+        // mainButton: IconButton(
+        //   onPressed: () {
+        //     Get.back();
+        //   },
+        //   icon: Icon(
+        //     Icons.cancel,
+        //     size: 14,
+        //     color: kWarningColor,
+        //   ),
+        // ),
       ),
     );
   }

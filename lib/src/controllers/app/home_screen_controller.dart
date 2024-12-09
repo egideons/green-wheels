@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:board_datetime_picker/board_datetime_picker.dart';
@@ -8,7 +9,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_wheels/app/home/content/rent_ride/choose_available_vehicle_scaffold.dart';
 import 'package:green_wheels/app/home/modals/book_ride_cancel_ride_fee_modal.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
+import 'package:green_wheels/src/models/ride/rent_ride_vehicle_model.dart';
+import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.dart';
+import 'package:green_wheels/src/models/rider/registration_rider_model.dart';
+import 'package:green_wheels/src/services/api/api_url.dart';
+import 'package:green_wheels/src/services/client/http_client_service.dart';
 import 'package:green_wheels/theme/colors.dart';
+import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -30,7 +37,6 @@ import '../../../app/splash/loading/screen/loading_screen.dart';
 import '../../../main.dart';
 import '../../constants/assets.dart';
 import '../../constants/consts.dart';
-import '../../models/rent_ride_vehicle_model.dart';
 import '../others/loading_controller.dart';
 
 class HomeScreenController extends GetxController
@@ -56,6 +62,11 @@ class HomeScreenController extends GetxController
     bookRideTimer?.cancel();
     super.onClose();
   }
+
+  //================ Models =================\\
+  var getRiderProfileResponseModel =
+      GetRiderProfileResponseModel.fromJson(null).obs;
+  var registrationRiderModel = RegistrationRiderModel.fromJson(null).obs;
 
   late TabController tabBarController;
   var selectedTabBar = 0.obs;
@@ -141,14 +152,57 @@ class HomeScreenController extends GetxController
   }
 
   //=============================== Init Functions =====================================\\
+  //Get Rider  Details
+  Future<bool> getRiderProfile() async {
+    var url = ApiUrl.baseUrl + ApiUrl.getRiderProfile;
+    var userToken = prefs.getString("userToken");
 
-  void initFunctions() async {
-    // showHomeModalBottomSheet();
+    log("URL=> $url\nUSERTOKEN=>$userToken");
 
-    // This will display info immediately and then hide it after 3 seconds
-    displayInfo();
-    await Future.delayed(const Duration(seconds: 3));
-    hideInfo();
+    //HTTP Client Service
+    http.Response? response =
+        await HttpClientService.getRequest(url, userToken);
+
+    if (response == null) {
+      return false;
+    }
+
+    try {
+      if (response.statusCode == 200) {
+        // log("Response body=> ${response.body}");
+
+        // Convert to json
+        dynamic responseJson;
+
+        responseJson = jsonDecode(response.body);
+
+        getRiderProfileResponseModel.value =
+            GetRiderProfileResponseModel.fromJson(responseJson);
+
+        registrationRiderModel.value = getRiderProfileResponseModel.value.data;
+
+        log(getRiderProfileResponseModel.value.message);
+        log(jsonEncode(registrationRiderModel.value));
+
+        return true;
+      } else {
+        log("An error occured, Response body: ${response.body}");
+        return false;
+      }
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  initFunctions() async {
+    var loadDriverDetails = await getRiderProfile();
+
+    if (loadDriverDetails) {
+      await displayInfo();
+      await Future.delayed(const Duration(seconds: 2));
+      await hideInfo();
+    }
   }
 
   //==================================== Google Maps =========================================\\

@@ -15,48 +15,44 @@ class EmailSignupScaffold extends GetView<EmailSignupController> {
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     var colorScheme = Theme.of(context).colorScheme;
-    return GetBuilder<EmailSignupController>(
-        init: EmailSignupController(),
-        builder: (controller) {
-          return Scaffold(
-            backgroundColor: colorScheme.surface,
-            appBar: myAppBar(colorScheme, media),
-            body: SafeArea(
-              child: ListView(
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(20),
-                children: [
-                  const SizedBox(height: kDefaultPadding * 4),
-                  const Text(
-                    "Enter Email Address",
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w400,
-                      color: kTextBlackColor,
-                    ),
-                  ),
-                  kSizedBox,
-                  Obx(
-                    () => Form(
-                      key: controller.formKey,
-                      child: emailSignupForm(colorScheme, media, controller),
-                    ),
-                  ),
-                  kSizedBox,
-                  Obx(() {
-                    return AndroidElevatedButton(
-                      title: "Sign Up",
-                      isLoading: controller.isLoading.value,
-                      disable: controller.isChecked.value ? false : true,
-                      onPressed: controller.signup,
-                    );
-                  }),
-                  kSizedBox,
-                ],
+    return Scaffold(
+      backgroundColor: colorScheme.surface,
+      appBar: myAppBar(colorScheme, media),
+      body: SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(20),
+          children: [
+            const SizedBox(height: kDefaultPadding * 4),
+            const Text(
+              "Enter Email Address",
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.w400,
+                color: kTextBlackColor,
               ),
             ),
-          );
-        });
+            kSizedBox,
+            Obx(
+              () => Form(
+                key: controller.formKey,
+                child: emailSignupForm(colorScheme, media, controller),
+              ),
+            ),
+            kSizedBox,
+            Obx(() {
+              return AndroidElevatedButton(
+                title: "Sign Up",
+                isLoading: controller.isLoading.value,
+                disable: !controller.isChecked.value,
+                onPressed: controller.signup,
+              );
+            }),
+            kSizedBox,
+          ],
+        ),
+      ),
+    );
   }
 }

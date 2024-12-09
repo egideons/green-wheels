@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/consts.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
-import 'package:green_wheels/src/utils/components/my_app_bar.dart';
 import 'package:green_wheels/theme/colors.dart';
 
 import '../../../../../src/controllers/auth/phone_login_controller.dart';
@@ -20,7 +19,6 @@ class PhoneLoginScaffold extends GetView<PhoneLoginController> {
         builder: (controller) {
           return Scaffold(
             backgroundColor: colorScheme.surface,
-            appBar: myAppBar(colorScheme, media),
             body: SafeArea(
               child: ListView(
                 shrinkWrap: true,

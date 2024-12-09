@@ -40,6 +40,7 @@ rideOptionTabBar(HomeScreenController controller, ColorScheme colorScheme) {
             children: [
               SvgPicture.asset(
                 tab['icon']!,
+                // ignore: deprecated_member_use
                 color: controller.selectedTabBar.value == index
                     ? colorScheme.surface
                     : tab['color'],

@@ -30,12 +30,14 @@ class GreenWalletPaymentMenuController extends GetxController {
     amountEC.dispose();
   }
 
-  var isLoading = false.obs;
+  //================ Variables =================\\
+  var walletBalance = Get.arguments?["wallet_balance"] ?? "";
 
   //================ controllers =================\\
   var scrollController = ScrollController();
 
   //================ Booleans =================\\
+  var isLoading = false.obs;
   var isScrollToTopBtnVisible = false.obs;
   var hideBalance = false.obs;
 
@@ -89,16 +91,7 @@ class GreenWalletPaymentMenuController extends GetxController {
     // await Get.toNamed(Routes.fundWalletMenu, preventDuplicates: true);
   }
 
-  List<Map<String, dynamic>> greenWalletPaymentMenuCards = [
-    {
-      "amount": 10000,
-      "label": "Available balance",
-    },
-    {
-      "amount": 5000,
-      "label": "Total expenses",
-    },
-  ];
+  late final List<Map<String, dynamic>> greenWalletPaymentMenuCards;
 
   //================ Wallet functions ================\\
 
@@ -117,7 +110,16 @@ class GreenWalletPaymentMenuController extends GetxController {
   // Load visibility state from SharedPreferences
   Future<void> loadVisibilityState() async {
     hideBalance.value = prefs.getBool('hideBalance') ?? hideBalance.value;
-    update();
+    greenWalletPaymentMenuCards = [
+      {
+        "amount": int.tryParse(walletBalance),
+        "label": "Available balance",
+      },
+      {
+        "amount": 0,
+        "label": "Total expenses",
+      },
+    ];
   }
 
   //=========================== Fund wallet ============================//

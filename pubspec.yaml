@@ -23,7 +23,7 @@ dependencies:
   lottie:
   image_picker:
   loading_animation_widget:
-  dio:
+  http:
   google_maps_flutter:
   permission_handler:
   # geolocator:
@@ -32,6 +32,7 @@ dependencies:
   board_datetime_picker: ^2.1.1
   animate_do:
   skeletonizer:
+  connectivity_plus:
 
 dev_dependencies:
   flutter_test:
