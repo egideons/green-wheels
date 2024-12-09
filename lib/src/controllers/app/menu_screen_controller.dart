@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:green_wheels/main.dart';
 import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.dart';
-import 'package:green_wheels/src/models/rider/registration_rider_model.dart';
+import 'package:green_wheels/src/models/rider/rider_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:green_wheels/src/services/client/http_client_service.dart';
 import 'package:http/http.dart' as http;
@@ -31,7 +31,7 @@ class MenuScreenController extends GetxController {
   //================ Models =================\\
   var getRiderProfileResponseModel =
       GetRiderProfileResponseModel.fromJson(null).obs;
-  var registrationRiderModel = RegistrationRiderModel.fromJson(null).obs;
+  var riderModel = RiderModel.fromJson(null).obs;
 
   //===================== Variable ========================\\
   List<Map<String, dynamic>> menuTotalInfo = [
@@ -88,6 +88,13 @@ class MenuScreenController extends GetxController {
   }
 
   //===================== Navivations ========================\\
+  goToEditProfile() async {
+    Get.toNamed(
+      Routes.editProfile,
+      preventDuplicates: true,
+    );
+  }
+
   goToRideHistory() async {
     Get.toNamed(
       Routes.rideHistoryMenu,
@@ -131,7 +138,7 @@ class MenuScreenController extends GetxController {
     // );
   }
 
-  //Get Rider  Details
+  //Get Rider Profile
   Future<void> getRiderProfile() async {
     isLoadingRiderProfile.value = true;
     var url = ApiUrl.baseUrl + ApiUrl.getRiderProfile;
@@ -160,11 +167,11 @@ class MenuScreenController extends GetxController {
         getRiderProfileResponseModel.value =
             GetRiderProfileResponseModel.fromJson(responseJson);
 
-        registrationRiderModel.value = getRiderProfileResponseModel.value.data;
-        walletBalance.value = registrationRiderModel.value.walletBalance;
+        riderModel.value = getRiderProfileResponseModel.value.data;
+        walletBalance.value = riderModel.value.walletBalance;
 
         log(getRiderProfileResponseModel.value.message);
-        log(jsonEncode(registrationRiderModel.value));
+        log(jsonEncode(riderModel.value));
       } else {
         log("An error occured, Response body: ${response.body}");
       }

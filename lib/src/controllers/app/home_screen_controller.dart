@@ -11,7 +11,7 @@ import 'package:green_wheels/app/home/modals/book_ride_cancel_ride_fee_modal.dar
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:green_wheels/src/models/ride/rent_ride_vehicle_model.dart';
 import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.dart';
-import 'package:green_wheels/src/models/rider/registration_rider_model.dart';
+import 'package:green_wheels/src/models/rider/rider_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:green_wheels/src/services/client/http_client_service.dart';
 import 'package:green_wheels/theme/colors.dart';
@@ -66,7 +66,7 @@ class HomeScreenController extends GetxController
   //================ Models =================\\
   var getRiderProfileResponseModel =
       GetRiderProfileResponseModel.fromJson(null).obs;
-  var registrationRiderModel = RegistrationRiderModel.fromJson(null).obs;
+  var riderModel = RiderModel.fromJson(null).obs;
 
   late TabController tabBarController;
   var selectedTabBar = 0.obs;
@@ -179,10 +179,10 @@ class HomeScreenController extends GetxController
         getRiderProfileResponseModel.value =
             GetRiderProfileResponseModel.fromJson(responseJson);
 
-        registrationRiderModel.value = getRiderProfileResponseModel.value.data;
+        riderModel.value = getRiderProfileResponseModel.value.data;
 
         log(getRiderProfileResponseModel.value.message);
-        log(jsonEncode(registrationRiderModel.value));
+        log(jsonEncode(riderModel.value));
 
         return true;
       } else {

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/app/auth/phone_login/screen/phone_login_screen.dart';
 import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.dart';
-import 'package:green_wheels/src/models/rider/registration_rider_model.dart';
+import 'package:green_wheels/src/models/rider/rider_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:green_wheels/src/services/client/http_client_service.dart';
 import 'package:http/http.dart' as http;
@@ -32,7 +32,7 @@ class AuthController extends GetxController {
   //================ Models =================\\
   var getRiderProfileResponseModel =
       GetRiderProfileResponseModel.fromJson(null).obs;
-  var registrationRiderModel = RegistrationRiderModel.fromJson(null).obs;
+  var riderModel = RiderModel.fromJson(null).obs;
 
   var isLoading = false.obs;
   var responseStatus = 0.obs;
@@ -133,12 +133,12 @@ class AuthController extends GetxController {
         getRiderProfileResponseModel.value =
             GetRiderProfileResponseModel.fromJson(responseJson);
 
-        registrationRiderModel.value = getRiderProfileResponseModel.value.data;
+        riderModel.value = getRiderProfileResponseModel.value.data;
 
-        isLoggedIn.value = registrationRiderModel.value.loggedIn;
+        isLoggedIn.value = riderModel.value.loggedIn;
 
         log(getRiderProfileResponseModel.value.message);
-        log(jsonEncode(registrationRiderModel.value));
+        log(jsonEncode(riderModel.value));
 
         return true;
       } else {

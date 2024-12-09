@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:green_wheels/app/menu/views/edit_profile/screen/edit_profile_screen.dart';
 import 'package:green_wheels/app/menu/views/scheduled_trips_menu/views/scheduled_rides_menu/screen/scheduled_rides_menu_screen.dart';
 
 import '../../app/auth/email_login/screen/email_login_screen.dart';
@@ -67,7 +68,7 @@ class Routes {
 
   //Menu Section
   static const menu = "/menu";
-  static const profile = "/profile-menu";
+  static const editProfile = "/edit-profile";
   static const rideHistoryMenu = "/ride-history-menu";
   static const scheduledTripsMenu = "/scheduled-trips-menu";
   static const scheduledRidesMenu = "/scheduled-ride-menu";
@@ -119,6 +120,7 @@ class Routes {
     //Menu Section
     // GetPage(name: notificationsScreen, page: () => const NotificationsScreen()),
     GetPage(name: menu, page: () => const MenuScreen()),
+    GetPage(name: editProfile, page: () => const EditProfileScreen()),
     GetPage(name: rideHistoryMenu, page: () => const RideHistoryMenuScreen()),
     GetPage(
       name: scheduledTripsMenu,

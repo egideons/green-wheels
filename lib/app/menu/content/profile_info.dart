@@ -34,7 +34,7 @@ profileInfo(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  controller.registrationRiderModel.value.fullName,
+                  controller.riderModel.value.fullName ?? "",
                   textAlign: TextAlign.start,
                   maxLines: 2,
                   style: defaultTextStyle(
@@ -44,7 +44,7 @@ profileInfo(
                   ),
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: controller.goToEditProfile,
                   borderRadius: BorderRadius.circular(8),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(

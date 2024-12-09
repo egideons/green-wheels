@@ -99,4 +99,32 @@ class HttpClientService {
     }
     return response;
   }
+
+  static Future<http.Response?> patchRequest([
+    String? url,
+    String? token,
+    dynamic data,
+  ]) async {
+    http.Response? response;
+    try {
+      // log("This is the http client service data: $data");
+
+      response = await http
+          .patch(
+            Uri.parse(url!),
+            headers: {
+              HttpHeaders.contentTypeHeader: header,
+              "Content-Type": content,
+              HttpHeaders.authorizationHeader: "Bearer $token",
+            },
+            body: data,
+          )
+          .timeout(const Duration(seconds: 20));
+      // log("This is the http client service response body: ${response.body}");
+    } catch (e) {
+      response = null;
+      log(e.toString());
+    }
+    return response;
+  }
 }

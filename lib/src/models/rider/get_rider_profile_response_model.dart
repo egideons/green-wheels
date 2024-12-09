@@ -1,9 +1,9 @@
-import 'registration_rider_model.dart';
+import 'package:green_wheels/src/models/rider/rider_model.dart';
 
 class GetRiderProfileResponseModel {
   final int status;
   final String message;
-  final RegistrationRiderModel data;
+  final RiderModel data;
 
   GetRiderProfileResponseModel({
     required this.status,
@@ -16,7 +16,7 @@ class GetRiderProfileResponseModel {
     return GetRiderProfileResponseModel(
       status: json['status'] ?? 0,
       message: json['message'] ?? "",
-      data: RegistrationRiderModel.fromJson(json['data'] ?? {}),
+      data: RiderModel.fromJson(json['data'] ?? {}),
     );
   }
 

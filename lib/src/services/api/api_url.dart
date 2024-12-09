@@ -10,8 +10,9 @@ class ApiUrl {
   static const resendOtp = "/riders/resend-otp";
   static const logout = "/riders/logout";
 
-  //============= Driver ================\\
+  //============= Rider ================\\
   static const getRiderProfile = "/riders/user";
+  static const editProfile = "/riders/user";
 
   //=============== Booking ====================\\
 }
