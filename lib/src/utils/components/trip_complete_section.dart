@@ -21,10 +21,10 @@ tripCompleteSection(ColorScheme colorScheme) {
       chatAndCallSection(
         colorScheme,
         chatFunc: () {
-          UrlLaunchController.sendSms("+2347039502751");
+          UrlLaunchController.sendSms("+2347034922494");
         },
         callFunc: () {
-          UrlLaunchController.makePhoneCall("+2347039502751");
+          UrlLaunchController.makePhoneCall("+2347034922494");
         },
       ),
     ],

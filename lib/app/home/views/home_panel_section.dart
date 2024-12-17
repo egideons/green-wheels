@@ -114,7 +114,7 @@ homePanelSection(
                           ),
                           kSizedBox,
                           controller.selectedTabBar.value == 0
-                              ? bookRideTabBarView(
+                              ? bookInstantRideTabBarView(
                                   media,
                                   colorScheme,
                                   controller,

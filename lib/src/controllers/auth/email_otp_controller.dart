@@ -201,25 +201,69 @@ class EmailOTPController extends GetxController {
     pauseTimer();
     timerComplete.value = false;
 
-    //Save state that the user has logged in
-    prefs.setBool("isLoggedIn", true);
-    //Save state that the user has entered their phone number
-    prefs.setBool("hasEnteredPhoneNumber", true);
-    //Save state that the user has entered their name
-    prefs.setBool("hasEnteredName", true);
+    var url = ApiUrl.baseUrl + ApiUrl.verifyOtp;
 
-    await Future.delayed(const Duration(seconds: 3));
-    ApiProcessorController.successSnack("Verification successful");
+    var otpCode = pin1EC.text + pin2EC.text + pin3EC.text + pin4EC.text;
 
-    Get.offAll(
-      () => const HomeScreen(),
-      routeName: "/home",
-      fullscreenDialog: true,
-      curve: Curves.easeInOut,
-      predicate: (routes) => false,
-      popGesture: false,
-      transition: Get.defaultTransition,
-    );
+    Map data = {
+      "rider_id": riderId.toString(),
+      "otp": otpCode,
+    };
+
+    log("This is the Url: $url");
+    log("This is the email otp data: $data");
+
+    //HTTP Client Service
+    http.Response? response =
+        await HttpClientService.postRequest(url, null, data);
+
+    if (response == null) {
+      isLoading.value = false;
+      //Continue the timer and enable resend button
+      startTimer();
+      return;
+    }
+
+    // //Save state that the user has logged in
+    // prefs.setBool("isLoggedIn", true);
+
+    try {
+      // Convert to json
+      dynamic responseJson;
+
+      responseJson = jsonDecode(response.body);
+
+      // log("This is the response body ====> ${response.body}");
+
+      if (response.statusCode == 200) {
+        // Map the response json to the model provided
+        verifyOTPResponse.value = VerifyOTPResponseModel.fromJson(responseJson);
+        prefs.setString("userToken", verifyOTPResponse.value.data.token);
+
+        //Save state that the user has logged in
+        prefs.setBool("isLoggedIn", true);
+
+        await Future.delayed(const Duration(seconds: 2));
+        ApiProcessorController.successSnack(responseJson["message"]);
+
+        Get.offAll(
+          () => const HomeScreen(),
+          routeName: "/home",
+          fullscreenDialog: true,
+          curve: Curves.easeInOut,
+          predicate: (routes) => false,
+          popGesture: false,
+          transition: Get.defaultTransition,
+        );
+      } else {
+        ApiProcessorController.warningSnack(responseJson["message"]);
+
+        log("Request failed with status: ${response.statusCode}");
+        log("Response body: ${response.body}");
+      }
+    } catch (e) {
+      log(e.toString());
+    }
 
     isLoading.value = false;
     update();

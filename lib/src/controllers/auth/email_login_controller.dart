@@ -85,7 +85,7 @@ class EmailLoginController extends GetxController {
 
         if (response.statusCode == 200) {
           await Future.delayed(const Duration(seconds: 1));
-          ApiProcessorController.warningSnack(loginResponse.value.message);
+          ApiProcessorController.successSnack(loginResponse.value.message);
 
           await Get.to(
             () => EmailOTP(

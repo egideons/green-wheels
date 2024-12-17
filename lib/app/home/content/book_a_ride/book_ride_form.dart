@@ -39,32 +39,32 @@ bookRideForm(
               ),
             ),
             kHalfSizedBox,
-            controller.isStopLocationVisible.value
-                ? formFieldContainer(
-                    colorScheme,
-                    media,
-                    borderSide: BorderSide(
-                      width: 1,
-                      color: colorScheme.primary,
-                    ),
-                    child: Center(
-                      child: AndroidTextFormField(
-                        controller: controller.stop1LocationEC,
-                        focusNode: controller.stop1LocationFN,
-                        textInputAction: TextInputAction.next,
-                        textCapitalization: TextCapitalization.words,
-                        onChanged: controller.stopLocationOnChanged,
-                        hintText: "Add a Stop",
-                        validator: (value) {
-                          return null;
-                        },
-                      ),
-                    ),
-                  )
-                : const SizedBox(),
-            controller.isStopLocationVisible.value
-                ? kHalfSizedBox
-                : const SizedBox(),
+            // controller.isStopLocationVisible.value
+            //     ? formFieldContainer(
+            //         colorScheme,
+            //         media,
+            //         borderSide: BorderSide(
+            //           width: 1,
+            //           color: colorScheme.primary,
+            //         ),
+            //         child: Center(
+            //           child: AndroidTextFormField(
+            //             controller: controller.stop1LocationEC,
+            //             focusNode: controller.stop1LocationFN,
+            //             textInputAction: TextInputAction.next,
+            //             textCapitalization: TextCapitalization.words,
+            //             onChanged: controller.stopLocationOnChanged,
+            //             hintText: "Add a Stop",
+            //             validator: (value) {
+            //               return null;
+            //             },
+            //           ),
+            //         ),
+            //       )
+            //     : const SizedBox(),
+            // controller.isStopLocationVisible.value
+            //     ? kHalfSizedBox
+            //     : const SizedBox(),
             formFieldContainer(
               colorScheme,
               media,

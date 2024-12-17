@@ -84,7 +84,7 @@ emailSignupForm(
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
                         UrlLaunchController.launchWeb(
-                          "https://google.com",
+                          "https://essemobility.com/",
                           LaunchMode.externalApplication,
                         );
                       },
@@ -109,7 +109,7 @@ emailSignupForm(
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
                         UrlLaunchController.launchWeb(
-                          "https://google.com",
+                          "https://essemobility.com/",
                           LaunchMode.externalApplication,
                         );
                       },

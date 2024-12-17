@@ -26,32 +26,32 @@ tripIconsSection(ColorScheme colorScheme, controller) {
             width: 1,
             color: colorScheme.primary,
           ),
-          controller.isStopLocationVisible.value
-              ? Container(
-                  width: 32,
-                  height: 32,
-                  decoration: ShapeDecoration(
-                    shape: const CircleBorder(),
-                    color: controller.isStopLocationTextFieldActive.value
-                        ? colorScheme.primary
-                        : colorScheme.inversePrimary,
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.circle,
-                      color: colorScheme.surface,
-                      size: 16,
-                    ),
-                  ),
-                )
-              : const SizedBox(),
-          controller.isStopLocationVisible.value
-              ? Container(
-                  height: 30,
-                  width: 1,
-                  color: colorScheme.primary,
-                )
-              : const SizedBox(),
+          // controller.isStopLocationVisible.value
+          //     ? Container(
+          //         width: 32,
+          //         height: 32,
+          //         decoration: ShapeDecoration(
+          //           shape: const CircleBorder(),
+          //           color: controller.isStopLocationTextFieldActive.value
+          //               ? colorScheme.primary
+          //               : colorScheme.inversePrimary,
+          //         ),
+          //         child: Center(
+          //           child: Icon(
+          //             Icons.circle,
+          //             color: colorScheme.surface,
+          //             size: 16,
+          //           ),
+          //         ),
+          //       )
+          //     : const SizedBox(),
+          // controller.isStopLocationVisible.value
+          //     ? Container(
+          //         height: 30,
+          //         width: 1,
+          //         color: colorScheme.primary,
+          //       )
+          //     : const SizedBox(),
           Container(
             width: 32,
             height: 32,

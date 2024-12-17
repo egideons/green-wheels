@@ -34,6 +34,8 @@ class AuthController extends GetxController {
       GetRiderProfileResponseModel.fromJson(null).obs;
   var riderModel = RiderModel.fromJson(null).obs;
 
+  var userToken = prefs.getString("userToken");
+
   var isLoading = false.obs;
   var responseStatus = 0.obs;
   var responseMessage = "".obs;
@@ -42,10 +44,36 @@ class AuthController extends GetxController {
   Future<void> loadApp() async {
     bool isOnboarded = prefs.getBool("isOnboarded") ?? false;
 
-    bool notNewUser = await getRiderProfile();
+    // bool notNewUser =
 
-    if (notNewUser) {
-      if (isLoggedIn.value) {
+    if (userToken == null || userToken!.isEmpty) {
+      if (isOnboarded) {
+        // UserToken is null or empty navigate to the login screen
+        await Get.offAll(
+          () => const PhoneLoginScreen(),
+          routeName: "/login",
+          fullscreenDialog: true,
+          curve: Curves.easeInOut,
+          predicate: (routes) => false,
+          popGesture: false,
+          transition: Get.defaultTransition,
+        );
+      } else {
+        // UserToken is null or empty navigate to the login screen
+        await Get.offAll(
+          () => const OnboardingScreen(),
+          routeName: "/onboarding",
+          fullscreenDialog: true,
+          curve: Curves.easeInOut,
+          predicate: (routes) => false,
+          popGesture: false,
+          transition: Get.defaultTransition,
+        );
+      }
+    } else {
+      await getRiderProfile();
+
+      if (isLoggedIn.value == true) {
         // User is logged in, navigate to the home screen
         await Get.offAll(
           () => const HomeScreen(),
@@ -56,11 +84,24 @@ class AuthController extends GetxController {
           popGesture: false,
           transition: Get.defaultTransition,
         );
+
+        // }
+        //else if (isLoggedIn.value) {
+        //   // User is logged in, navigate to the home screen
+        //   await Get.offAll(
+        //     () => const HomeScreen(),
+        //     routeName: "/home",
+        //     fullscreenDialog: true,
+        //     curve: Curves.easeInOut,
+        //     predicate: (routes) => false,
+        //     popGesture: false,
+        //     transition: Get.defaultTransition,
+        //   );
       } else {
-        // User is onboarded but not logged in, navigate to the phone login screen
+        // User is onboarded but not logged in, navigate to the sign up screen
         await Get.offAll(
-          () => const PhoneLoginScreen(),
-          routeName: "/login",
+          () => const PhoneSignupScreen(),
+          routeName: "/signup",
           fullscreenDialog: true,
           curve: Curves.easeInOut,
           predicate: (routes) => false,
@@ -68,40 +109,6 @@ class AuthController extends GetxController {
           transition: Get.defaultTransition,
         );
       }
-      // }
-      //else if (isLoggedIn.value) {
-      //   // User is logged in, navigate to the home screen
-      //   await Get.offAll(
-      //     () => const HomeScreen(),
-      //     routeName: "/home",
-      //     fullscreenDialog: true,
-      //     curve: Curves.easeInOut,
-      //     predicate: (routes) => false,
-      //     popGesture: false,
-      //     transition: Get.defaultTransition,
-      //   );
-    } else if (isOnboarded) {
-      // User is onboarded but not logged in, navigate to the sign up screen
-      await Get.offAll(
-        () => const PhoneSignupScreen(),
-        routeName: "/signup",
-        fullscreenDialog: true,
-        curve: Curves.easeInOut,
-        predicate: (routes) => false,
-        popGesture: false,
-        transition: Get.defaultTransition,
-      );
-    } else {
-      // User is not onboarded, navigate to the onboarding screen
-      await Get.offAll(
-        () => const OnboardingScreen(),
-        routeName: "/onboarding",
-        fullscreenDialog: true,
-        curve: Curves.easeInOut,
-        predicate: (routes) => false,
-        popGesture: false,
-        transition: Get.defaultTransition,
-      );
     }
   }
 
@@ -140,7 +147,7 @@ class AuthController extends GetxController {
         log(getRiderProfileResponseModel.value.message);
         log(jsonEncode(riderModel.value));
 
-        return true;
+        return isLoggedIn.value;
       } else {
         log("An error occured, Response body: ${response.body}");
         return false;
