@@ -27,6 +27,7 @@ class ProvideNameController extends GetxController {
 
   //=========== Variables ===========\\
   var riderId = Get.arguments?["riderId"] ?? "";
+  var userEmail = Get.arguments?["userEmail"] ?? "";
 
   //=========== Form Key ===========\\
   final formKey = GlobalKey<FormState>();

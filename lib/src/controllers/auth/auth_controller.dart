@@ -71,9 +71,9 @@ class AuthController extends GetxController {
         );
       }
     } else {
-      await getRiderProfile();
+      var loggedIn = await getRiderProfile();
 
-      if (isLoggedIn.value == true) {
+      if (loggedIn == true) {
         // User is logged in, navigate to the home screen
         await Get.offAll(
           () => const HomeScreen(),
@@ -147,7 +147,7 @@ class AuthController extends GetxController {
         log(getRiderProfileResponseModel.value.message);
         log(jsonEncode(riderModel.value));
 
-        return isLoggedIn.value;
+        return true;
       } else {
         log("An error occured, Response body: ${response.body}");
         return false;

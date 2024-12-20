@@ -30,6 +30,7 @@ class PhoneSignupController extends GetxController {
   var responseStatus = 0.obs;
   var isChecked = false.obs;
   var responseMessage = "".obs;
+  var nigerianDialCode = "+234";
 
   @override
   void onInit() {

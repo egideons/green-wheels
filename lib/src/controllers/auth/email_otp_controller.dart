@@ -42,8 +42,6 @@ class EmailOTPController extends GetxController {
 
   //=========== Controllers ===========\\
 
-  final emailEC = TextEditingController();
-
   final pin1EC = TextEditingController();
   final pin2EC = TextEditingController();
   final pin3EC = TextEditingController();
@@ -325,7 +323,7 @@ class EmailOTPController extends GetxController {
         Get.to(
           () => const ProvideNameScreen(isEmailSignup: true),
           routeName: "/provide-name",
-          arguments: {"riderId": riderId},
+          arguments: {"riderId": riderId, "email": userEmail},
           fullscreenDialog: true,
           curve: Curves.easeInOut,
           preventDuplicates: true,

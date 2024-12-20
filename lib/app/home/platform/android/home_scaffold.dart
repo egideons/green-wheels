@@ -57,7 +57,8 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
                   //     // sc,
                   //   );
                   // },
-                  panel: homePanelSection(colorScheme, media, context),
+                  panel:
+                      homePanelSection(colorScheme, media, context, controller),
                 ),
                 Positioned(
                   top: 15,

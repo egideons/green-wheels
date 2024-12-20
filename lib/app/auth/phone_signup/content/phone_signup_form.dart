@@ -43,7 +43,7 @@ phoneSignupForm(
             ),
             kHalfWidthSizedBox,
             Text(
-              "+234",
+              controller.nigerianDialCode,
               textAlign: TextAlign.start,
               style: defaultTextStyle(
                 fontSize: 16,

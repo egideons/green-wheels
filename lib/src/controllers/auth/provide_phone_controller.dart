@@ -26,6 +26,7 @@ class ProvidePhoneController extends GetxController {
       GetRegistrationRiderResponseModel.fromJson(null).obs;
 
   //=========== Variables ===========\\
+  var nigerianDialCode = "+234";
   var riderId = Get.arguments?["riderId"] ?? "";
   var fullName = Get.arguments?["fullName"] ?? "";
 
@@ -100,13 +101,13 @@ class ProvidePhoneController extends GetxController {
       Map data = {
         "rider_id": riderId.toString(),
         "full_name": fullName,
-        "phone": phoneNumberEC.text,
+        "phone": nigerianDialCode + phoneNumberEC.text,
       };
 
       var userToken = prefs.getString("userToken");
       log(userToken.toString());
       log("This is the Url: $url");
-      log("This is the email otp data: $data");
+      log("This is the data: $data");
 
       //HTTP Client Service
       http.Response? response =

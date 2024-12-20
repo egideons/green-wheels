@@ -8,7 +8,10 @@ import '../../../../src/utils/textformfields/android/android_textformfield.dart'
 import '../../../../theme/colors.dart';
 
 providePhoneForm(
-    ColorScheme colorScheme, Size media, ProvidePhoneController controller) {
+  ColorScheme colorScheme,
+  Size media,
+  ProvidePhoneController controller,
+) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
     children: [
@@ -36,7 +39,7 @@ providePhoneForm(
             ),
             kHalfWidthSizedBox,
             Text(
-              "+234",
+              controller.nigerianDialCode,
               textAlign: TextAlign.start,
               style: defaultTextStyle(
                 fontSize: 16,
