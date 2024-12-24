@@ -304,11 +304,11 @@ class HomeScreenController extends GetxController
   //==== Book Ride Section =========================================================================>
 
   //================ Controllers =================\\
-  var pickupLocation = "Pin Plaza, 1st Avenue, Festac".obs;
+  var pickupLocation = "123 Main Street, Lagos".obs;
   var stopLocation1 = "22 Festac Town".obs;
-  var destinationLocation = "Holy Family Catholic Church".obs;
+  var destinationLocation = "456 Marina Road, Lagos".obs;
   final pickupLocationEC =
-      TextEditingController(text: "Pin Plaza, 1st Avenue, Festac");
+      TextEditingController(text: "123 Main Street, Lagos");
   final stop1LocationEC = TextEditingController();
   final stop2LocationEC = TextEditingController();
   final stop3LocationEC = TextEditingController();
@@ -327,6 +327,7 @@ class HomeScreenController extends GetxController
   var bookDriverTimerFinished = false.obs;
   var bookDriverFound = false.obs;
   var driverHasArrived = false.obs;
+  var loadingRideAmount = false.obs;
 
   //================ OnTap and Onchanged =================\\
   void selectPickupSuggestion() async {
@@ -340,11 +341,49 @@ class HomeScreenController extends GetxController
     FocusManager.instance.primaryFocus?.nextFocus();
   }
 
+//! Calculate Ride Amount and Select Destination Suggestion
   void selectDestinationSuggestion() async {
-    mapSuggestionIsSelected.value = true;
     destinationEC.text = destinationLocation.value;
-    // FocusScope.of(Get.context!).unfocus();
-    FocusManager.instance.primaryFocus?.unfocus();
+
+    var url = ApiUrl.baseUrl + ApiUrl.rideAmount;
+
+    var userToken = prefs.getString("userToken");
+
+    Map<String, dynamic> data = {
+      "type": "instant",
+      "pickup_location": {
+        "address": pickupLocationEC.text,
+        "lat": 6.5244,
+        "long": 3.3792
+      },
+      "destination": {
+        "address": destinationEC.text,
+        "lat": 6.4531,
+        "long": 3.3958
+      }
+    };
+
+    log("URL=> $url\nUSERTOKEN=>$userToken\n$data");
+
+    //HTTP Client Service
+    http.Response? response =
+        await HttpClientService.postRequest(url, userToken, data);
+
+    if (response == null) {
+      return;
+    }
+
+    log("Response body=> ${response.body}");
+
+    try {
+      if (response.statusCode == 200) {
+        mapSuggestionIsSelected.value = true;
+        // FocusScope.of(Get.context!).unfocus();
+        FocusManager.instance.primaryFocus?.unfocus();
+      } else {}
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   void destinationOnTap() async {

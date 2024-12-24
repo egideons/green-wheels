@@ -15,4 +15,5 @@ class ApiUrl {
   static const editProfile = "/riders/user";
 
   //=============== Booking ====================\\
+  static const rideAmount = "/ride-amount";
 }

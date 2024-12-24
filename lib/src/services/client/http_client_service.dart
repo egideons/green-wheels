@@ -11,6 +11,7 @@ class HttpClientService {
   static Future<http.Response?> getRequest([
     String? url,
     String? token,
+    Map<String, String>? headers,
   ]) async {
     http.Response? response;
 
@@ -19,10 +20,11 @@ class HttpClientService {
     try {
       response = await http.get(
         Uri.parse(url!),
-        headers: {
-          HttpHeaders.contentTypeHeader: header,
-          HttpHeaders.authorizationHeader: "Bearer $token",
-        },
+        headers: headers ??
+            {
+              HttpHeaders.contentTypeHeader: header,
+              HttpHeaders.authorizationHeader: "Bearer $token",
+            },
       );
       // log("This is the http client service response body: ${response.statusCode}");
     } catch (e) {
@@ -36,6 +38,7 @@ class HttpClientService {
     String? url,
     String? token,
     dynamic data,
+    Map<String, String>? headers,
   ]) async {
     http.Response? response;
     try {
@@ -43,10 +46,11 @@ class HttpClientService {
         response = await http
             .post(
               Uri.parse(url!),
-              headers: {
-                HttpHeaders.contentTypeHeader: header,
-                "Content-Type": content,
-              },
+              headers: headers ??
+                  {
+                    HttpHeaders.contentTypeHeader: header,
+                    "Content-Type": content,
+                  },
               body: data,
             )
             .timeout(const Duration(seconds: 20));
@@ -54,16 +58,17 @@ class HttpClientService {
         response = await http
             .post(
               Uri.parse(url!),
-              headers: {
-                HttpHeaders.contentTypeHeader: header,
-                "Content-Type": content,
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              },
+              headers: headers ??
+                  {
+                    HttpHeaders.contentTypeHeader: header,
+                    "Content-Type": content,
+                    HttpHeaders.authorizationHeader: "Bearer $token",
+                  },
               body: jsonEncode(data),
             )
             .timeout(const Duration(seconds: 20));
 
-        log(response.body);
+        // log(response.body);
       }
     } catch (e) {
       response = null;
@@ -76,6 +81,7 @@ class HttpClientService {
     String? url,
     String? token,
     dynamic data,
+    Map<String, String>? headers,
   ]) async {
     http.Response? response;
     try {
@@ -84,11 +90,12 @@ class HttpClientService {
       response = await http
           .put(
             Uri.parse(url!),
-            headers: {
-              HttpHeaders.contentTypeHeader: header,
-              "Content-Type": content,
-              HttpHeaders.authorizationHeader: "Bearer $token",
-            },
+            headers: headers ??
+                {
+                  HttpHeaders.contentTypeHeader: header,
+                  "Content-Type": content,
+                  HttpHeaders.authorizationHeader: "Bearer $token",
+                },
             body: data,
           )
           .timeout(const Duration(seconds: 20));
@@ -104,6 +111,7 @@ class HttpClientService {
     String? url,
     String? token,
     dynamic data,
+    Map<String, String>? headers,
   ]) async {
     http.Response? response;
     try {
@@ -112,11 +120,12 @@ class HttpClientService {
       response = await http
           .patch(
             Uri.parse(url!),
-            headers: {
-              HttpHeaders.contentTypeHeader: header,
-              "Content-Type": content,
-              HttpHeaders.authorizationHeader: "Bearer $token",
-            },
+            headers: headers ??
+                {
+                  HttpHeaders.contentTypeHeader: header,
+                  "Content-Type": content,
+                  HttpHeaders.authorizationHeader: "Bearer $token",
+                },
             body: data,
           )
           .timeout(const Duration(seconds: 20));
