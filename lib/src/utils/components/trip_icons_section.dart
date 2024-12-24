@@ -21,7 +21,7 @@ tripIconsSection(ColorScheme colorScheme, controller) {
         ),
       ),
       Container(
-        height: 30,
+        height: controller.destinationEC.text.isEmpty ? 30 : 50,
         width: 1,
         color: colorScheme.primary,
       ),

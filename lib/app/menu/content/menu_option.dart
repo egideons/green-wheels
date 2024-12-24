@@ -10,6 +10,7 @@ menuOption(
   void Function()? nav,
   IconData? icon,
   String? title,
+  var trailingIsVisible = true,
 }) {
   return Container(
     decoration: ShapeDecoration(
@@ -32,7 +33,7 @@ menuOption(
           fontWeight: FontWeight.w500,
         ),
       ),
-      trailing: const Icon(Icons.chevron_right),
+      trailing: trailingIsVisible ? const Icon(Icons.chevron_right) : null,
     ),
   );
 }

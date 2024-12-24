@@ -105,7 +105,7 @@ class RentRideBookingConfirmedModal extends GetView<HomeScreenController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Amount Charge\n(per hour)",
+                        "Amount Charge\n(per minute)",
                         style: defaultTextStyle(
                           color: kTextBlackColor,
                           fontSize: 16,

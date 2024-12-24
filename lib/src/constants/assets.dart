@@ -20,6 +20,11 @@ class Assets {
   static const routeIconSvg = "assets/icons/svg/route.svg";
   static const supportIconSvg = "assets/icons/svg/support.svg";
   static const carOutlineIconSvg = "assets/icons/svg/car_outline.svg";
+  static const cameraOutlineSvg = "assets/icons/svg/camera-outline.svg";
+  static const cameraFilledSvg = "assets/icons/svg/camera-filled.svg";
+  static const imageOutlineSvg = "assets/icons/svg/image-outline.svg";
+  static const imageOutline2Svg = "assets/icons/svg/image-outline-2.svg";
+  static const imageFilledSvg = "assets/icons/svg/image-filled.svg";
   static const carCalendarOutlineIconSvg =
       "assets/icons/svg/car_calendar_outline.svg";
   static const carClockIconOutlineSvg =

@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:green_wheels/theme/colors.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 //validation for email
@@ -101,6 +102,17 @@ defaultTextStyle({
       fontWeight: fontWeight ?? FontWeight.w600,
       letterSpacing: letterSpacing ?? .60,
     );
+
+//========== Image ==============\\
+const int maxImageSize = 5 * 1024 * 1024; // 5 MB
+
+Future<bool> checkXFileSize(XFile? image) async {
+  if (image == null) {
+    return false;
+  }
+  int imgLen = await image.length();
+  return imgLen > maxImageSize;
+}
 
 //===================== Number format ==========================\\
 String doubleFormattedText(double value) {
@@ -256,4 +268,14 @@ String shortenId(String id) {
   }
   final int mid = id.length ~/ 2;
   return '${id.substring(0, 4)}...${id.substring(mid + 1)}';
+}
+
+String getNameInitials(String name) {
+  // Split the name by spaces
+  List<String> nameParts = name.split(' ');
+
+  // Map each part to its first letter and join them
+  String initials = nameParts.map((part) => part[0]).join();
+
+  return initials.toUpperCase(); // Convert to uppercase if needed
 }

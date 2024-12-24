@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
 
 String header = "application/json";
 const content = "application/x-www-form-urlencoded";
@@ -133,6 +135,38 @@ class HttpClientService {
     } catch (e) {
       response = null;
       log(e.toString());
+    }
+    return response;
+  }
+
+  static Future<http.StreamedResponse?> uploadProfilePicture(
+    String url,
+    String token,
+    XFile file,
+  ) async {
+    http.StreamedResponse? response;
+    try {
+      var request = http.MultipartRequest('POST', Uri.parse(url));
+      request.headers.addAll({
+        HttpHeaders.authorizationHeader: "Bearer $token",
+        HttpHeaders.contentTypeHeader: "multipart/form-data",
+      });
+
+      // Add the file to the request
+      request.files.add(await http.MultipartFile.fromPath(
+        'file', // field name for the file
+        file.path,
+        contentType: MediaType('image', 'jpeg'),
+      ));
+
+      log("Uploading profile image: ${file.path}");
+
+      response = await request.send().timeout(const Duration(seconds: 20));
+
+      log("Response status code: ${response.statusCode}");
+    } catch (e) {
+      response = null;
+      log("Error uploading profile image: $e");
     }
     return response;
   }

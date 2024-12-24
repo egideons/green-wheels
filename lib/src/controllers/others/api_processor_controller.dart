@@ -33,7 +33,7 @@ class ApiProcessorController extends GetxController {
         //     overflow: TextOverflow.ellipsis,
         //     maxLines: 4,
         //     style: defaultTextStyle(
-        //       color: kWhiteBackgroundColor,
+        //       color: kLightBackgroundColor,
         //       fontSize: 14.0,
         //       fontWeight: FontWeight.w500,
         //     ),
@@ -78,7 +78,7 @@ class ApiProcessorController extends GetxController {
         //   onPressed: () {
         //     Get.back();
         //   },
-        //   color: kWhiteBackgroundColor,
+        //   color: kLightBackgroundColor,
         //   icon: const Icon(
         //     Icons.cancel,
         //     size: 14,
@@ -101,7 +101,7 @@ class ApiProcessorController extends GetxController {
         //     overflow: TextOverflow.ellipsis,
         //     maxLines: 4,
         //     style: defaultTextStyle(
-        //       color: kWhiteBackgroundColor,
+        //       color: kLightBackgroundColor,
         //       fontSize: 14.0,
         //       fontWeight: FontWeight.w500,
         //       letterSpacing: -0.40,
@@ -171,7 +171,7 @@ class ApiProcessorController extends GetxController {
         //     overflow: TextOverflow.ellipsis,
         //     maxLines: 4,
         //     style: defaultTextStyle(
-        //       color: kWhiteBackgroundColor,
+        //       color: kLightBackgroundColor,
         //       fontSize: 14.0,
         //       fontWeight: FontWeight.w500,
         //       letterSpacing: -0.40,

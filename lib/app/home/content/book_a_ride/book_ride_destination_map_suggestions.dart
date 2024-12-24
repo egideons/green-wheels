@@ -35,33 +35,18 @@ bookRideDestinationMapSuggestions(
               Icon(
                 Iconsax.location,
                 color: colorScheme.primary,
-                size: 32,
+                size: 20,
               ),
               kSmallWidthSizedBox,
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: media.width - 100,
-                    child: Text(
-                      "Destination: ${controller.destinationLocation.value}",
-                      style: defaultTextStyle(
-                        color: kTextBlackColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+              Expanded(
+                child: Text(
+                  controller.destinationLocation.value,
+                  style: defaultTextStyle(
+                    color: kTextBlackColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
                   ),
-                  // kSmallSizedBox,
-                  // Text(
-                  //   "22 Road, Festac Town",
-                  //   style: defaultTextStyle(
-                  //     color: kTextBlackColor,
-                  //     fontSize: 12,
-                  //     fontWeight: FontWeight.w500,
-                  //   ),
-                  // )
-                ],
+                ),
               ),
             ],
           ),

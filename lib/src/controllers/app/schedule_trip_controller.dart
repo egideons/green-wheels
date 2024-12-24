@@ -4,7 +4,11 @@ import 'dart:developer';
 import 'package:board_datetime_picker/board_datetime_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/main.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
+import 'package:green_wheels/src/services/api/api_url.dart';
+import 'package:green_wheels/src/services/client/http_client_service.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import '../../../app/schedule_trip/content/schedule_trip_request_canceled_dialog.dart';
@@ -29,6 +33,12 @@ class ScheduleTripController extends GetxController {
   TimeOfDay? lastSelectedTime;
   Rx<double> rideAmount = 8000.0.obs;
 
+  //================ Variables =================\\
+  var pickupLocation = "123 Main Street, Lagos".obs;
+  var destination = "456 Marina Road, Lagos".obs;
+  String? scheduledPickupTime;
+  String? scheduledPickupDate;
+
   //================ Booleans =================\\
   var isPickupLocationTextFieldActive = false.obs;
   var isDestinationTextFieldActive = false.obs;
@@ -44,7 +54,7 @@ class ScheduleTripController extends GetxController {
   var selectedRouteEC = TextEditingController();
 
   final pickupLocationEC =
-      TextEditingController(text: "Pin Plaza, 1st Avenue, Festac");
+      TextEditingController(text: "123 Main Street, Lagos");
   final stop1LocationEC = TextEditingController();
   final stop2LocationEC = TextEditingController();
   final stop3LocationEC = TextEditingController();
@@ -76,6 +86,7 @@ class ScheduleTripController extends GetxController {
       useSafeArea: true,
       onChanged: (dateTime) {
         selectedDateEC.text = DateFormat("dd/MM/yyyy").format(dateTime);
+        scheduledPickupDate = DateFormat('yyyy-MM-dd').format(dateTime);
         lastSelectedDate = dateTime;
       },
       options: const BoardDateTimeOptions(
@@ -87,8 +98,10 @@ class ScheduleTripController extends GetxController {
 
     if (selectedDate != null) {
       selectedDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
+      scheduledPickupDate = DateFormat('yyyy-MM-dd').format(selectedDate);
       lastSelectedDate = selectedDate;
     }
+    log("This is the scheduled Datte: $scheduledPickupDate");
   }
 
   void selectTimeFunc() async {
@@ -110,12 +123,24 @@ class ScheduleTripController extends GetxController {
         selectedTime.hour,
         selectedTime.minute,
       ));
+
+      // Format time in 24-hour format
+      scheduledPickupTime = DateFormat("HH:mm").format(DateTime(
+        now.year,
+        now.month,
+        now.day,
+        selectedTime.hour,
+        selectedTime.minute,
+      ));
+
+      log("This is the scheduled time: $scheduledPickupTime");
+
       selectedTimeEC.text = formattedTime;
       lastSelectedTime = selectedTime;
     }
   }
 
-  void showSchedulteTripSelectRouteModal() async {
+  void showScheduleTripSelectRouteModal() async {
     final media = MediaQuery.of(Get.context!).size;
 
     await showModalBottomSheet(
@@ -136,7 +161,7 @@ class ScheduleTripController extends GetxController {
       builder: (context) {
         return GestureDetector(
           onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
-          child: const SchedulteTripSelectRouteModal(),
+          child: const ScheduleTripSelectRouteModal(),
         );
       },
     );
@@ -152,6 +177,7 @@ class ScheduleTripController extends GetxController {
 
   void selectDestinationSuggestion() async {
     mapSuggestionIsSelected.value = true;
+    destinationEC.text = destination.value;
     // FocusScope.of(Get.context!).unfocus();
     FocusManager.instance.primaryFocus?.unfocus();
   }
@@ -271,8 +297,57 @@ class ScheduleTripController extends GetxController {
         ApiProcessorController.errorSnack("Please select a time");
         return;
       }
-      await Future.delayed(const Duration(milliseconds: 800));
-      await showSearchingForDriverModalSheet();
+
+      var url = ApiUrl.baseUrl + ApiUrl.scheduleRide;
+
+      var userToken = prefs.getString("userToken");
+
+      Map<String, dynamic> data = {
+        "pickup_location": {
+          "address": pickupLocationEC.text,
+          "lat": 40.7829,
+          "long": -73.9654
+        },
+        "destination": {
+          "address": destinationEC.text,
+          "lat": 40.7061,
+          "long": -73.9969
+        },
+        "schedule_pickup_time": scheduledPickupTime,
+        "schedule_date": scheduledPickupDate,
+        "payment_type": "wallet",
+      };
+
+      log("URL=> $url\nUSERTOKEN=>$userToken\n$data");
+
+      Map<String, String> headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $userToken"
+      };
+
+      //HTTP Client Service
+      http.Response? response =
+          await HttpClientService.postRequest(url, userToken, data, headers);
+
+      if (response == null) {
+        return;
+      }
+
+      try {
+        // dynamic responseJson;
+
+        // responseJson = jsonDecode(response.body);
+        if (response.statusCode == 200) {
+          await Future.delayed(const Duration(milliseconds: 800));
+          await showSearchingForDriverModalSheet();
+        } else {
+          ApiProcessorController.errorSnack(
+              "An error occured in scheduling your ride.\nPlease try again later");
+          log("An error occured: ${response.body}");
+        }
+      } catch (e) {
+        log(e.toString());
+      }
     }
   }
 

@@ -147,6 +147,7 @@ class EditProfileController extends GetxController {
               GetRiderProfileResponseModel.fromJson(responseJson);
 
           riderModel.value = getRiderProfileResponseModel.value.data;
+          getRiderProfile();
 
           Get.back();
           ApiProcessorController.successSnack(responseJson["message"]);

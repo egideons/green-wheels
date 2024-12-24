@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/consts.dart';
 import 'package:green_wheels/src/utils/components/my_app_bar.dart';
-import 'package:iconsax/iconsax.dart';
 
 import '../../../../src/controllers/app/menu_screen_controller.dart';
 import '../../content/menu_option.dart';
@@ -23,12 +22,12 @@ class MenuScreenScaffold extends GetView<MenuScreenController> {
       appBar: myAppBar(
         colorScheme,
         media,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Iconsax.notification),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {},
+        //     icon: const Icon(Iconsax.notification),
+        //   ),
+        // ],
       ),
       body: SafeArea(
         child: Scrollbar(
@@ -74,6 +73,7 @@ class MenuScreenScaffold extends GetView<MenuScreenController> {
                       nav: menuItem["nav"],
                       icon: menuItem["icon"],
                       title: menuItem["label"],
+                      trailingIsVisible: menuItem["trailingIsVisible"],
                     );
                   },
                 ),

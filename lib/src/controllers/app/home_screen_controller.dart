@@ -890,18 +890,19 @@ class HomeScreenController extends GetxController
   //==== School Commutes =========================================================================>
 
   scheduleACommute() async {
-    bool hasViewedScheduleTripIntro =
-        prefs.getBool("viewedSchoolCommuteIntro") ?? false;
-    if (hasViewedScheduleTripIntro) {
-      // User has viewed intro already, navigate to the schedule trip screen
-      await closePanel();
-      goToSchoolCommuteScreen();
-      log("User has viewed");
-    } else {
-      closePanel();
-      showSchoolCommuteIntroDialog();
-      log("User has not viewed");
-    }
+    ApiProcessorController.warningSnack("School Commutes is coming soon");
+    // bool hasViewedScheduleTripIntro =
+    //     prefs.getBool("viewedSchoolCommuteIntro") ?? false;
+    // if (hasViewedScheduleTripIntro) {
+    //   // User has viewed intro already, navigate to the schedule trip screen
+    //   await closePanel();
+    //   goToSchoolCommuteScreen();
+    //   log("User has viewed");
+    // } else {
+    //   closePanel();
+    //   showSchoolCommuteIntroDialog();
+    //   log("User has not viewed");
+    // }
   }
 
   goToSchoolCommuteScreen() async {

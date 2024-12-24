@@ -8,6 +8,7 @@ Widget circleAvatarImage(
   ColorScheme colorScheme, {
   double? height,
   double? radius,
+  String? imageText,
   ImageProvider<Object>? foregroundImage,
 }) {
   return SizedBox(
@@ -20,10 +21,10 @@ Widget circleAvatarImage(
         foregroundImage:
             foregroundImage ?? const NetworkImage(Assets.userPlaceholderImage),
         child: Text(
-          "P",
+          imageText ?? "",
           style: defaultTextStyle(
             fontSize: 32.0,
-            color: kLightBackgroundColor,
+            color: colorScheme.surface,
           ),
         ),
       ),

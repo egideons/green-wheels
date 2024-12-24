@@ -20,6 +20,7 @@ scheduleTripDestinationMapSuggestions(
         onTap: controller.selectDestinationSuggestion,
         borderRadius: BorderRadius.circular(4),
         child: Container(
+          height: 50,
           padding: const EdgeInsets.all(10),
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
@@ -35,33 +36,18 @@ scheduleTripDestinationMapSuggestions(
               Icon(
                 Iconsax.location,
                 color: colorScheme.primary,
-                size: 32,
+                size: 20,
               ),
               kSmallWidthSizedBox,
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: media.width - 100,
-                    child: Text(
-                      "Destination: Holy Family Catholic Church",
-                      style: defaultTextStyle(
-                        color: kTextBlackColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+              Expanded(
+                child: Text(
+                  controller.destination.value,
+                  style: defaultTextStyle(
+                    color: kTextBlackColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
                   ),
-                  kSmallSizedBox,
-                  Text(
-                    "22 Road, Festac Town",
-                    style: defaultTextStyle(
-                      color: kTextBlackColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
-                ],
+                ),
               ),
             ],
           ),

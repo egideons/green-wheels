@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../src/constants/consts.dart';
-import '../../../../../src/utils/components/amount_charge_per_hour.dart';
 import '../../../../../src/utils/components/car_name_and_rating.dart';
+import '../../../../../src/utils/components/rent_ride_amount_charge.dart';
 import '../../../../../src/utils/components/time_and_date_section.dart';
 import '../../../../../theme/colors.dart';
 import 'car_rental_container.dart';
@@ -56,7 +56,7 @@ cancelledCarRentalContainer(
           kSizedBox,
           timeAndDateSection(colorScheme),
           kSizedBox,
-          amountChargePerHr(rideAmount: amount ?? 0),
+          rentRideAmountCharge(rideAmount: amount ?? 0),
         ],
       ),
     ),

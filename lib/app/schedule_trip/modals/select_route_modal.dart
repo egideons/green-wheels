@@ -10,10 +10,9 @@ import '../../../src/utils/buttons/android/android_elevated_button.dart';
 import '../content/schedule_trip_destination_map_suggestions.dart';
 import '../content/schedule_trip_pickup_location_map_suggestions.dart';
 import '../content/schedule_trip_route_form.dart';
-import '../content/schedule_trip_stop_location_map_suggestions.dart';
 
-class SchedulteTripSelectRouteModal extends GetView<ScheduleTripController> {
-  const SchedulteTripSelectRouteModal({super.key});
+class ScheduleTripSelectRouteModal extends GetView<ScheduleTripController> {
+  const ScheduleTripSelectRouteModal({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -108,15 +107,16 @@ class SchedulteTripSelectRouteModal extends GetView<ScheduleTripController> {
                         media,
                       )
                     ];
-                  } else if (controller.isStopLocationTextFieldActive.value) {
-                    return <Widget>[
-                      scheduleTripStopLocationMapSuggestions(
-                        colorScheme,
-                        controller,
-                        media,
-                      )
-                    ];
                   }
+                  // else if (controller.isStopLocationTextFieldActive.value) {
+                  //   return <Widget>[
+                  //     scheduleTripStopLocationMapSuggestions(
+                  //       colorScheme,
+                  //       controller,
+                  //       media,
+                  //     )
+                  //   ];
+                  // }
                   return <Widget>[
                     SizedBox(height: media.height * .6),
                   ];

@@ -13,7 +13,10 @@ class ApiUrl {
   //============= Rider ================\\
   static const getRiderProfile = "/riders/user";
   static const editProfile = "/riders/user";
+  static const uploadProfileImage = "/uploadfile";
 
   //=============== Booking ====================\\
   static const rideAmount = "/ride-amount";
+  static const instantRide = "/booking/instant";
+  static const scheduleRide = "/booking/schedule";
 }

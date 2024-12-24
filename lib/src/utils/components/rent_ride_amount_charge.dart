@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import '../../../theme/colors.dart';
 import '../../constants/consts.dart';
 
-amountChargePerHr({int? rideAmount}) {
+rentRideAmountCharge({int? rideAmount}) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       Text(
-        "Amount Charge\n(per hour)",
+        "Amount Charge\n(per minute)",
         style: defaultTextStyle(
           color: kTextBlackColor,
           fontSize: 16,

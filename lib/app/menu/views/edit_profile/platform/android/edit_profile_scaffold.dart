@@ -175,7 +175,7 @@ class EditProfileScaffold extends GetView<EditProfileController> {
                                     ),
                                   ),
                                   child: const Icon(
-                                    Iconsax.location,
+                                    Iconsax.map,
                                     color: kBlackColor,
                                   ),
                                 ),
@@ -190,6 +190,58 @@ class EditProfileScaffold extends GetView<EditProfileController> {
                                         TextCapitalization.words,
                                     keyboardType: TextInputType.name,
                                     hintText: "Enter state",
+                                    validator: (value) {
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          kSizedBox,
+                          Text(
+                            "City",
+                            textAlign: TextAlign.start,
+                            style: defaultTextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w400,
+                              color: kTextBlackColor,
+                            ),
+                          ),
+                          kSizedBox,
+                          formFieldContainer(
+                            colorScheme,
+                            media,
+                            containerHeight: media.height * .08,
+                            padding: const EdgeInsets.all(0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  height: 60,
+                                  width: 60,
+                                  decoration: const BoxDecoration(
+                                    color: kFrameBackgroundColor,
+                                    borderRadius: BorderRadius.horizontal(
+                                      left: Radius.circular(6),
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Iconsax.buildings,
+                                    color: kBlackColor,
+                                  ),
+                                ),
+                                kHalfWidthSizedBox,
+                                Expanded(
+                                  child: AndroidTextFormField(
+                                    readOnly: controller.isLoading.value,
+                                    controller: controller.cityEC,
+                                    focusNode: controller.cityFN,
+                                    textInputAction: TextInputAction.done,
+                                    textCapitalization:
+                                        TextCapitalization.words,
+                                    keyboardType: TextInputType.name,
+                                    hintText: "Enter city",
                                     validator: (value) {
                                       return null;
                                     },

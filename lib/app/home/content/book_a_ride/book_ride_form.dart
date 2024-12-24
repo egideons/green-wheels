@@ -32,6 +32,8 @@ bookRideForm(
               focusNode: controller.pickupLocationFN,
               textCapitalization: TextCapitalization.words,
               onChanged: controller.pickupLocationOnChanged,
+              minLines: 1,
+              maxLines: 20,
               validator: (value) {
                 return null;
               },
@@ -68,6 +70,8 @@ bookRideForm(
         formFieldContainer(
           colorScheme,
           media,
+          containerHeight:
+              controller.destinationEC.text.isEmpty ? null : media.height * .1,
           borderSide: BorderSide(
             width: 1,
             color: colorScheme.primary,
@@ -87,6 +91,8 @@ bookRideForm(
                   onTap: controller.destinationOnTap,
                   textCapitalization: TextCapitalization.words,
                   hintText: "Enter destination",
+                  minLines: 1,
+                  maxLines: 20,
                   onChanged: controller.destinationOnChanged,
                   onFieldSubmitted: controller.onFieldSubmitted,
                   validator: (value) {

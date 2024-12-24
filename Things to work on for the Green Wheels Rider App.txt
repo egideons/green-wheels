@@ -1,0 +1,18 @@
+Things to work on/fix on the Green Wheels Rider app:
+ 
+- Schedule a ride
+	- Remove date, time restrictions like this one: "The schedule pickup time field must be a date after 20:49.". I will be the one enforcing these restrictions. Just make sure that you schedule the scheduled time for that scheduled date.
+
+- Image Upload
+	- It should accept authorization (Bearer Token) for each user image upload
+	- After uploading and returning the response. Add the profile_image (url) field to the UserModel.
+
+- Ride History for Riders - is different from the one for Drivers.
+	- Should return: pickupLocation, destination, DriverName, status (completed or canceled), amount, and any other detail.
+
+- Scheduled Trips History - is different from the one for Drivers.
+	- Should return: pickupLocation, destination, DriverName, scheduled date, scheduled time, status (completed, pending, or canceled), amount, and any other detail.
+
+- Car Rental History - is different from the one for Drivers.
+	- Should return: Vehicle details (vehicle name, vehicle plate number, vehicle rating), scheduled date, scheduled time, status (completed, ongoing, or canceled), amount (per minute), and any other detail.
+

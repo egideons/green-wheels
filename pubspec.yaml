@@ -33,6 +33,7 @@ dependencies:
   animate_do:
   skeletonizer:
   connectivity_plus:
+  http_parser:
 
 dev_dependencies:
   flutter_test:
