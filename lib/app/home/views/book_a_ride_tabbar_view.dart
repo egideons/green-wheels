@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../src/constants/consts.dart';
 import '../../../src/controllers/app/home_screen_controller.dart';
@@ -20,7 +19,7 @@ bookInstantRideTabBarView(
       kSizedBox,
       Column(
         children: () {
-          if (controller.mapSuggestionIsSelected.isTrue) {
+          if (controller.mapSuggestionIsSelected.value) {
             return <Widget>[
               bookRideSearchForDriverSection(
                 colorScheme,

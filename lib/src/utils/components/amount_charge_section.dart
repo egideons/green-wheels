@@ -5,7 +5,7 @@ import '../../constants/consts.dart';
 
 amountChargeSection(
   ColorScheme colorScheme, {
-  int? amount,
+  double? amount,
   double? fontSize,
   bool? isSpaceBetween,
 }) {
@@ -37,7 +37,7 @@ amountChargeSection(
             ),
             children: [
               TextSpan(
-                text: intFormattedText(amount ?? 0),
+                text: doubleFormattedTextWithDecimal(amount ?? 0.0),
                 style: defaultTextStyle(
                   color: kTextBlackColor,
                   fontSize: fontSize ?? 20,

@@ -152,7 +152,7 @@ class SchoolCommuteRideRequestAcceptedModal
                   kSizedBox,
                   amountChargeSection(
                     colorScheme,
-                    amount: controller.rideAmount,
+                    amount: controller.rideAmount.value,
                   ),
                 ],
               ),

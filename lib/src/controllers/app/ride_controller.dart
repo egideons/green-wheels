@@ -27,6 +27,12 @@ class RideController extends GetxController {
     super.onInit();
   }
 
+  //================ Variables =================\\
+  var rideAmount = Get.arguments?["rideAmount"] ?? 0.0;
+  var rideTime = Get.arguments?["rideTime"] ?? "";
+  var pickupLocation = Get.arguments?["pickupLocation"] ?? "";
+  var dropOffLocation = Get.arguments?["dropOffLocation"] ?? "";
+
   //================ Boolean =================\\
   var isLocationPermissionGranted = false.obs;
   var floatingIconButtonIsVisible = false.obs;

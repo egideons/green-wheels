@@ -29,7 +29,7 @@ class SchoolCommuteController extends GetxController {
   DateTime? endDate;
   TimeOfDay? lastSelectedPickupTime;
   TimeOfDay? lastSelectedDropOffTime;
-  var rideAmount = 8000;
+  Rx<double> rideAmount = 8000.0.obs;
 
   //================ Booleans =================\\
   var isPickupLocationTextFieldActive = false.obs;

@@ -9,6 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_wheels/app/home/content/rent_ride/choose_available_vehicle_scaffold.dart';
 import 'package:green_wheels/app/home/modals/book_ride_cancel_ride_fee_modal.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
+import 'package:green_wheels/src/models/ride/instant_ride_amount_response_model.dart';
 import 'package:green_wheels/src/models/ride/rent_ride_vehicle_model.dart';
 import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.dart';
 import 'package:green_wheels/src/models/rider/rider_model.dart';
@@ -143,12 +144,10 @@ class HomeScreenController extends GetxController
   //=============================== Display Info =====================================\\
   displayInfo() async {
     showInfo.value = true;
-    update();
   }
 
   hideInfo() async {
     showInfo.value = false;
-    update();
   }
 
   //=============================== Init Functions =====================================\\
@@ -274,12 +273,10 @@ class HomeScreenController extends GetxController
 
   Future<void> onRefresh() async {
     isRefreshing.value = true;
-    update();
 
     await Future.delayed(const Duration(seconds: 2));
 
     isRefreshing.value = false;
-    update();
   }
 
   /// When the location services are not enabled or permissions are denied the `Future` will return an error.
@@ -288,7 +285,6 @@ class HomeScreenController extends GetxController
 
     if (status.isGranted) {
       isLocationPermissionGranted.value = true;
-      update();
     }
     if (status.isDenied) {
       Permission.location.request();
@@ -301,7 +297,13 @@ class HomeScreenController extends GetxController
     Get.close(2);
   }
 
-  //==== Book Ride Section =========================================================================>
+  //!============ Book Instant Ride Section ==========================================================>
+
+  //================ Models =================\\
+  var instantRideAmountResponseModel =
+      InstantRideAmountResponseModel.fromJson(null).obs;
+  var instantRideData = InstantRideData.fromJson(null).obs;
+  var priceBreakdown = PriceBreakdown.fromJson(null).obs;
 
   //================ Controllers =================\\
   var pickupLocation = "123 Main Street, Lagos".obs;
@@ -324,10 +326,44 @@ class HomeScreenController extends GetxController
   Timer? bookRideTimer;
 
   var progress = .0.obs;
+  var totalInstantRideTime = "".obs;
   var bookDriverTimerFinished = false.obs;
   var bookDriverFound = false.obs;
   var driverHasArrived = false.obs;
-  var loadingRideAmount = false.obs;
+
+  //!===== Calculate Readable Travel Time ===========!\\
+  String calculateReadableTravelTime(double distanceInMeters) {
+    const double speedInMilesPerHour = 60.0; // Constant speed
+    const double metersPerMile = 1609.34; // Conversion factor
+
+    // Convert speed to meters per second
+    double speedInMetersPerSecond =
+        (speedInMilesPerHour * metersPerMile) / 3600;
+
+    // Calculate total time in seconds
+    int totalSeconds = (distanceInMeters / speedInMetersPerSecond).round();
+
+    // Calculate hours, minutes, and seconds
+    int hours = totalSeconds ~/ 3600; // 1 hour = 3600 seconds
+    int minutes = (totalSeconds % 3600) ~/ 60; // Remaining seconds to minutes
+    int seconds = totalSeconds % 60; // Remaining seconds
+
+    // Build the readable time string
+    String readableTime = '';
+    if (hours > 0) {
+      readableTime = "$hours hr${hours > 1 ? 's' : ''}";
+    }
+    if (minutes > 0) {
+      readableTime +=
+          "${readableTime.isNotEmpty ? " " : ""}$minutes min${minutes > 1 ? 's' : ''}";
+    }
+    if (seconds > 0) {
+      readableTime +=
+          "${readableTime.isNotEmpty ? " " : ""}$seconds sec${seconds > 1 ? 's' : ''}";
+    }
+
+    return totalInstantRideTime.value = readableTime;
+  }
 
   //================ OnTap and Onchanged =================\\
   void selectPickupSuggestion() async {
@@ -365,22 +401,43 @@ class HomeScreenController extends GetxController
 
     log("URL=> $url\nUSERTOKEN=>$userToken\n$data");
 
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $userToken"
+    };
+
     //HTTP Client Service
     http.Response? response =
-        await HttpClientService.postRequest(url, userToken, data);
+        await HttpClientService.postRequest(url, userToken, data, headers);
 
     if (response == null) {
       return;
     }
 
-    log("Response body=> ${response.body}");
-
     try {
+      dynamic responseJson;
+
+      responseJson = jsonDecode(response.body);
+
       if (response.statusCode == 200) {
+        instantRideAmountResponseModel.value =
+            InstantRideAmountResponseModel.fromJson(responseJson);
+        instantRideData.value = instantRideAmountResponseModel.value.data;
+        priceBreakdown.value =
+            instantRideAmountResponseModel.value.data.priceBreakdown;
+
+        calculateReadableTravelTime(priceBreakdown.value.distanceInMeters);
+
+        await Future.delayed(const Duration(milliseconds: 300));
+
         mapSuggestionIsSelected.value = true;
+
         // FocusScope.of(Get.context!).unfocus();
         FocusManager.instance.primaryFocus?.unfocus();
-      } else {}
+      } else {
+        ApiProcessorController.errorSnack("An error occured");
+        log("An error occured, Response body: ${response.body}");
+      }
     } catch (e) {
       log(e.toString());
     }
@@ -463,7 +520,7 @@ class HomeScreenController extends GetxController
   }
 
 // Start the progress simulation with a Timer
-  void simulateBookRideDriverSearchProgress() {
+  void instantRideAwaitDriverResponse() {
     progress.value = 0.0;
     driverHasArrived.value = false;
 
@@ -475,7 +532,7 @@ class HomeScreenController extends GetxController
         updateProgress(1.0);
         bookDriverTimerFinished.value = true;
         bookDriverFound.value = true;
-        update();
+
         log("Timer finished: ${bookDriverTimerFinished.value}");
         log("Driver found: ${bookDriverFound.value}");
         cancelProgress();
@@ -658,7 +715,7 @@ class HomeScreenController extends GetxController
     );
   }
 
-  //=============================== Modal Bottom Sheets =====================================\\
+  //!=============================== Modal Bottom Sheets =====================================\\
 
   void showSearchingForDriverModalSheet() async {
     final media = MediaQuery.of(Get.context!).size;
@@ -667,7 +724,7 @@ class HomeScreenController extends GetxController
 
     await closePanel();
 
-    simulateBookRideDriverSearchProgress();
+    instantRideAwaitDriverResponse();
 
     await showModalBottomSheet(
       isScrollControlled: true,
@@ -752,6 +809,12 @@ class HomeScreenController extends GetxController
     Get.to(
       () => const RideScreen(),
       routeName: "/ride",
+      arguments: {
+        "rideAmount": instantRideData.value.amount,
+        "rideTime": totalInstantRideTime.value,
+        "pickupLocation": pickupLocationEC.text,
+        "dropOffLocation": destinationEC.text,
+      },
       curve: Curves.easeInOut,
       fullscreenDialog: true,
       popGesture: true,
@@ -760,7 +823,7 @@ class HomeScreenController extends GetxController
     );
   }
 
-  //==== Schedule Trip =========================================================================>
+  //!==== Schedule Trip =========================================================================>
 
   scheduleATrip() async {
     bool hasViewedScheduleTripIntro =

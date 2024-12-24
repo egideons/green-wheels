@@ -124,9 +124,8 @@ class TripCompletedModal extends GetView<RideController> {
             defaultInfoContainer(
               child: rideAddressSection(
                 colorScheme,
-                pickup: "Pin Plaza, 1st Avenue",
-                destination:
-                    "Holy Family Catholic church, 22 road, Festac Town",
+                pickup: controller.pickupLocation,
+                destination: controller.dropOffLocation,
               ),
             ),
             kSizedBox,
@@ -134,11 +133,14 @@ class TripCompletedModal extends GetView<RideController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  amountChargeSection(colorScheme, amount: 2000),
+                  amountChargeSection(
+                    colorScheme,
+                    amount: controller.rideAmount,
+                  ),
                   kSizedBox,
                   estimatedTravelTime(
                     colorScheme,
-                    estimatedTime: "${intFormattedText(10)}mins",
+                    estimatedTime: controller.rideTime,
                   ),
                   kSizedBox,
                   paymentTypeSection(),

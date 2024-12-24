@@ -170,9 +170,8 @@ class BookRideRequestAcceptedModal extends GetView<HomeScreenController> {
             defaultInfoContainer(
               child: rideAddressSection(
                 colorScheme,
-                pickup: "Pin Plaza, 1st Avenue",
-                destination:
-                    "Holy Family Catholic church, 22 road, Festac Town",
+                pickup: controller.pickupLocation.value,
+                destination: controller.destinationEC.text,
               ),
             ),
             kSizedBox,
@@ -180,11 +179,14 @@ class BookRideRequestAcceptedModal extends GetView<HomeScreenController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  amountChargeSection(colorScheme, amount: 2000),
+                  amountChargeSection(
+                    colorScheme,
+                    amount: controller.instantRideData.value.amount,
+                  ),
                   kSizedBox,
                   estimatedTravelTime(
                     colorScheme,
-                    estimatedTime: "${intFormattedText(10)}mins",
+                    estimatedTime: controller.totalInstantRideTime.value,
                   ),
                   kSizedBox,
                   paymentTypeSection(),

@@ -19,7 +19,7 @@ bookRideSearchForDriverSection(
         child: amountChargeSection(
           colorScheme,
           isSpaceBetween: true,
-          amount: 2000,
+          amount: controller.instantRideData.value.amount,
         ),
       ),
       kHalfSizedBox,

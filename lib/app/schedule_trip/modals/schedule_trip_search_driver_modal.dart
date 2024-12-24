@@ -57,7 +57,7 @@ class ScheduleTripSearchDriverModal extends GetView<ScheduleTripController> {
                 children: [
                   amountChargeSection(
                     colorScheme,
-                    amount: controller.rideAmount,
+                    amount: controller.rideAmount.value,
                   ),
                   kSizedBox,
                   scheduleTripSelectDateTimeRouteForm(

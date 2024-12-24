@@ -12,7 +12,7 @@ cancelledScheduledRideContainer(
   String? driverName,
   String? vehicleName,
   String? pickup,
-  int? amount,
+  double? amount,
   String? destination,
 }) {
   return Column(

@@ -27,7 +27,7 @@ class ScheduleTripController extends GetxController {
   var scheduleTripRouteFormKey = GlobalKey<FormState>();
   DateTime? lastSelectedDate;
   TimeOfDay? lastSelectedTime;
-  var rideAmount = 8000;
+  Rx<double> rideAmount = 8000.0.obs;
 
   //================ Booleans =================\\
   var isPickupLocationTextFieldActive = false.obs;

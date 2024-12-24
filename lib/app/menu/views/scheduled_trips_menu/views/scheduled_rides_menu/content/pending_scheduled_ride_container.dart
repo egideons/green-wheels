@@ -12,7 +12,7 @@ pendingScheduledRideContainer(
   String? driverName,
   String? vehicleName,
   String? pickup,
-  int? amount,
+  double? amount,
   String? destination,
   void Function()? viewPendingScheduledRide,
 }) {

@@ -17,7 +17,7 @@ class RideScreenScaffold extends GetView<RideController> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      drawer: const Drawer(),
+      // drawer: const Drawer(),
       body: GetBuilder<RideController>(
         init: RideController(),
         builder: (controller) {

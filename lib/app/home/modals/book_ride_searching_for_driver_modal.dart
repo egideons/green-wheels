@@ -39,11 +39,14 @@ class BookRideSearchingForDriverModal extends GetView<HomeScreenController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  amountChargeSection(colorScheme, amount: 2000),
+                  amountChargeSection(
+                    colorScheme,
+                    amount: controller.instantRideData.value.amount,
+                  ),
                   kSizedBox,
                   estimatedTravelTime(
                     colorScheme,
-                    estimatedTime: "${intFormattedText(10)}mins",
+                    estimatedTime: controller.totalInstantRideTime.value,
                   ),
                   kSizedBox,
                   paymentTypeSection(),
@@ -105,8 +108,7 @@ class BookRideSearchingForDriverModal extends GetView<HomeScreenController> {
                       )
                     : AndroidElevatedButton(
                         title: "Retry",
-                        onPressed:
-                            controller.simulateBookRideDriverSearchProgress,
+                        onPressed: controller.instantRideAwaitDriverResponse,
                       );
               },
             ),

@@ -13,7 +13,7 @@ pendingSchoolCommuteContainer(
   String? vehicleName,
   String? pickup,
   String? destination,
-  int? amount,
+  double? amount,
   void Function()? viewPendingSchoolCommute,
 }) {
   return Column(
