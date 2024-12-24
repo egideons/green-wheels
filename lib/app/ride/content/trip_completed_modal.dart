@@ -150,8 +150,8 @@ class TripCompletedModal extends GetView<RideController> {
             kSizedBox,
             kSizedBox,
             AndroidElevatedButton(
-              title: "Make Payment",
-              onPressed: controller.showPaymentSuccessfulModal,
+              title: "Rate Ride",
+              onPressed: controller.giveFeedback,
             ),
             kSizedBox,
           ],

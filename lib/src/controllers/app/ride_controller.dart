@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -28,6 +27,7 @@ class RideController extends GetxController {
   }
 
   //================ Variables =================\\
+  var rideInfo = "Trip has started".obs;
   var rideAmount = Get.arguments?["rideAmount"] ?? 0.0;
   var rideTime = Get.arguments?["rideTime"] ?? "";
   var pickupLocation = Get.arguments?["pickupLocation"] ?? "";
@@ -76,7 +76,10 @@ class RideController extends GetxController {
 
   //======================================== Init Function =========================================//
   initFunctions() async {
-    await Future.delayed(const Duration(seconds: 10));
+    await Future.delayed(const Duration(seconds: 5));
+    rideInfo.value = "Trip is ongoing";
+    await Future.delayed(const Duration(seconds: 5));
+    rideInfo.value = "Trip is completed";
     rideComplete.value = true;
     showTripCompletedModal();
   }
@@ -227,10 +230,10 @@ class RideController extends GetxController {
   Future<void> submitFeedback() async {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
-      if (feedbackMessageEC.text.isEmpty) {
-        ApiProcessorController.errorSnack("Field cannot be empty");
-        return;
-      }
+      // if (feedbackMessageEC.text.isEmpty) {
+      //   ApiProcessorController.errorSnack("Field cannot be empty");
+      //   return;
+      // }
       submittingRequest.value = true;
       await Future.delayed(const Duration(seconds: 3));
       submittingRequest.value = false;
