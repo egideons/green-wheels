@@ -45,7 +45,7 @@ homePanelSection(
               kSmallWidthSizedBox,
               Flexible(
                 child: Text(
-                  "Please note that every vehicle has a security camera for safety reasons.",
+                  controller.infoMessage.value,
                   maxLines: 10,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.start,

@@ -24,57 +24,57 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
         init: HomeScreenController(),
         builder: (controller) {
           return SafeArea(
-            child: Stack(
-              children: [
-                SlidingUpPanel(
-                  controller: controller.panelController,
-                  maxHeight: media.height,
-                  backdropTapClosesPanel: true,
-                  minHeight: media.height * .26,
-                  backdropEnabled: true,
-                  defaultPanelState: PanelState.CLOSED,
-                  panelSnapping: false,
-                  backdropColor: kTransparentColor,
-                  backdropOpacity: 0,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(32),
-                    topRight: Radius.circular(32),
+            child: controller.userPosition == null
+                ? const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  )
+                : Stack(
+                    children: [
+                      SlidingUpPanel(
+                        controller: controller.panelController,
+                        maxHeight: media.height,
+                        backdropTapClosesPanel: true,
+                        minHeight: media.height * .26,
+                        backdropEnabled: true,
+                        defaultPanelState: PanelState.CLOSED,
+                        panelSnapping: false,
+                        backdropColor: kTransparentColor,
+                        backdropOpacity: 0,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(32),
+                          topRight: Radius.circular(32),
+                        ),
+                        body: homeGoogleMap(controller),
+                        // panelBuilder: (sc) {
+                        //   return homePanelSection(
+                        //     colorScheme,
+                        //     media,
+                        //     context,
+                        //     // sc,
+                        //   );
+                        // },
+                        panel: homePanelSection(
+                          colorScheme,
+                          media,
+                          context,
+                          controller,
+                        ),
+                      ),
+                      Positioned(
+                        top: 15,
+                        left: 15,
+                        child: IconButton(
+                          onPressed: controller.goToMenu,
+                          icon: const Icon(Icons.menu),
+                          color: colorScheme.secondary,
+                          style: IconButton.styleFrom(
+                            backgroundColor: colorScheme.primary,
+                            foregroundColor: colorScheme.secondary,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  body:
-                      // controller.userPosition == null
-                      //     ? Center(
-                      //         child: CircularProgressIndicator(
-                      //           color: colorScheme.primary,
-                      //         ),
-                      //       )
-                      //     :
-                      homeGoogleMap(controller),
-                  // panelBuilder: (sc) {
-                  //   return homePanelSection(
-                  //     colorScheme,
-                  //     media,
-                  //     context,
-                  //     // sc,
-                  //   );
-                  // },
-                  panel:
-                      homePanelSection(colorScheme, media, context, controller),
-                ),
-                Positioned(
-                  top: 15,
-                  left: 15,
-                  child: IconButton(
-                    onPressed: controller.goToMenu,
-                    icon: const Icon(Icons.menu),
-                    color: colorScheme.secondary,
-                    style: IconButton.styleFrom(
-                      backgroundColor: colorScheme.primary,
-                      foregroundColor: colorScheme.secondary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
           );
         },
       ),

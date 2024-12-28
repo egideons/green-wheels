@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:board_datetime_picker/board_datetime_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_wheels/app/home/content/rent_ride/choose_available_vehicle_scaffold.dart';
@@ -19,7 +20,6 @@ import 'package:green_wheels/theme/colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../../../app/home/content/book_a_ride/book_ride_request_canceled_dialog.dart';
@@ -48,7 +48,7 @@ class HomeScreenController extends GetxController
 
   @override
   void onInit() {
-    requestLocationPermission();
+    // requestLocationPermission();
     tabBarController = TabController(length: 3, vsync: this);
     tabBarController.addListener(() {
       selectedTabBar.value = tabBarController.index;
@@ -64,6 +64,9 @@ class HomeScreenController extends GetxController
     super.onClose();
   }
 
+  //================ Panel Info Messages =================\\
+  var infoMessage = "".obs;
+
   //================ Models =================\\
   var getRiderProfileResponseModel =
       GetRiderProfileResponseModel.fromJson(null).obs;
@@ -72,7 +75,7 @@ class HomeScreenController extends GetxController
   late TabController tabBarController;
   var selectedTabBar = 0.obs;
 
-  // Position? userPosition;
+  Position? userPosition;
   CameraPosition? cameraPosition;
 
   //================ Keys =================\\
@@ -209,92 +212,71 @@ class HomeScreenController extends GetxController
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 14,
   );
-  // Future<void> loadMapData() async {
-  //   bool serviceEnabled;
-  //   LocationPermission permission;
 
-  //   // Test if location services are enabled.
-  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  //   if (!serviceEnabled) {
-  //     // Location services are not enabled don't continue
-  //     // accessing the position and request users of the
-  //     // App to enable the location services.
-  //     return Future.error('Location services are disabled.');
-  //   }
+  Future<void> loadMapData() async {
+    bool serviceEnabled;
+    LocationPermission permission;
 
-  //   permission = await Geolocator.checkPermission();
-  //   if (permission == LocationPermission.denied) {
-  //     permission = await Geolocator.requestPermission();
-  //     if (permission == LocationPermission.denied) {
-  //       // Permissions are denied, next time you could try
-  //       // requesting permissions again (this is also where
-  //       // Android's shouldShowRequestPermissionRationale
-  //       // returned true. According to Android guidelines
-  //       // your App should show an explanatory UI now.
-  //       return Future.error('Location permissions are denied');
-  //     }
-  //   }
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      ApiProcessorController.errorSnack(
+        "Please enable location services",
+      );
+      return Future.error('Location services are disabled.');
+    }
 
-  //   if (permission == LocationPermission.deniedForever) {
-  //     // Permissions are denied forever, handle appropriately.
-  //     return Future.error(
-  //       'Location permissions are permanently denied, we cannot request permissions.',
-  //     );
-  //   }
-  //   await _getAndGoToUserCurrentLocation();
-  // }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        ApiProcessorController.errorSnack(
+          "Could not retrieve your location.\nPlease enable location services",
+        );
+        return Future.error('Location permissions are denied');
+      }
+    }
 
-  // Future<Position> _getAndGoToUserCurrentLocation() async {
-  //   Position userLocation = await Geolocator.getCurrentPosition(
-  //     locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
-  //     // desiredAccuracy: LocationAccuracy.high,
-  //   ).then(
-  //     (location) => userPosition = location,
-  //   );
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
+    }
+    await _getAndGoToUserCurrentLocation();
+  }
 
-  //   LatLng latLngPosition =
-  //       LatLng(userLocation.latitude, userLocation.longitude);
+  Future<Position> _getAndGoToUserCurrentLocation() async {
+    Position userLocation = await Geolocator.getCurrentPosition(
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+      // desiredAccuracy: LocationAccuracy.high,
+    ).then(
+      (location) => userPosition = location,
+    );
 
-  //   cameraPosition = CameraPosition(target: latLngPosition, zoom: 20);
+    LatLng latLngPosition =
+        LatLng(userLocation.latitude, userLocation.longitude);
 
-  //   newGoogleMapController?.animateCamera(
-  //     CameraUpdate.newCameraPosition(cameraPosition!),
-  //   );
+    cameraPosition = CameraPosition(target: latLngPosition, zoom: 20);
 
-  //   return userLocation;
-  // }
+    newGoogleMapController?.animateCamera(
+      CameraUpdate.newCameraPosition(cameraPosition!),
+    );
+
+    return userLocation;
+  }
 
   void onMapCreated(GoogleMapController controller) {
     _googleMapController.complete(controller);
     newGoogleMapController = controller;
-  }
-
-  //================ Handle refresh ================\\
-
-  Future<void> onRefresh() async {
-    isRefreshing.value = true;
-
-    await Future.delayed(const Duration(seconds: 2));
-
-    isRefreshing.value = false;
-  }
-
-  /// When the location services are not enabled or permissions are denied the `Future` will return an error.
-  Future<void> requestLocationPermission() async {
-    PermissionStatus status = await Permission.location.request();
-
-    if (status.isGranted) {
-      isLocationPermissionGranted.value = true;
-    }
-    if (status.isDenied) {
-      Permission.location.request();
-    } else if (status.isPermanentlyDenied) {
-      openAppSettings();
-    }
-  }
-
-  void returnHome() async {
-    Get.close(2);
   }
 
   //!============ Book Instant Ride Section ==========================================================>
@@ -330,40 +312,6 @@ class HomeScreenController extends GetxController
   var bookDriverTimerFinished = false.obs;
   var bookDriverFound = false.obs;
   var driverHasArrived = false.obs;
-
-  //!===== Calculate Readable Travel Time ===========!\\
-  String calculateReadableTravelTime(double distanceInMeters) {
-    const double speedInMilesPerHour = 60.0; // Constant speed
-    const double metersPerMile = 1609.34; // Conversion factor
-
-    // Convert speed to meters per second
-    double speedInMetersPerSecond =
-        (speedInMilesPerHour * metersPerMile) / 3600;
-
-    // Calculate total time in seconds
-    int totalSeconds = (distanceInMeters / speedInMetersPerSecond).round();
-
-    // Calculate hours, minutes, and seconds
-    int hours = totalSeconds ~/ 3600; // 1 hour = 3600 seconds
-    int minutes = (totalSeconds % 3600) ~/ 60; // Remaining seconds to minutes
-    int seconds = totalSeconds % 60; // Remaining seconds
-
-    // Build the readable time string
-    String readableTime = '';
-    if (hours > 0) {
-      readableTime = "$hours hr${hours > 1 ? 's' : ''}";
-    }
-    if (minutes > 0) {
-      readableTime +=
-          "${readableTime.isNotEmpty ? " " : ""}$minutes min${minutes > 1 ? 's' : ''}";
-    }
-    if (seconds > 0) {
-      readableTime +=
-          "${readableTime.isNotEmpty ? " " : ""}$seconds sec${seconds > 1 ? 's' : ''}";
-    }
-
-    return totalInstantRideTime.value = readableTime;
-  }
 
   //================ OnTap and Onchanged =================\\
   void selectPickupSuggestion() async {
@@ -426,7 +374,8 @@ class HomeScreenController extends GetxController
         priceBreakdown.value =
             instantRideAmountResponseModel.value.data.priceBreakdown;
 
-        calculateReadableTravelTime(priceBreakdown.value.distanceInMeters);
+        calculateReadableTravelTime(
+            priceBreakdown.value.distanceInMeters, totalInstantRideTime.value);
 
         await Future.delayed(const Duration(milliseconds: 300));
 

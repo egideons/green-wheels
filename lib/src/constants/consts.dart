@@ -103,6 +103,40 @@ defaultTextStyle({
       letterSpacing: letterSpacing ?? .60,
     );
 
+//!===== Calculate Readable Travel Time ===========!\\
+String calculateReadableTravelTime(
+    double distanceInMeters, totalInstantRideTime) {
+  const double speedInMilesPerHour = 60.0; // Constant speed
+  const double metersPerMile = 1609.34; // Conversion factor
+
+  // Convert speed to meters per second
+  double speedInMetersPerSecond = (speedInMilesPerHour * metersPerMile) / 3600;
+
+  // Calculate total time in seconds
+  int totalSeconds = (distanceInMeters / speedInMetersPerSecond).round();
+
+  // Calculate hours, minutes, and seconds
+  int hours = totalSeconds ~/ 3600; // 1 hour = 3600 seconds
+  int minutes = (totalSeconds % 3600) ~/ 60; // Remaining seconds to minutes
+  int seconds = totalSeconds % 60; // Remaining seconds
+
+  // Build the readable time string
+  String readableTime = '';
+  if (hours > 0) {
+    readableTime = "$hours hr${hours > 1 ? 's' : ''}";
+  }
+  if (minutes > 0) {
+    readableTime +=
+        "${readableTime.isNotEmpty ? " " : ""}$minutes min${minutes > 1 ? 's' : ''}";
+  }
+  if (seconds > 0) {
+    readableTime +=
+        "${readableTime.isNotEmpty ? " " : ""}$seconds sec${seconds > 1 ? 's' : ''}";
+  }
+
+  return totalInstantRideTime = readableTime;
+}
+
 //========== Image ==============\\
 const int maxImageSize = 5 * 1024 * 1024; // 5 MB
 
