@@ -348,15 +348,19 @@ class MenuScreenController extends GetxController {
       if (streamedResponse.statusCode == 200 ||
           streamedResponse.statusCode == 201) {
         profilePicIsUploaded.value = true;
-        ApiProcessorController.successSnack(
-          "Profile picture uploaded successfully",
-        );
+
         imageUploadResponseModel.value =
             ImageUploadResponseModel.fromJson(decodedResponse);
         profileImageUrl = imageUploadResponseModel.value.data.path;
         fileName.value = imageUploadResponseModel.value.data.filename;
 
-        prefs.setString("profileImageUrl", profileImageUrl);
+        var profileIsUpdated = await updateProfile(profileImageUrl);
+        if (profileIsUpdated) {
+          ApiProcessorController.successSnack(
+            "Profile picture uploaded successfully",
+          );
+          prefs.setString("profileImageUrl", profileImageUrl);
+        }
       } else {
         ApiProcessorController.warningSnack(
           "Failed to upload profile picture\n${decodedResponse["message"]},",
@@ -368,5 +372,56 @@ class MenuScreenController extends GetxController {
       log(e.toString());
     }
     isUploadingProfilePic.value = false;
+  }
+
+  Future<bool> updateProfile(String imageUrl) async {
+    var url = ApiUrl.baseUrl + ApiUrl.editProfile;
+
+    var userToken = prefs.getString("userToken");
+
+    Map data = {
+      "image": imageUrl,
+    };
+
+    // var finalData = jsonEncode(data);
+
+    log("This is the Url: $url");
+    log("This is the Data: $data");
+
+    //HTTP Client Service
+    http.Response? response =
+        await HttpClientService.patchRequest(url, userToken, data);
+
+    if (response == null) {
+      return false;
+    }
+
+    try {
+      // Convert to json
+      dynamic responseJson;
+
+      responseJson = jsonDecode(response.body);
+
+      log("This is the response body ====> ${response.body}");
+      responseJson = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        getRiderProfileResponseModel.value =
+            GetRiderProfileResponseModel.fromJson(responseJson);
+
+        riderModel.value = getRiderProfileResponseModel.value.data;
+        getRiderProfile();
+
+        Get.back();
+        ApiProcessorController.successSnack(responseJson["message"]);
+        return true;
+      } else {
+        ApiProcessorController.warningSnack(responseJson["message"]);
+        return false;
+      }
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
   }
 }

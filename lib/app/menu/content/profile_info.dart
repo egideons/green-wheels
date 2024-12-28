@@ -34,14 +34,17 @@ profileInfo(
                       ? circleAvatarImage(
                           colorScheme,
                           height: 120,
-                          foregroundImage: controller.profileImageUrl.isEmpty
-                              ? null
-                              : NetworkImage(controller.profileImageUrl),
+                          foregroundImage:
+                              controller.riderModel.value.image.isEmpty
+                                  ? null
+                                  : NetworkImage(
+                                      controller.riderModel.value.image,
+                                    ),
                           imageText:
-                              controller.riderModel.value.fullName!.isEmpty
+                              controller.riderModel.value.fullName.isEmpty
                                   ? ""
                                   : getNameInitials(
-                                      controller.riderModel.value.fullName!,
+                                      controller.riderModel.value.fullName,
                                     ),
                         )
                       : circleAvatarImage(
@@ -145,7 +148,7 @@ profileInfo(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  controller.riderModel.value.fullName ?? "",
+                  controller.riderModel.value.fullName,
                   textAlign: TextAlign.start,
                   maxLines: 2,
                   style: defaultTextStyle(

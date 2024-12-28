@@ -1,18 +1,18 @@
 class RiderModel {
   final int id;
   final String riderUuid;
-  final String? fullName;
+  final String fullName;
   final String email;
-  final String? phone;
-  final String? image;
-  final String? otpExpiresAt;
-  final String? street;
-  final String? city;
-  final String? state;
-  final String? country;
-  final String? virtualAccountNumber;
-  final String? virtualAccountName;
-  final String? lastLoggedIn;
+  final String phone;
+  final String image;
+  final String otpExpiresAt;
+  final String street;
+  final String city;
+  final String state;
+  final String country;
+  final String virtualAccountNumber;
+  final String virtualAccountName;
+  final String lastLoggedIn;
   final bool loggedIn;
   final String walletBalance;
   final String status;
@@ -23,18 +23,18 @@ class RiderModel {
   RiderModel({
     required this.id,
     required this.riderUuid,
-    this.fullName,
+    required this.fullName,
     required this.email,
-    this.phone,
-    this.image,
-    this.otpExpiresAt,
-    this.street,
-    this.city,
-    this.state,
-    this.country,
-    this.virtualAccountNumber,
-    this.virtualAccountName,
-    this.lastLoggedIn,
+    required this.phone,
+    required this.image,
+    required this.otpExpiresAt,
+    required this.street,
+    required this.city,
+    required this.state,
+    required this.country,
+    required this.virtualAccountNumber,
+    required this.virtualAccountName,
+    required this.lastLoggedIn,
     required this.loggedIn,
     required this.walletBalance,
     required this.status,

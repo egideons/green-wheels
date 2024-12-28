@@ -87,11 +87,11 @@ class EditProfileController extends GetxController {
         log(getRiderProfileResponseModel.value.message);
         log(jsonEncode(riderModel.value));
 
-        fullNameEC.text = riderModel.value.fullName ?? "";
-        countryEC.text = riderModel.value.country ?? "";
-        stateEC.text = riderModel.value.state ?? "";
-        cityEC.text = riderModel.value.city ?? "";
-        streetEC.text = riderModel.value.street ?? "";
+        fullNameEC.text = riderModel.value.fullName;
+        countryEC.text = riderModel.value.country;
+        stateEC.text = riderModel.value.state;
+        cityEC.text = riderModel.value.city;
+        streetEC.text = riderModel.value.street;
       } else {
         log("An error occured, Response body: ${response.body}");
       }
