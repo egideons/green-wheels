@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:board_datetime_picker/board_datetime_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/main.dart';
@@ -72,36 +71,36 @@ class ScheduleTripController extends GetxController {
 
 //================ OnTap and Onchanged =================\\
   void selectDateFunc() async {
-    DateTime today = DateTime.now();
+    // DateTime today = DateTime.now();
 
-    final selectedDate = await showBoardDateTimePicker(
-      context: Get.context!,
-      enableDrag: false,
-      showDragHandle: false,
-      pickerType: DateTimePickerType.date,
-      initialDate: lastSelectedDate ?? today,
-      minimumDate: today,
-      maximumDate: DateTime(2101),
-      isDismissible: true,
-      useSafeArea: true,
-      onChanged: (dateTime) {
-        selectedDateEC.text = DateFormat("dd/MM/yyyy").format(dateTime);
-        scheduledPickupDate = DateFormat('yyyy-MM-dd').format(dateTime);
-        lastSelectedDate = dateTime;
-      },
-      options: const BoardDateTimeOptions(
-        inputable: true,
-        showDateButton: true,
-        startDayOfWeek: DateTime.sunday,
-      ),
-    );
+    // final selectedDate = await showBoardDateTimePicker(
+    //   context: Get.context!,
+    //   enableDrag: false,
+    //   showDragHandle: false,
+    //   pickerType: DateTimePickerType.date,
+    //   initialDate: lastSelectedDate ?? today,
+    //   minimumDate: today,
+    //   maximumDate: DateTime(2101),
+    //   isDismissible: true,
+    //   useSafeArea: true,
+    //   onChanged: (dateTime) {
+    //     selectedDateEC.text = DateFormat("dd/MM/yyyy").format(dateTime);
+    //     scheduledPickupDate = DateFormat('yyyy-MM-dd').format(dateTime);
+    //     lastSelectedDate = dateTime;
+    //   },
+    //   options: const BoardDateTimeOptions(
+    //     inputable: true,
+    //     showDateButton: true,
+    //     startDayOfWeek: DateTime.sunday,
+    //   ),
+    // );
 
-    if (selectedDate != null) {
-      selectedDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
-      scheduledPickupDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-      lastSelectedDate = selectedDate;
-    }
-    log("This is the scheduled Datte: $scheduledPickupDate");
+    // if (selectedDate != null) {
+    //   selectedDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
+    //   scheduledPickupDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+    //   lastSelectedDate = selectedDate;
+    // }
+    // log("This is the scheduled Datte: $scheduledPickupDate");
   }
 
   void selectTimeFunc() async {

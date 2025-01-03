@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:board_datetime_picker/board_datetime_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -143,15 +142,6 @@ class HomeScreenController extends GetxController
     );
   }
 
-  //=============================== Display Info =====================================\\
-  displayInfo() async {
-    showInfo.value = true;
-  }
-
-  hideInfo() async {
-    showInfo.value = false;
-  }
-
   //=============================== Init Functions =====================================\\
   //Get Rider  Details
   Future<bool> getRiderProfile() async {
@@ -200,9 +190,10 @@ class HomeScreenController extends GetxController
     var loadDriverDetails = await getRiderProfile();
 
     if (loadDriverDetails) {
-      await displayInfo();
+      infoMessage.value =
+          "Please note that every vehicle has a security camera for safety reasons.";
       await Future.delayed(const Duration(seconds: 2));
-      await hideInfo();
+      infoMessage.value = "";
     }
   }
 
@@ -280,6 +271,10 @@ class HomeScreenController extends GetxController
 
   //!============ Book Instant Ride Section ==========================================================>
 
+  //================ Variables =================\\
+  String? destinationLatitude;
+  String? destinationLongitude;
+
   //================ Models =================\\
   var instantRideAmountResponseModel =
       InstantRideAmountResponseModel.fromJson(null).obs;
@@ -287,11 +282,12 @@ class HomeScreenController extends GetxController
   var priceBreakdown = PriceBreakdown.fromJson(null).obs;
 
   //================ Controllers =================\\
-  var pickupLocation = "123 Main Street, Lagos".obs;
+  var pickupLocation = "97 Chime Ave, New Haven, Enugu 400102, Enugu".obs;
   var stopLocation1 = "22 Festac Town".obs;
   var destinationLocation = "456 Marina Road, Lagos".obs;
-  final pickupLocationEC =
-      TextEditingController(text: "123 Main Street, Lagos");
+  final pickupLocationEC = TextEditingController(
+    text: "97 Chime Ave, New Haven, Enugu 400102, Enugu",
+  );
   final stop1LocationEC = TextEditingController();
   final stop2LocationEC = TextEditingController();
   final stop3LocationEC = TextEditingController();
@@ -336,8 +332,8 @@ class HomeScreenController extends GetxController
       "type": "instant",
       "pickup_location": {
         "address": pickupLocationEC.text,
-        "lat": 6.5244,
-        "long": 3.3792
+        "lat": 6.459145467001655,
+        "long": 7.520305312930343,
       },
       "destination": {
         "address": destinationEC.text,
@@ -610,7 +606,7 @@ class HomeScreenController extends GetxController
 
     await showModalBottomSheet(
       isScrollControlled: true,
-      enableDrag: true,
+      enableDrag: false,
       context: Get.context!,
       useSafeArea: true,
       isDismissible: false,
@@ -634,7 +630,7 @@ class HomeScreenController extends GetxController
   showBookRideRequestCanceledDialog() {
     showDialog(
       context: Get.context!,
-      barrierColor: kBlackColor.withOpacity(.8),
+      barrierColor: kBlackColor.withValues(),
       builder: (context) {
         return Dialog(
           insetAnimationCurve: Curves.easeIn,
@@ -995,29 +991,30 @@ class HomeScreenController extends GetxController
   var chooseAvailableVehicleFN = FocusNode();
 
   void selectRentRideDate() async {
-    DateTime today = DateTime.now();
+    // DateTime today = DateTime.now();
 
-    final selectedDate = await showBoardDateTimePickerForDate(
-        context: Get.context!,
-        enableDrag: false,
-        showDragHandle: false,
-        initialDate: lastSelectedRentRideDate ?? today,
-        minimumDate: DateTime.now(),
-        maximumDate: DateTime(2101),
-        isDismissible: true,
-        useSafeArea: true,
-        onChanged: (dateTime) {
-          rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(dateTime);
-        },
-        options: const BoardDateTimeOptions(
-          inputable: true,
-          showDateButton: true,
-          startDayOfWeek: DateTime.sunday,
-        ));
+    // final selectedDate = await showBoardDateTimePickerForDate(
+    //   context: Get.context!,
+    //   enableDrag: false,
+    //   showDragHandle: false,
+    //   initialDate: lastSelectedRentRideDate ?? today,
+    //   minimumDate: DateTime.now(),
+    //   maximumDate: DateTime(2101),
+    //   isDismissible: true,
+    //   useSafeArea: true,
+    //   onChanged: (dateTime) {
+    //     rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(dateTime);
+    //   },
+    // options: const BoardDateTimeOptions(
+    //   inputable: true,
+    //   showDateButton: true,
+    //   startDayOfWeek: DateTime.sunday,
+    // )
+    // );
 
-    if (selectedDate != null) {
-      rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
-    }
+    // if (selectedDate != null) {
+    //   rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
+    // }
   }
 
   void selectRentRidePickupTime() async {

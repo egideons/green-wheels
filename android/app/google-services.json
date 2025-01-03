@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "83227363936",
+    "project_id": "green-wheels-00",
+    "storage_bucket": "green-wheels-00.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:83227363936:android:3c49f1e170011524915105",
+        "android_client_info": {
+          "package_name": "com.greenwheels.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC64QT_XHVrCFfgiDZiJkbV6sZJi1oQd0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

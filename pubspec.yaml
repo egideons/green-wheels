@@ -26,15 +26,18 @@ dependencies:
   http:
   google_maps_flutter:
   permission_handler:
-  # geolocator:
-  # geocoding:
+  geolocator:
+  geocoding:
   url_launcher:
   sliding_up_panel: ^2.0.0+1
   board_datetime_picker: ^2.1.1
+  omni_datetime_picker:
   animate_do:
   skeletonizer:
   connectivity_plus:
   http_parser:
+  firebase_core:
+  flutter_dotenv:
 
 dev_dependencies:
   flutter_test:

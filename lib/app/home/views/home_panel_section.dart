@@ -15,59 +15,59 @@ homePanelSection(
   BuildContext context,
   HomeScreenController controller,
 ) {
-  return Container(
-    decoration: ShapeDecoration(
-      color: colorScheme.primary,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
+  return Obx(
+    () => Container(
+      decoration: ShapeDecoration(
+        color: colorScheme.primary,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(32),
+            topRight: Radius.circular(32),
+          ),
         ),
       ),
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        AnimatedContainer(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 10,
-          ),
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          child: Row(
-            children: [
-              Icon(
-                Icons.info_outlined,
-                color: colorScheme.surface,
-                size: 32,
-              ),
-              kSmallWidthSizedBox,
-              Flexible(
-                child: Text(
-                  controller.infoMessage.value,
-                  maxLines: 10,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    color: colorScheme.surface,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          controller.infoMessage.value.isEmpty
+              ? const SizedBox()
+              : AnimatedContainer(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outlined,
+                        color: colorScheme.surface,
+                        size: 32,
+                      ),
+                      kSmallWidthSizedBox,
+                      Flexible(
+                        child: Text(
+                          controller.infoMessage.value,
+                          maxLines: 10,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            color: colorScheme.surface,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: AnimatedContainer(
+          Container(
             width: media.width,
             padding: const EdgeInsets.symmetric(
-              horizontal: 20,
+              horizontal: 100,
               vertical: 10,
             ),
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
             decoration: ShapeDecoration(
               color: colorScheme.surface,
               shape: const RoundedRectangleBorder(
@@ -77,16 +77,23 @@ homePanelSection(
                 ),
               ),
             ),
-            child: Obx(
-              () => SingleChildScrollView(
+            child: dragHandle(media),
+          ),
+          Expanded(
+            child: AnimatedContainer(
+              width: media.width,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 10,
+              ),
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              decoration: BoxDecoration(
+                color: colorScheme.surface,
+              ),
+              child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: media.width / 3.4,
-                      ),
-                      child: dragHandle(media),
-                    ),
                     kSmallSizedBox,
                     Container(
                       decoration: ShapeDecoration(
@@ -130,8 +137,8 @@ homePanelSection(
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }

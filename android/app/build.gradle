@@ -66,6 +66,8 @@ android {
         debug {
             signingConfig signingConfigs.debug
             multiDexEnabled true
+            shrinkResources false
+            minifyEnabled false
         }
         profile {
             multiDexEnabled true

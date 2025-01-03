@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:board_datetime_picker/board_datetime_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/app/school_commute/modals/school_commute_ride_request_accepted_modal.dart';
@@ -66,39 +65,39 @@ class SchoolCommuteController extends GetxController {
 
 //================ Select Data, Time and Route =================\\
   void selectDateFunc() async {
-    DateTime today = DateTime.now();
-    DateTime tomorrow = today.add(const Duration(days: 1));
+    // DateTime today = DateTime.now();
+    // DateTime tomorrow = today.add(const Duration(days: 1));
 
-    final selectedDate = await showBoardDateTimeMultiPicker(
-        context: Get.context!,
-        enableDrag: false,
-        showDragHandle: false,
-        pickerType: DateTimePickerType.date,
-        startDate: startDate ?? today,
-        endDate: endDate ?? tomorrow,
-        minimumDate: DateTime.now(),
-        maximumDate: DateTime(2101),
-        isDismissible: true,
-        useSafeArea: true,
-        onChanged: (dateTime) {
-          selectedDateEC.text =
-              "${DateFormat("dd/MM/yyyy").format(dateTime.start)} - ${DateFormat("dd/MM/yyyy").format(dateTime.end)}";
+    // final selectedDate = await showBoardDateTimeMultiPicker(
+    //     context: Get.context!,
+    //     enableDrag: false,
+    //     showDragHandle: false,
+    //     pickerType: DateTimePickerType.date,
+    //     startDate: startDate ?? today,
+    //     endDate: endDate ?? tomorrow,
+    //     minimumDate: DateTime.now(),
+    //     maximumDate: DateTime(2101),
+    //     isDismissible: true,
+    //     useSafeArea: true,
+    //     onChanged: (dateTime) {
+    //       selectedDateEC.text =
+    //           "${DateFormat("dd/MM/yyyy").format(dateTime.start)} - ${DateFormat("dd/MM/yyyy").format(dateTime.end)}";
 
-          startDate = dateTime.start;
-          endDate = dateTime.end;
-        },
-        options: const BoardDateTimeOptions(
-          inputable: true,
-          showDateButton: true,
-          startDayOfWeek: DateTime.sunday,
-        ));
+    //       startDate = dateTime.start;
+    //       endDate = dateTime.end;
+    //     },
+    //     options: const BoardDateTimeOptions(
+    //       inputable: true,
+    //       showDateButton: true,
+    //       startDayOfWeek: DateTime.sunday,
+    //     ));
 
-    if (selectedDate != null) {
-      selectedDateEC.text =
-          "${DateFormat("dd/MM/yyyy").format(selectedDate.start)} - ${DateFormat("dd/MM/yyyy").format(selectedDate.end)}";
-      startDate = selectedDate.start;
-      endDate = selectedDate.end;
-    }
+    // if (selectedDate != null) {
+    //   selectedDateEC.text =
+    //       "${DateFormat("dd/MM/yyyy").format(selectedDate.start)} - ${DateFormat("dd/MM/yyyy").format(selectedDate.end)}";
+    //   startDate = selectedDate.start;
+    //   endDate = selectedDate.end;
+    // }
   }
 
   void selectPickupTimeFunc() async {
