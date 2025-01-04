@@ -80,7 +80,7 @@ class TripFeedbackModal extends GetView<RideController> {
                               : controller.rating.value == 4
                                   ? kSuccessColor
                                   : controller.rating.value == 3
-                                      ? kSuccessColor.withOpacity(.4)
+                                      ? kSuccessColor.withValues()
                                       : controller.rating.value == 2
                                           ? kStarColor
                                           : colorScheme.error,

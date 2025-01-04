@@ -1,4 +1,4 @@
-package com.greenwheels.android
+package com.android.greenwheels
 
 import io.flutter.embedding.android.FlutterActivity
 

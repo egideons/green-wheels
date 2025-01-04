@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/consts.dart';
@@ -82,6 +83,33 @@ class PhoneLoginScaffold extends GetView<PhoneLoginController> {
                   AndroidElevatedButton(
                     title: "Continue with Email",
                     onPressed: controller.toEmailLogin,
+                  ),
+                  kSizedBox,
+                  Center(
+                    child: RichText(
+                      maxLines: 10,
+                      text: TextSpan(
+                        text: "Don't have an account? ",
+                        style: defaultTextStyle(
+                          color: colorScheme.inversePrimary,
+                          fontWeight: FontWeight.w300,
+                          fontSize: 14.0,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: "Sign up",
+                            mouseCursor: SystemMouseCursors.click,
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = controller.toPhoneSignup,
+                            style: defaultTextStyle(
+                              color: colorScheme.primary,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   kSizedBox,
                 ],

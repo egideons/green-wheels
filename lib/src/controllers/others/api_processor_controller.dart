@@ -64,14 +64,14 @@ class ApiProcessorController extends GetxController {
         duration: const Duration(seconds: 2),
         boxShadows: [
           BoxShadow(
-            color: colorScheme.inversePrimary.withOpacity(.2),
+            color: colorScheme.inversePrimary.withValues(),
             offset: const Offset(0, 4),
             blurRadius: 10,
             spreadRadius: 2,
           ),
         ],
         // backgroundGradient: LinearGradient(
-        //   colors: [kSuccessColor, kSuccessColor.withOpacity(0.6)],
+        //   colors: [kSuccessColor, kSuccessColor.withValues(),],
         // ),
         // margin: const EdgeInsets.all(60),
         // mainButton: IconButton(
@@ -134,14 +134,14 @@ class ApiProcessorController extends GetxController {
         duration: const Duration(seconds: 2),
         boxShadows: [
           BoxShadow(
-            color: colorScheme.inversePrimary.withOpacity(.2),
+            color: colorScheme.inversePrimary.withValues(),
             offset: const Offset(0, 4),
             blurRadius: 10,
             spreadRadius: 2,
           ),
         ],
         // backgroundGradient: LinearGradient(
-        //   colors: [kSuccessColor, kSuccessColor.withOpacity(0.6)],
+        //   colors: [kSuccessColor, kSuccessColor.withValues(),],
         // ),
         // margin: const EdgeInsets.all(60),
         // mainButton: IconButton(
@@ -204,14 +204,14 @@ class ApiProcessorController extends GetxController {
         duration: const Duration(seconds: 2),
         boxShadows: [
           BoxShadow(
-            color: colorScheme.inversePrimary.withOpacity(.2),
+            color: colorScheme.inversePrimary.withValues(),
             offset: const Offset(0, 4),
             blurRadius: 10,
             spreadRadius: 2,
           ),
         ],
         // backgroundGradient: LinearGradient(
-        //   colors: [kSuccessColor, kSuccessColor.withOpacity(0.6)],
+        //   colors: [kSuccessColor, kSuccessColor.withValues(),],
         // ),
         // margin: const EdgeInsets.all(60),
         // mainButton: IconButton(

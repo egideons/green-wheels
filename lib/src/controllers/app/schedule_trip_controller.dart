@@ -510,7 +510,7 @@ class ScheduleTripController extends GetxController {
   showScheduleTripRequestCanceledDialog() {
     showDialog(
       context: Get.context!,
-      barrierColor: kBlackColor.withOpacity(.8),
+      barrierColor: kBlackColor.withValues(),
       builder: (context) {
         return Dialog(
           insetAnimationCurve: Curves.easeIn,

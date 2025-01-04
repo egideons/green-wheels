@@ -85,4 +85,9 @@ class PhoneLoginController extends GetxController {
   toEmailLogin() {
     Get.toNamed(Routes.emailLogin, preventDuplicates: true);
   }
+
+  //=========== Navigate ===========\\
+  toPhoneSignup() {
+    Get.back();
+  }
 }

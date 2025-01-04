@@ -1,16 +1,14 @@
 name: green_wheels
 description: "A Ride Hailing App"
-publish_to: "none" # Remove this line if you wish to publish to pub.dev
-
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.4.4 <4.0.0"
-
+  sdk: ^3.6.0
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.6
+  cupertino_icons: ^1.0.8
   smooth_page_indicator: ^1.2.0
   cached_network_image:
   readmore:
@@ -25,7 +23,6 @@ dependencies:
   loading_animation_widget:
   http:
   google_maps_flutter:
-  permission_handler:
   geolocator:
   geocoding:
   url_launcher:
@@ -43,7 +40,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^3.0.0
+  flutter_lints: ^5.0.0
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: ^2.3.2
 
@@ -81,6 +78,7 @@ flutter:
     - assets/images/svg/
     - assets/icons/png/
     - assets/icons/svg/
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

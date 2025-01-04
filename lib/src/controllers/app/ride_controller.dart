@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../../../app/ride/content/trip_completed_modal.dart';
@@ -60,19 +59,19 @@ class RideController extends GetxController {
   //======================================= Google Maps ================================================\\
 
   /// When the location services are not enabled or permissions are denied the `Future` will return an error.
-  Future<void> requestLocationPermission() async {
-    PermissionStatus status = await Permission.location.request();
+  // Future<void> requestLocationPermission() async {
+  //   PermissionStatus status = await Permission.location.request();
 
-    if (status.isGranted) {
-      isLocationPermissionGranted.value = true;
-      update();
-    }
-    if (status.isDenied) {
-      Permission.location.request();
-    } else if (status.isPermanentlyDenied) {
-      openAppSettings();
-    }
-  }
+  //   if (status.isGranted) {
+  //     isLocationPermissionGranted.value = true;
+  //     update();
+  //   }
+  //   if (status.isDenied) {
+  //     Permission.location.request();
+  //   } else if (status.isPermanentlyDenied) {
+  //     openAppSettings();
+  //   }
+  // }
 
   //======================================== Init Function =========================================//
   initFunctions() async {

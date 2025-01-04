@@ -101,7 +101,7 @@ class ProvidePhoneController extends GetxController {
       Map data = {
         "rider_id": riderId.toString(),
         "full_name": fullName,
-        "phone": nigerianDialCode + phoneNumberEC.text,
+        "phone": phoneNumberEC.text,
       };
 
       var userToken = prefs.getString("userToken");

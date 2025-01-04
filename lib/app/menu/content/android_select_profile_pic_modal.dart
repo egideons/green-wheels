@@ -44,14 +44,14 @@ class AndroidSelectProfilePicModal extends GetView<MenuScreenController> {
             children: [
               androidUploadProfilePicOption(
                 colorScheme,
-                onTap: controller.requestCameraPermission,
+                onTap: controller.uploadProfilePicWithCamera,
                 icon: Assets.cameraOutlineSvg,
                 label: "Camera",
               ),
               kWidthSizedBox,
               androidUploadProfilePicOption(
                 colorScheme,
-                onTap: controller.requestGalleryPermission,
+                onTap: controller.uploadProfilePicWithGallery,
                 icon: Assets.imageOutlineSvg,
                 label: "Gallery",
               ),

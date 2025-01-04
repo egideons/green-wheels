@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyC64QT_XHVrCFfgiDZiJkbV6sZJi1oQd0M',
-    appId: '1:83227363936:android:3c49f1e170011524915105',
+    appId: '1:83227363936:android:1ed26065f16604ba915105',
     messagingSenderId: '83227363936',
     projectId: 'green-wheels-00',
     storageBucket: 'green-wheels-00.firebasestorage.app',

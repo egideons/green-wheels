@@ -18,7 +18,6 @@ import 'package:green_wheels/src/services/client/http_client_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../routes/routes.dart';
@@ -244,45 +243,45 @@ class MenuScreenController extends GetxController {
     );
   }
 
-  requestCameraPermission() async {
-    try {
-      log('Requesting camera permission');
-      var status = await Permission.camera.request();
-      log('Permission status: $status');
+  // requestCameraPermission() async {
+  //   try {
+  //     log('Requesting camera permission');
+  //     var status = await Permission.camera.request();
+  //     log('Permission status: $status');
 
-      if (status.isGranted) {
-        cameraPermissionIsGranted.value = true;
-        Get.close(0);
-        uploadProfilePicWithCamera();
-      } else if (status.isDenied) {
-        await Permission.camera.request();
-      } else if (status.isPermanentlyDenied) {
-        openAppSettings();
-      }
-    } catch (e) {
-      log('Error while requesting camera permission: $e');
-    }
-  }
+  //     if (status.isGranted) {
+  //       cameraPermissionIsGranted.value = true;
+  //       Get.close(0);
+  //       uploadProfilePicWithCamera();
+  //     } else if (status.isDenied) {
+  //       await Permission.camera.request();
+  //     } else if (status.isPermanentlyDenied) {
+  //       openAppSettings();
+  //     }
+  //   } catch (e) {
+  //     log('Error while requesting camera permission: $e');
+  //   }
+  // }
 
-  requestGalleryPermission() async {
-    try {
-      log('Requesting media library permission');
-      var status = await Permission.mediaLibrary.request();
-      log('Permission status: $status');
+  // requestGalleryPermission() async {
+  //   try {
+  //     log('Requesting media library permission');
+  //     var status = await Permission.mediaLibrary.request();
+  //     log('Permission status: $status');
 
-      if (status.isGranted) {
-        cameraPermissionIsGranted.value = true;
-        Get.close(0);
-        uploadProfilePicWithGallery();
-      } else if (status.isDenied) {
-        await Permission.mediaLibrary.request();
-      } else if (status.isPermanentlyDenied) {
-        openAppSettings();
-      }
-    } catch (e) {
-      log('Error while requesting media library permission: $e');
-    }
-  }
+  //     if (status.isGranted) {
+  //       cameraPermissionIsGranted.value = true;
+  //       Get.close(0);
+  //       uploadProfilePicWithGallery();
+  //     } else if (status.isDenied) {
+  //       await Permission.mediaLibrary.request();
+  //     } else if (status.isPermanentlyDenied) {
+  //       openAppSettings();
+  //     }
+  //   } catch (e) {
+  //     log('Error while requesting media library permission: $e');
+  //   }
+  // }
 
   uploadProfilePicWithCamera() async {
     final XFile? image = await picker.pickImage(source: ImageSource.camera);

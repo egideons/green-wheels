@@ -21,7 +21,7 @@ scheduledTripContainer(ColorScheme colorScheme, {Widget? child}) {
       ),
       shadows: [
         BoxShadow(
-          color: colorScheme.primary.withOpacity(.4),
+          color: colorScheme.primary.withValues(),
           blurRadius: 4,
           spreadRadius: 0,
           offset: const Offset(0, 2),

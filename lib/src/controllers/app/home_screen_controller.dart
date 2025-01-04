@@ -1172,7 +1172,7 @@ class HomeScreenController extends GetxController
 
     showDialog(
       context: Get.context!,
-      barrierColor: kBlackColor.withOpacity(.8),
+      barrierColor: kBlackColor.withValues(),
       builder: (context) {
         return Dialog(
           insetAnimationCurve: Curves.easeIn,

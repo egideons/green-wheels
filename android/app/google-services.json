@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:83227363936:android:3c49f1e170011524915105",
+        "mobilesdk_app_id": "1:83227363936:android:1ed26065f16604ba915105",
         "android_client_info": {
-          "package_name": "com.greenwheels.android"
+          "package_name": "com.android.greenwheels"
         }
       },
       "oauth_client": [],
