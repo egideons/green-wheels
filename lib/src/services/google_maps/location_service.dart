@@ -1,7 +1,6 @@
 import 'dart:convert' as convert;
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
@@ -10,11 +9,11 @@ import 'package:green_wheels/src/services/google_maps/places_auto_complete_model
 import 'package:http/http.dart' as http;
 
 class LocationService {
-  var googleMapsApiKey = dotenv.env['GoogleMapsAPIKey'];
+  var googlePlacesApiKey = dotenv.env['GooglePlacesAPIKey'];
 
   Future<String> getPlaceId(String query) async {
     final String url =
-        "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=$query&inputtype=textquery&key=$googleMapsApiKey";
+        "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=$query&inputtype=textquery&key=$googlePlacesApiKey";
 
     var response = await http.get(Uri.parse(url));
 
@@ -22,9 +21,7 @@ class LocationService {
 
     var placeId = json['candidates'][0]['place_id'] as String;
 
-    if (kDebugMode) {
-      print(placeId);
-    }
+    log(placeId);
 
     return placeId;
   }
@@ -33,7 +30,7 @@ class LocationService {
     final placeId = await getPlaceId(query);
 
     final String url =
-        "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$googleMapsApiKey";
+        "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$googlePlacesApiKey";
 
     var response = await http.get(Uri.parse(url));
 
@@ -41,32 +38,9 @@ class LocationService {
 
     var results = json['result'] as Map<String, dynamic>;
 
-    if (kDebugMode) {
-      print(results);
-    }
+    log(results.toString());
 
     return results;
-  }
-
-  void googlePlaceAutoComplete(
-    String query,
-    List<GooglePlaceAutoCompletePredictionModel> placePredictions,
-  ) async {
-    Uri uri = Uri.https(
-        "maps.googleapis.com",
-        '/maps/api/place/autocomplete/json', //unencoder path
-        {
-          "input": query, //query params
-          "key": googleMapsApiKey, //google places api key
-        });
-
-    String? response = await fetchUrl(uri, ApiUrl.baseUrl);
-    GooglePlaceAutoCompleteResponseModel result =
-        GooglePlaceAutoCompleteResponseModel.parseAutoCompleteResult(
-            response ?? "");
-    if (result.predictions != null) {
-      placePredictions = result.predictions!;
-    }
   }
 
   static Future<String?> fetchUrl(Uri uri, String baseURL,
@@ -81,11 +55,42 @@ class LocationService {
     }
     return null;
   }
+}
 
-  Future<List> parseLatLng(String newLocation) async {
-    List<Location> location = await locationFromAddress(newLocation);
-    String latitude = location[0].latitude.toString();
-    String longitude = location[0].longitude.toString();
-    return [latitude.toString(), longitude.toString()];
+void googlePlaceAutoComplete(
+  String query,
+  List<GooglePlaceAutoCompletePredictionModel> placePredictions,
+) async {
+  var googlePlacesApiKey = dotenv.env['GooglePlacesAPIKey'];
+
+  Uri uri = Uri.https(
+      "maps.googleapis.com",
+      '/maps/api/place/autocomplete/json', //unencoder path
+      {
+        "input": query, //query params
+        "key": googlePlacesApiKey, //google places api key
+      });
+
+  String? response = await LocationService.fetchUrl(uri, ApiUrl.baseUrl);
+
+  GooglePlaceAutoCompleteResponseModel result =
+      GooglePlaceAutoCompleteResponseModel.parseAutoCompleteResult(
+    response ?? "",
+  );
+  if (result.predictions != null) {
+    placePredictions = result.predictions ?? [];
+    // var responseJson = jsonDecode(response!);
+    // for (var prediction in responseJson["predictions"]) {
+    //   log("Description: ${prediction["description"]}");
+    // }
+
+    // log("Place Predictions: $placePredictions");
   }
+}
+
+Future<List> parseLatLng(String newLocation) async {
+  List<Location> location = await locationFromAddress(newLocation);
+  String latitude = location[0].latitude.toString();
+  String longitude = location[0].longitude.toString();
+  return [latitude.toString(), longitude.toString()];
 }

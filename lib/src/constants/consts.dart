@@ -1,4 +1,5 @@
 //default value
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
@@ -56,6 +57,19 @@ String nA = "N/A";
 String nairaSign = '\u20A6';
 
 String phoneNumberPattern = r'^\(\d{3}\) \d{3}-\d{4}$';
+
+Function(String value) debounce(
+    Function(String value) action, int milliseconds) {
+  Timer? timer;
+  return (String value) {
+    if (timer != null) {
+      timer!.cancel();
+    }
+    timer = Timer(Duration(milliseconds: milliseconds), () {
+      action(value);
+    });
+  };
+}
 
 convertToCurrency(String e) {
   String newStr = e.replaceAllMapped(

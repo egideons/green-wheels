@@ -14,6 +14,7 @@ class GooglePlaceAutoCompleteResponseModel {
   factory GooglePlaceAutoCompleteResponseModel.fromJson(
       Map<String, dynamic>? json) {
     json ??= {};
+
     return GooglePlaceAutoCompleteResponseModel(
       status: json['status'] ?? "",
       predictions: json['predictions']

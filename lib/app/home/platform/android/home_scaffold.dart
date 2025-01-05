@@ -24,13 +24,7 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
         init: HomeScreenController(),
         builder: (controller) {
           return SafeArea(
-            child:
-                // controller.userPosition == null
-                //     ? const Center(
-                //         child: CircularProgressIndicator.adaptive(),
-                //       )
-                // :
-                Stack(
+            child: Stack(
               children: [
                 SlidingUpPanel(
                   controller: controller.panelController,

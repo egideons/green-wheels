@@ -11,13 +11,15 @@ bookRidePickupLocationMapSuggestions(
   Size media,
 ) {
   return ListView.separated(
-    itemCount: 10,
+    itemCount: controller.pickupPlacePredictions.length,
     shrinkWrap: true,
     physics: const BouncingScrollPhysics(),
     separatorBuilder: (context, index) => kSmallSizedBox,
     itemBuilder: (context, index) {
       return InkWell(
-        onTap: controller.selectPickupSuggestion,
+        onTap: () {
+          controller.selectPickupSuggestion(index);
+        },
         borderRadius: BorderRadius.circular(4),
         child: Container(
           padding: const EdgeInsets.all(10),
@@ -40,7 +42,7 @@ bookRidePickupLocationMapSuggestions(
               kSmallWidthSizedBox,
               Expanded(
                 child: Text(
-                  controller.pickupLocation.value,
+                  controller.pickupPlacePredictions[index].description,
                   style: defaultTextStyle(
                     color: kTextBlackColor,
                     fontSize: 18,

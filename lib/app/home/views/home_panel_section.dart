@@ -65,7 +65,7 @@ homePanelSection(
           Container(
             width: media.width,
             padding: const EdgeInsets.symmetric(
-              horizontal: 100,
+              horizontal: 140,
               vertical: 10,
             ),
             decoration: ShapeDecoration(
