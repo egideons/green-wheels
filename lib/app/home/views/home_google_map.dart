@@ -5,7 +5,7 @@ import 'package:green_wheels/src/constants/assets.dart';
 
 import '../../../src/controllers/app/home_screen_controller.dart';
 
-homeGoogleMap(HomeScreenController controller) {
+homeGoogleMap(HomeScreenController controller, ColorScheme colorScheme) {
   return Obx(
     () {
       final userPosition = controller.userPosition.value;
@@ -37,6 +37,17 @@ homeGoogleMap(HomeScreenController controller) {
                   markers: Set<Marker>.of(controller.markers),
                   onCameraIdle: controller.onCameraIdle,
                   onCameraMove: controller.onCameraMove,
+                  polylines: {
+                    Polyline(
+                      polylineId: const PolylineId("Travel route"),
+                      points: controller.polylineCoordinates,
+                      color: colorScheme.primary,
+                      consumeTapEvents: true,
+                      geodesic: true,
+                      width: 5,
+                      visible: true,
+                    ),
+                  },
                   initialCameraPosition: CameraPosition(
                     target: LatLng(
                       userPosition.latitude,
@@ -48,7 +59,9 @@ homeGoogleMap(HomeScreenController controller) {
                 if (locationPinIsVisible)
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 50),
+                      padding: EdgeInsets.only(
+                        bottom: controller.locationPinBottomPadding.value,
+                      ),
                       child: Image.asset(
                         Assets.locationPin1Png,
                         height: 50,

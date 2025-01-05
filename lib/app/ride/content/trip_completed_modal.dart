@@ -125,7 +125,7 @@ class TripCompletedModal extends GetView<RideController> {
               child: rideAddressSection(
                 colorScheme,
                 pickup: controller.pickupLocation,
-                destination: controller.dropOffLocation,
+                destination: controller.destination,
               ),
             ),
             kSizedBox,

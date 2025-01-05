@@ -43,16 +43,16 @@ class RideScreenScaffold extends GetView<RideController> {
                   //         ),
                   //       )
                   //     :
-                  rideGoogleMap(controller),
-              panelBuilder: (sc) {
-                return ridePanelSection(
-                  colorScheme,
-                  media,
-                  context,
-                  controller,
-                );
-              },
-              // panel: ridePanelSection(colorScheme, media, context, controller),
+                  rideGoogleMap(controller, colorScheme),
+              // panelBuilder: (sc) {
+              //   return ridePanelSection(
+              //     colorScheme,
+              //     media,
+              //     context,
+              //     controller,
+              //   );
+              // },
+              panel: ridePanelSection(colorScheme, media, context, controller),
             ),
           );
         },

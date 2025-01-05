@@ -40,7 +40,7 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
                     topLeft: Radius.circular(32),
                     topRight: Radius.circular(32),
                   ),
-                  body: homeGoogleMap(controller),
+                  body: homeGoogleMap(controller, colorScheme),
                   // panelBuilder: (sc) {
                   //   return homePanelSection(
                   //     colorScheme,

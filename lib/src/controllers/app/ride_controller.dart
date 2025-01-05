@@ -1,8 +1,15 @@
 import 'dart:async';
+import 'dart:developer';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:green_wheels/src/constants/assets.dart';
+import 'package:green_wheels/src/services/google_maps/location_service.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../../../app/ride/content/trip_completed_modal.dart';
@@ -27,10 +34,30 @@ class RideController extends GetxController {
 
   //================ Variables =================\\
   var rideInfo = "Trip has started".obs;
+  var riderName = Get.arguments?["riderName"] ?? "";
   var rideAmount = Get.arguments?["rideAmount"] ?? 0.0;
   var rideTime = Get.arguments?["rideTime"] ?? "";
   var pickupLocation = Get.arguments?["pickupLocation"] ?? "";
-  var dropOffLocation = Get.arguments?["dropOffLocation"] ?? "";
+  var destination = Get.arguments?["destination"] ?? "";
+  var pickupLat = Get.arguments?["pickupLat"] ?? "";
+  var pickupLong = Get.arguments?["pickupLong"] ?? "";
+  var destinationLat = Get.arguments?["destinationLat"] ?? "";
+  var destinationLong = Get.arguments?["destinationLong"] ?? "";
+
+  Uint8List? markerImage;
+  late LatLng draggedLatLng;
+  var markers = <Marker>[].obs;
+
+  Rx<Position?> userPosition = Rx<Position?>(null);
+  CameraPosition? cameraPosition;
+
+  final List<MarkerId> markerId = <MarkerId>[
+    const MarkerId("0"),
+  ];
+  List<String>? markerTitle;
+  List<String>? markerSnippet;
+  final List<String> customMarkers = <String>[Assets.personLocationPng];
+  RxList<LatLng> polylineCoordinates = <LatLng>[].obs;
 
   //================ Boolean =================\\
   var isLocationPermissionGranted = false.obs;
@@ -49,38 +76,148 @@ class RideController extends GetxController {
     zoom: 14,
   );
 
-  //====================================== Setting Google Map Consts =========================================\\
+  //======================================== Init Function =========================================//
+  initFunctions() async {
+    rideInfo.value = "Trip has started";
+    await Future.delayed(const Duration(seconds: 6));
+    rideInfo.value = "Trip is ongoing";
+    await Future.delayed(const Duration(seconds: 6));
+    rideInfo.value = "Trip is completed";
+    rideComplete.value = true;
+    showTripCompletedModal();
+  }
 
-  void onMapCreated(GoogleMapController controller) {
+  var routeIsVisible = false.obs;
+
+  showRoute() async {
+    getPolyPoints(
+      destinationLat: double.tryParse(destinationLat!)!,
+      destinationLong: double.tryParse(destinationLong!)!,
+      pickupLat: double.tryParse(pickupLat!)!,
+      pickupLong: double.tryParse(pickupLong!)!,
+      polylineCoordinates: polylineCoordinates,
+      alternatives: true,
+    );
+    await Future.delayed(const Duration(seconds: 1));
+    routeIsVisible.value = true;
+  }
+
+  hideRoute() {
+    routeIsVisible.value = false;
+    polylineCoordinates.clear();
+  }
+
+  void onMapCreated(GoogleMapController controller) async {
     _googleMapController.complete(controller);
     newGoogleMapController = controller;
   }
 
   //======================================= Google Maps ================================================\\
 
-  /// When the location services are not enabled or permissions are denied the `Future` will return an error.
-  // Future<void> requestLocationPermission() async {
-  //   PermissionStatus status = await Permission.location.request();
+  //============================== Get bytes from assets =================================\\
 
-  //   if (status.isGranted) {
-  //     isLocationPermissionGranted.value = true;
-  //     update();
-  //   }
-  //   if (status.isDenied) {
-  //     Permission.location.request();
-  //   } else if (status.isPermanentlyDenied) {
-  //     openAppSettings();
-  //   }
-  // }
+  Future<Uint8List> getBytesFromAssets(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+      targetHeight: width,
+    );
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+  }
 
-  //======================================== Init Function =========================================//
-  initFunctions() async {
-    await Future.delayed(const Duration(seconds: 5));
-    rideInfo.value = "Trip is ongoing";
-    await Future.delayed(const Duration(seconds: 5));
-    rideInfo.value = "Trip is completed";
-    rideComplete.value = true;
-    showTripCompletedModal();
+  //========================== Get Location Markers =============================\\
+
+  Future<void> loadCustomMarkers() async {
+    Position userLocation = await Geolocator.getCurrentPosition(
+      locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
+    );
+    userPosition.value = userLocation;
+
+    List<LatLng> latLng = <LatLng>[
+      LatLng(userLocation.latitude, userLocation.longitude),
+    ];
+    for (int i = 0; i < customMarkers.length; i++) {
+      final Uint8List markerIcon =
+          await getBytesFromAssets(customMarkers[i], 100);
+
+      markers.add(
+        Marker(
+          markerId: markerId[i],
+          icon: BitmapDescriptor.bytes(markerIcon, height: 40),
+          position: latLng[i],
+          infoWindow: InfoWindow(
+            title: markerTitle![i],
+            snippet: markerSnippet![i],
+          ),
+        ),
+      );
+    }
+  }
+
+  //========================================================== Locate a place =============================================================\\
+
+  Future<void> locatePlace(
+    Map<String, dynamic> place,
+  ) async {
+    double lat;
+    double lng;
+
+    lat = place['geometry']['location']['lat'];
+    lng = place['geometry']['location']['lng'];
+
+    goToSpecifiedLocation(LatLng(lat, lng), 18);
+
+    // log("${LatLng(lat, lng)}");
+
+    // _markers.add(
+    //   Marker(
+    //     markerId: const MarkerId("1"),
+    //     icon: BitmapDescriptor.defaultMarker,
+    //     position: LatLng(lat, lng),
+    //     infoWindow: InfoWindow(
+    //       title: _searchEC.text,
+    //       snippet: "Pinned Location",
+    //     ),
+    //   ),
+    // );
+  }
+
+  var updateTrigger = 0.obs;
+
+  void searchPlaceFunc(String? location) async {
+    var place = await LocationService().getPlace(location!);
+
+    await Future.delayed(const Duration(milliseconds: 100));
+    locatePlace(place);
+  }
+
+//================================== Go to specified location by LatLng ======================================\\
+  Future goToSpecifiedLocation(LatLng position, double zoom) async {
+    GoogleMapController mapController = await _googleMapController.future;
+    mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(target: position, zoom: zoom),
+      ),
+    );
+    await getPlaceMark(position);
+  }
+
+//============================================== Get PlaceMark Address and LatLng =================================================\\
+
+  Future getPlaceMark(LatLng position) async {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark address = placemarks[0];
+    String addressStr =
+        "${address.name} ${address.street}, ${address.locality}, ${address.country}";
+    // pinnedLocation.value = addressStr;
+
+    log("LatLng: ${LatLng(position.latitude, position.longitude)}");
+    log("AddressStr: $addressStr");
+    log("PinnedLocation: $addressStr");
   }
 
   //======================================== Ride Functions =========================================//

@@ -71,9 +71,11 @@ class HomeScreenController extends GetxController
   //================ Variables =================\\
   var infoMessage = "".obs;
   var pinnedLocation = "".obs;
+  var riderName = "Emmanuel Daniel".obs;
   Uint8List? markerImage;
   late LatLng draggedLatLng;
   var markers = <Marker>[].obs;
+  var locationPinBottomPadding = 50.0.obs;
 
   final List<MarkerId> markerId = <MarkerId>[
     const MarkerId("0"),
@@ -81,6 +83,7 @@ class HomeScreenController extends GetxController
   List<String>? markerTitle;
   List<String>? markerSnippet;
   final List<String> customMarkers = <String>[Assets.personLocationPng];
+  RxList<LatLng> polylineCoordinates = <LatLng>[].obs;
 
   //================ Models =================\\
   var getRiderProfileResponseModel =
@@ -207,9 +210,8 @@ class HomeScreenController extends GetxController
   initFunctions() async {
     infoMessage.value =
         "Please note that every vehicle has a security camera for safety reasons.";
-    await Future.delayed(const Duration(seconds: 2), () {
-      infoMessage.value = "";
-    });
+    await Future.delayed(const Duration(seconds: 3));
+    infoMessage.value = "";
     var loadDriverDetails = await getRiderProfile();
 
     if (loadDriverDetails) {
@@ -266,6 +268,8 @@ class HomeScreenController extends GetxController
     await getAndGoToUserCurrentLocation();
 
     await loadCustomMarkers();
+
+    destinationEC.clear();
   }
 
   Future<Position> getAndGoToUserCurrentLocation() async {
@@ -282,8 +286,6 @@ class HomeScreenController extends GetxController
     newGoogleMapController?.animateCamera(
       CameraUpdate.newCameraPosition(cameraPosition!),
     );
-
-    draggedLatLng = latLngPosition;
 
     pickupLat = userLocation.latitude.toString();
     pickupLong = userLocation.longitude.toString();
@@ -342,16 +344,18 @@ class HomeScreenController extends GetxController
   }
 //========================================================== Locate a place =============================================================\\
 
-  Future<void> locatePlace(Map<String, dynamic> place) async {
+  Future<void> locatePlace(
+    Map<String, dynamic> place,
+  ) async {
     double lat;
     double lng;
 
     lat = place['geometry']['location']['lat'];
     lng = place['geometry']['location']['lng'];
 
-    goToSpecifiedLocation(LatLng(lat, lng), 20);
+    goToSpecifiedLocation(LatLng(lat, lng), 18);
 
-    log("${LatLng(lat, lng)}");
+    // log("${LatLng(lat, lng)}");
 
     // _markers.add(
     //   Marker(
@@ -366,27 +370,22 @@ class HomeScreenController extends GetxController
     // );
   }
 
-  void searchPickupPlaceFunc() async {
+  void searchPlaceFunc(String? location) async {
     locationPinIsVisible.value = false;
 
-    var place = await LocationService().getPlace(pickupLocationEC.text);
-    locatePlace(place);
-  }
-
-  void searchDestinationPlaceFunc() async {
-    locationPinIsVisible.value = false;
-
-    var place = await LocationService().getPlace(destinationEC.text);
+    var place = await LocationService().getPlace(location!);
+    await Future.delayed(const Duration(milliseconds: 100));
     locatePlace(place);
   }
 
 //============================================== Go to specified location by LatLng ==================================================\\
   Future goToSpecifiedLocation(LatLng position, double zoom) async {
     GoogleMapController mapController = await _googleMapController.future;
-    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-      target: position,
-      zoom: zoom,
-    )));
+    mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(target: position, zoom: zoom),
+      ),
+    );
     await getPlaceMark(position);
   }
 
@@ -397,7 +396,7 @@ class HomeScreenController extends GetxController
         await placemarkFromCoordinates(position.latitude, position.longitude);
     Placemark address = placemarks[0];
     String addressStr =
-        "${address.name} ${address.street},${address.locality}, ${address.country}";
+        "${address.name} ${address.street}, ${address.locality}, ${address.country}";
     pinnedLocation.value = addressStr;
 
     log("LatLng: ${LatLng(position.latitude, position.longitude)}");
@@ -408,19 +407,20 @@ class HomeScreenController extends GetxController
   onCameraIdle() async {
     locationPinIsVisible.value = true;
 
+    getPlaceMark(draggedLatLng);
+
+    await Future.delayed(const Duration(seconds: 1));
     destinationLat = draggedLatLng.latitude.toString();
     destinationLong = draggedLatLng.longitude.toString();
 
-    getPlaceMark(draggedLatLng);
-    await Future.delayed(const Duration(seconds: 1));
-    destinationEC.text = pinnedLocation.value;
-
-    log("Destination on Camera Idle: ${destinationEC.text}");
-    log("Destination Lat on Camera Idle: $destinationLat");
-    log("Destination Long on Camera Idle: $destinationLong");
+    if (destinationLat!.isNotEmpty && destinationLong!.isNotEmpty) {
+      destinationEC.text = pinnedLocation.value;
+    }
+    // log("Destination on Camera Idle: ${destinationEC.text}");
+    // log("Destination Lat on Camera Idle: $destinationLat");
+    // log("Destination Long on Camera Idle: $destinationLong");
 
     if (pickupLocationEC.text.isNotEmpty && destinationEC.text.isNotEmpty) {
-      log("Getting Ride amount");
       await getRideAmount(
         destination: destinationEC.text,
         destinationLat: destinationLat,
@@ -429,7 +429,22 @@ class HomeScreenController extends GetxController
         pickupLat: pickupLat,
         pickupLong: pickupLong,
       );
+
+      getPolyPoints(
+        destinationLat: double.tryParse(destinationLat!)!,
+        destinationLong: double.tryParse(destinationLong!)!,
+        pickupLat: double.tryParse(pickupLat!)!,
+        pickupLong: double.tryParse(pickupLong!)!,
+        polylineCoordinates: polylineCoordinates,
+      );
     }
+  }
+
+  RxInt polylineUpdateTrigger = 0.obs;
+
+  void updatePolylines(List<LatLng> newCoordinates) {
+    polylineCoordinates.assignAll(newCoordinates);
+    polylineUpdateTrigger.value++; // Trigger rebuild
   }
 
   onCameraMove(CameraPosition cameraPosition) {
@@ -494,6 +509,7 @@ class HomeScreenController extends GetxController
     await Future.delayed(const Duration(milliseconds: 300));
     pickupLocationEC.text = newLocation;
     log("Pickup Location: ${pickupLocationEC.text}, $pickupLat, $pickupLong");
+    searchPlaceFunc(destinationEC.text);
     FocusManager.instance.primaryFocus?.nextFocus();
   }
 
@@ -506,16 +522,25 @@ class HomeScreenController extends GetxController
 //! Calculate Ride Amount and Select Destination Suggestion
   void selectDestinationSuggestion(index) async {
     final newLocation = destinationPlacePredictions[index].description;
+
     List location = await parseLatLng(newLocation);
     destinationLat = location[0];
     destinationLong = location[1];
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 100));
     destinationEC.text = newLocation;
-    log("Destination: ${destinationEC.text}, $destinationLat, $destinationLong");
     FocusManager.instance.primaryFocus?.nextFocus();
+    log("Destination: ${destinationEC.text}, $destinationLat, $destinationLong");
 
     if (pickupLocationEC.text.isNotEmpty && destinationEC.text.isNotEmpty) {
-      log("Getting Ride amount");
+      // searchPlaceFunc(destinationEC.text);
+      getPolyPoints(
+        destinationLat: double.tryParse(destinationLat!)!,
+        destinationLong: double.tryParse(destinationLong!)!,
+        pickupLat: double.tryParse(pickupLat!)!,
+        pickupLong: double.tryParse(pickupLong!)!,
+        polylineCoordinates: polylineCoordinates,
+      );
+
       await getRideAmount(
         destination: destinationEC.text,
         destinationLat: destinationLat,
@@ -573,7 +598,7 @@ class HomeScreenController extends GetxController
 
       responseJson = jsonDecode(response.body);
 
-      log("Response Json=> $responseJson");
+      // log("Response Json=> $responseJson");
 
       if (response.statusCode == 200) {
         instantRideAmountResponseModel.value =
@@ -694,6 +719,13 @@ class HomeScreenController extends GetxController
     bookRideTimer = Timer.periodic(const Duration(seconds: 1), (bookRideTimer) {
       if (progress.value < 0.9) {
         updateProgress(progress.value + 0.1);
+      } else if (progress.value > 0.4 && progress.value < 0.5) {
+        updateProgress(progress.value);
+        bookDriverTimerFinished.value = true;
+        bookDriverFound.value = true;
+
+        log("Driver found: ${bookDriverFound.value}");
+        cancelProgress();
       } else {
         // Directly set progress to 1.0 on the last step
         updateProgress(1.0);
@@ -977,10 +1009,15 @@ class HomeScreenController extends GetxController
       () => const RideScreen(),
       routeName: "/ride",
       arguments: {
+        "riderName": riderName.value,
         "rideAmount": instantRideData.value.amount,
         "rideTime": totalInstantRideTime.value,
         "pickupLocation": pickupLocationEC.text,
-        "dropOffLocation": destinationEC.text,
+        "destination": destinationEC.text,
+        "pickupLat": pickupLat,
+        "pickupLong": pickupLong,
+        "destinationLat": destinationLat,
+        "destinationLong": destinationLong,
       },
       curve: Curves.easeInOut,
       fullscreenDialog: true,

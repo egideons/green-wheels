@@ -25,10 +25,10 @@ dependencies:
   google_maps_flutter:
   geolocator:
   geocoding:
+  flutter_polyline_points:
   url_launcher:
   sliding_up_panel: ^2.0.0+1
   board_datetime_picker: ^2.1.1
-  omni_datetime_picker:
   animate_do:
   skeletonizer:
   connectivity_plus:

@@ -39,9 +39,7 @@ ridePanelSection(
                 children: [
                   Obx(() {
                     return Text(
-                      controller.rideComplete.value
-                          ? "Trip completed"
-                          : "Trip has started",
+                      controller.rideInfo.value,
                       textAlign: TextAlign.start,
                       style: defaultTextStyle(
                         color: kTextBlackColor,
@@ -64,7 +62,7 @@ ridePanelSection(
                         ),
                         driverAvatarNameRating(
                           colorScheme,
-                          driverName: "John Kennedy",
+                          driverName: controller.riderName,
                           numOfStars: 4,
                           isUserVerified: true,
                         ),
@@ -93,41 +91,51 @@ ridePanelSection(
                           ],
                         ),
                         kHalfSizedBox,
-                        Row(
-                          children: [
-                            Text(
-                              "Plate number",
-                              style: defaultTextStyle(
-                                color: kTextBlackColor,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            kWidthSizedBox,
-                            Expanded(
-                              child: Text(
-                                "ABJ23 456",
-                                style: defaultTextStyle(
-                                  color: kTextBlackColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        // Row(
+                        //   children: [
+                        //     Text(
+                        //       "Plate number",
+                        //       style: defaultTextStyle(
+                        //         color: kTextBlackColor,
+                        //         fontSize: 13,
+                        //         fontWeight: FontWeight.w400,
+                        //       ),
+                        //     ),
+                        //     kWidthSizedBox,
+                        //     Expanded(
+                        //       child: Text(
+                        //         "ABJ23 456",
+                        //         style: defaultTextStyle(
+                        //           color: kTextBlackColor,
+                        //           fontSize: 16,
+                        //           fontWeight: FontWeight.w400,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                       ],
                     ),
                   ),
                   kSizedBox,
-                  Obx(() {
-                    return controller.hasPaid.value
-                        ? AndroidElevatedButton(
-                            title: "Done",
-                            onPressed: controller.goToHomeScreen,
-                          )
-                        : const SizedBox();
-                  }),
+                  Obx(
+                    () {
+                      if (!controller.rideComplete.value) {
+                        if (controller.routeIsVisible.value) {
+                          return AndroidElevatedButton(
+                            title: "Hide Route",
+                            onPressed: controller.hideRoute,
+                          );
+                        } else {
+                          return AndroidElevatedButton(
+                            title: "Show Route",
+                            onPressed: controller.showRoute,
+                          );
+                        }
+                      }
+                      return SizedBox();
+                    },
+                  ),
                 ],
               ),
             ),

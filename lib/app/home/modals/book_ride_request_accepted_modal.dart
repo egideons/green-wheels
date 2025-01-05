@@ -111,7 +111,7 @@ class BookRideRequestAcceptedModal extends GetView<HomeScreenController> {
                   ),
                   driverAvatarNameRating(
                     colorScheme,
-                    driverName: "John Kennedy",
+                    driverName: controller.riderName.value,
                     numOfStars: 4,
                     isUserVerified: true,
                   ),
@@ -140,29 +140,29 @@ class BookRideRequestAcceptedModal extends GetView<HomeScreenController> {
                     ],
                   ),
                   kHalfSizedBox,
-                  Row(
-                    children: [
-                      Text(
-                        "Plate number",
-                        style: defaultTextStyle(
-                          color: kTextBlackColor,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      kWidthSizedBox,
-                      Expanded(
-                        child: Text(
-                          "ABJ23 456",
-                          style: defaultTextStyle(
-                            color: kTextBlackColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     Text(
+                  //       "Plate number",
+                  //       style: defaultTextStyle(
+                  //         color: kTextBlackColor,
+                  //         fontSize: 13,
+                  //         fontWeight: FontWeight.w400,
+                  //       ),
+                  //     ),
+                  //     kWidthSizedBox,
+                  //     Expanded(
+                  //       child: Text(
+                  //         "ABJ23 456",
+                  //         style: defaultTextStyle(
+                  //           color: kTextBlackColor,
+                  //           fontSize: 16,
+                  //           fontWeight: FontWeight.w400,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
             ),
