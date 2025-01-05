@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:ui' as ui;
 
+import 'package:board_datetime_picker/board_datetime_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
@@ -397,22 +398,45 @@ class HomeScreenController extends GetxController
     Placemark address = placemarks[0];
     String addressStr =
         "${address.name} ${address.street},${address.locality}, ${address.country}";
+    pinnedLocation.value = addressStr;
 
     log("LatLng: ${LatLng(position.latitude, position.longitude)}");
     log("AddressStr: $addressStr");
-
-    pinnedLocation.value = addressStr;
+    log("PinnedLocation: $addressStr");
   }
 
-  onCameraIdle() {
+  onCameraIdle() async {
     locationPinIsVisible.value = true;
 
+    destinationLat = draggedLatLng.latitude.toString();
+    destinationLong = draggedLatLng.longitude.toString();
+
     getPlaceMark(draggedLatLng);
+    await Future.delayed(const Duration(seconds: 1));
+    destinationEC.text = pinnedLocation.value;
+
+    log("Destination on Camera Idle: ${destinationEC.text}");
+    log("Destination Lat on Camera Idle: $destinationLat");
+    log("Destination Long on Camera Idle: $destinationLong");
+
+    if (pickupLocationEC.text.isNotEmpty && destinationEC.text.isNotEmpty) {
+      log("Getting Ride amount");
+      await getRideAmount(
+        destination: destinationEC.text,
+        destinationLat: destinationLat,
+        destinationLong: destinationLong,
+        pickup: pickupLocationEC.text,
+        pickupLat: pickupLat,
+        pickupLong: pickupLong,
+      );
+    }
   }
 
   onCameraMove(CameraPosition cameraPosition) {
     locationPinIsVisible.value = true;
     draggedLatLng = cameraPosition.target;
+
+    log("Dragged LatLng: $draggedLatLng");
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -1190,30 +1214,29 @@ class HomeScreenController extends GetxController
   var chooseAvailableVehicleFN = FocusNode();
 
   void selectRentRideDate() async {
-    // DateTime today = DateTime.now();
+    DateTime today = DateTime.now();
 
-    // final selectedDate = await showBoardDateTimePickerForDate(
-    //   context: Get.context!,
-    //   enableDrag: false,
-    //   showDragHandle: false,
-    //   initialDate: lastSelectedRentRideDate ?? today,
-    //   minimumDate: DateTime.now(),
-    //   maximumDate: DateTime(2101),
-    //   isDismissible: true,
-    //   useSafeArea: true,
-    //   onChanged: (dateTime) {
-    //     rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(dateTime);
-    //   },
-    // options: const BoardDateTimeOptions(
-    //   inputable: true,
-    //   showDateButton: true,
-    //   startDayOfWeek: DateTime.sunday,
-    // )
-    // );
+    final selectedDate = await showBoardDateTimePickerForDate(
+        context: Get.context!,
+        enableDrag: false,
+        showDragHandle: false,
+        initialDate: lastSelectedRentRideDate ?? today,
+        minimumDate: DateTime.now(),
+        maximumDate: DateTime(2101),
+        isDismissible: true,
+        useSafeArea: true,
+        onChanged: (dateTime) {
+          rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(dateTime);
+        },
+        options: const BoardDateTimeOptions(
+          inputable: true,
+          showDateButton: true,
+          startDayOfWeek: DateTime.sunday,
+        ));
 
-    // if (selectedDate != null) {
-    //   rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
-    // }
+    if (selectedDate != null) {
+      rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
+    }
   }
 
   void selectRentRidePickupTime() async {

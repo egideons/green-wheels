@@ -75,9 +75,7 @@ bookRideForm(
           formFieldContainer(
             colorScheme,
             media,
-            containerHeight: controller.destinationEC.text.isEmpty
-                ? null
-                : media.height * .1,
+            containerHeight: media.height * .1,
             borderSide: BorderSide(
               width: 1,
               color: colorScheme.primary,
