@@ -41,7 +41,9 @@ class InstantRideData {
   factory InstantRideData.fromJson(Map<String, dynamic>? json) {
     json ??= {};
     return InstantRideData(
-      amount: json['amount'] ?? 0.0,
+      amount: (json['amount'] is int)
+          ? (json['amount'] as int).toDouble()
+          : (json['amount'] ?? 0.0) as double,
       priceBreakdown: PriceBreakdown.fromJson(json['price_breakdown'] ?? {}),
       rideType: json['ride_type'] ?? "",
     );
@@ -76,12 +78,22 @@ class PriceBreakdown {
   factory PriceBreakdown.fromJson(Map<String, dynamic>? json) {
     json ??= {};
     return PriceBreakdown(
-      basePrice: json['base_price'] ?? 0.0,
-      distanceInMeters: json['distance_in_meters'] ?? 0.0,
-      pricePerMeter: json['price_per_meter'] ?? 0.0,
-      distancePrice: json['distance_price'] ?? 0.0,
+      basePrice: (json['base_price'] is int)
+          ? (json['base_price'] as int).toDouble()
+          : (json['base_price'] ?? 0.0) as double,
+      distanceInMeters: (json['distance_in_meters'] is int)
+          ? (json['distance_in_meters'] as int).toDouble()
+          : (json['distance_in_meters'] ?? 0.0) as double,
+      pricePerMeter: (json['price_per_meter'] is int)
+          ? (json['price_per_meter'] as int).toDouble()
+          : (json['price_per_meter'] ?? 0.0) as double,
+      distancePrice: (json['distance_price'] is int)
+          ? (json['distance_price'] as int).toDouble()
+          : (json['distance_price'] ?? 0.0) as double,
       discountPercentage: json['discount_percentage'] ?? "",
-      finalPrice: json['final_price'] ?? 0.0,
+      finalPrice: (json['final_price'] is int)
+          ? (json['final_price'] as int).toDouble()
+          : (json['final_price'] ?? 0.0) as double,
     );
   }
 

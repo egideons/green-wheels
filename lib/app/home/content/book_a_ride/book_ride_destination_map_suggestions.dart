@@ -11,13 +11,15 @@ bookRideDestinationMapSuggestions(
   Size media,
 ) {
   return ListView.separated(
-    itemCount: 10,
+    itemCount: controller.destinationPlacePredictions.length,
     shrinkWrap: true,
     physics: const BouncingScrollPhysics(),
     separatorBuilder: (context, index) => kSmallSizedBox,
     itemBuilder: (context, index) {
       return InkWell(
-        onTap: controller.selectDestinationSuggestion,
+        onTap: () {
+          controller.selectDestinationSuggestion(index);
+        },
         borderRadius: BorderRadius.circular(4),
         child: Container(
           padding: const EdgeInsets.all(10),
@@ -40,7 +42,7 @@ bookRideDestinationMapSuggestions(
               kSmallWidthSizedBox,
               Expanded(
                 child: Text(
-                  controller.destinationLocation.value,
+                  controller.destinationPlacePredictions[index].description,
                   style: defaultTextStyle(
                     color: kTextBlackColor,
                     fontSize: 18,

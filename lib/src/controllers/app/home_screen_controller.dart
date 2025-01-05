@@ -5,7 +5,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -21,7 +20,6 @@ import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:green_wheels/src/services/client/http_client_service.dart';
 import 'package:green_wheels/src/services/google_maps/autocomplete_prediction_model.dart';
 import 'package:green_wheels/src/services/google_maps/location_service.dart';
-import 'package:green_wheels/src/services/google_maps/places_auto_complete_model.dart';
 import 'package:green_wheels/theme/colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
@@ -286,6 +284,12 @@ class HomeScreenController extends GetxController
 
     draggedLatLng = latLngPosition;
 
+    pickupLat = userLocation.latitude.toString();
+    pickupLong = userLocation.longitude.toString();
+
+    log("User Position: $userLocation");
+    log("Pickup Location: Latitude: $pickupLat, Longitude: $pickupLong");
+
     getPlaceMark(latLngPosition);
 
     await Future.delayed(const Duration(seconds: 2));
@@ -419,10 +423,10 @@ class HomeScreenController extends GetxController
   //!============ Book Instant Ride Section ==========================================================>
 
   //================ Variables =================\\
-  double? pickupLat;
-  double? pickupLong;
-  double? destinationLat;
-  double? destinationLong;
+  String? pickupLat;
+  String? pickupLong;
+  String? destinationLat;
+  String? destinationLong;
   List<GooglePlaceAutoCompletePredictionModel> pickupPlacePredictions = [];
   List<GooglePlaceAutoCompletePredictionModel> destinationPlacePredictions = [];
 
@@ -463,7 +467,9 @@ class HomeScreenController extends GetxController
     List location = await parseLatLng(newLocation);
     pickupLat = location[0];
     pickupLong = location[1];
+    await Future.delayed(const Duration(milliseconds: 300));
     pickupLocationEC.text = newLocation;
+    log("Pickup Location: ${pickupLocationEC.text}, $pickupLat, $pickupLong");
     FocusManager.instance.primaryFocus?.nextFocus();
   }
 
@@ -474,9 +480,37 @@ class HomeScreenController extends GetxController
   }
 
 //! Calculate Ride Amount and Select Destination Suggestion
-  void selectDestinationSuggestion() async {
-    destinationEC.text = destinationLocation.value;
+  void selectDestinationSuggestion(index) async {
+    final newLocation = destinationPlacePredictions[index].description;
+    List location = await parseLatLng(newLocation);
+    destinationLat = location[0];
+    destinationLong = location[1];
+    await Future.delayed(const Duration(milliseconds: 300));
+    destinationEC.text = newLocation;
+    log("Destination: ${destinationEC.text}, $destinationLat, $destinationLong");
+    FocusManager.instance.primaryFocus?.nextFocus();
 
+    if (pickupLocationEC.text.isNotEmpty && destinationEC.text.isNotEmpty) {
+      log("Getting Ride amount");
+      await getRideAmount(
+        destination: destinationEC.text,
+        destinationLat: destinationLat,
+        destinationLong: destinationLong,
+        pickup: pickupLocationEC.text,
+        pickupLat: pickupLat,
+        pickupLong: pickupLong,
+      );
+    }
+  }
+
+  getRideAmount({
+    String? pickup,
+    String? pickupLat,
+    String? pickupLong,
+    String? destination,
+    String? destinationLat,
+    String? destinationLong,
+  }) async {
     var url = ApiUrl.baseUrl + ApiUrl.rideAmount;
 
     var userToken = prefs.getString("userToken");
@@ -484,14 +518,14 @@ class HomeScreenController extends GetxController
     Map<String, dynamic> data = {
       "type": "instant",
       "pickup_location": {
-        "address": pickupLocationEC.text,
-        "lat": 6.459145467001655,
-        "long": 7.520305312930343,
+        "address": pickup,
+        "lat": pickupLat,
+        "long": pickupLong,
       },
       "destination": {
-        "address": destinationEC.text,
-        "lat": 6.4531,
-        "long": 3.3958
+        "address": destination,
+        "lat": destinationLat,
+        "long": destinationLong,
       }
     };
 
@@ -515,6 +549,8 @@ class HomeScreenController extends GetxController
 
       responseJson = jsonDecode(response.body);
 
+      log("Response Json=> $responseJson");
+
       if (response.statusCode == 200) {
         instantRideAmountResponseModel.value =
             InstantRideAmountResponseModel.fromJson(responseJson);
@@ -523,7 +559,9 @@ class HomeScreenController extends GetxController
             instantRideAmountResponseModel.value.data.priceBreakdown;
 
         calculateReadableTravelTime(
-            priceBreakdown.value.distanceInMeters, totalInstantRideTime.value);
+          priceBreakdown.value.distanceInMeters,
+          totalInstantRideTime.value,
+        );
 
         await Future.delayed(const Duration(milliseconds: 300));
 
@@ -545,36 +583,6 @@ class HomeScreenController extends GetxController
     mapSuggestionIsSelected.value = false;
   }
 
-  void googlePlaceAutoComplete(
-    String query,
-    List<GooglePlaceAutoCompletePredictionModel> placePredictions,
-  ) async {
-    var googlePlacesApiKey = dotenv.env['GooglePlacesAPIKey'];
-
-    Uri uri = Uri.https(
-        "maps.googleapis.com",
-        '/maps/api/place/autocomplete/json', // unencoded path
-        {
-          "input": query, // query params
-          "key": googlePlacesApiKey, // google places api key
-        });
-
-    String? response = await LocationService.fetchUrl(uri, ApiUrl.baseUrl);
-
-    GooglePlaceAutoCompleteResponseModel result =
-        GooglePlaceAutoCompleteResponseModel.parseAutoCompleteResult(
-      response ?? "",
-    );
-
-    if (result.predictions != null && result.predictions!.isNotEmpty) {
-      placePredictions.clear();
-      placePredictions.addAll(result.predictions!);
-      log("Place predictions: ${placePredictions.map((e) => e.description).toList()}");
-    } else {
-      log("Place predictions is Empty");
-    }
-  }
-
   pickupLocationOnChanged(String value) {
     mapSuggestionIsSelected.value = false;
 
@@ -590,6 +598,7 @@ class HomeScreenController extends GetxController
       // } else {
       // isStopLocationTextFieldActive.value = true;
       googlePlaceAutoComplete(value, pickupPlacePredictions);
+      update();
 
       isPickupLocationTextFieldActive.value = true;
       isDestinationTextFieldActive.value = false;
@@ -609,13 +618,14 @@ class HomeScreenController extends GetxController
       //   isPickupLocationTextFieldActive.value = false;
       //   isDestinationTextFieldActive.value = true;
       // } else {
-      isStopLocationTextFieldActive.value = true;
-      isPickupLocationTextFieldActive.value = false;
-      isDestinationTextFieldActive.value = true;
       googlePlaceAutoComplete(
         value,
         destinationPlacePredictions,
       );
+      update();
+      // isStopLocationTextFieldActive.value = true;
+      isDestinationTextFieldActive.value = true;
+      isPickupLocationTextFieldActive.value = false;
       // }
     }
   }

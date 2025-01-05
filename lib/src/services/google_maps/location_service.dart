@@ -65,10 +65,10 @@ void googlePlaceAutoComplete(
 
   Uri uri = Uri.https(
       "maps.googleapis.com",
-      '/maps/api/place/autocomplete/json', //unencoder path
+      '/maps/api/place/autocomplete/json', // unencoded path
       {
-        "input": query, //query params
-        "key": googlePlacesApiKey, //google places api key
+        "input": query, // query params
+        "key": googlePlacesApiKey, // google places api key
       });
 
   String? response = await LocationService.fetchUrl(uri, ApiUrl.baseUrl);
@@ -77,14 +77,13 @@ void googlePlaceAutoComplete(
       GooglePlaceAutoCompleteResponseModel.parseAutoCompleteResult(
     response ?? "",
   );
-  if (result.predictions != null) {
-    placePredictions = result.predictions ?? [];
-    // var responseJson = jsonDecode(response!);
-    // for (var prediction in responseJson["predictions"]) {
-    //   log("Description: ${prediction["description"]}");
-    // }
 
-    // log("Place Predictions: $placePredictions");
+  if (result.predictions != null && result.predictions!.isNotEmpty) {
+    placePredictions.clear();
+    placePredictions.addAll(result.predictions!);
+    log("Place predictions: ${placePredictions.map((e) => e.description).toList()}");
+  } else {
+    log("Place predictions is Empty");
   }
 }
 

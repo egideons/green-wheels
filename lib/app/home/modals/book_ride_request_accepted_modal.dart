@@ -170,7 +170,7 @@ class BookRideRequestAcceptedModal extends GetView<HomeScreenController> {
             defaultInfoContainer(
               child: rideAddressSection(
                 colorScheme,
-                pickup: controller.pickupLocation.value,
+                pickup: controller.pickupLocationEC.text,
                 destination: controller.destinationEC.text,
               ),
             ),
