@@ -29,7 +29,7 @@ profileInfo(
             return Center(
               child: Stack(
                 children: [
-                  controller.selectedProfileImage == null ||
+                  controller.selectedProfileImage.value == null ||
                           controller.profilePicUploadIsCanceled.isTrue
                       ? circleAvatarImage(
                           colorScheme,
@@ -52,11 +52,11 @@ profileInfo(
                           height: 120,
                           foregroundImage: FileImage(
                             File(
-                              controller.selectedProfileImage!.path,
+                              controller.selectedProfileImage.value!.path,
                             ),
                           ),
                         ),
-                  controller.selectedProfileImage == null ||
+                  controller.selectedProfileImage.value == null ||
                           controller.profilePicIsUploaded.isTrue ||
                           controller.profilePicUploadIsCanceled.value
                       ? const SizedBox()
@@ -108,14 +108,16 @@ profileInfo(
                               ),
                             )
                           : InkWell(
-                              onTap: controller.selectedProfileImage == null ||
+                              onTap: controller.selectedProfileImage.value ==
+                                          null ||
                                       controller.profilePicIsUploaded.isTrue ||
                                       controller
                                           .profilePicUploadIsCanceled.value
                                   ? controller.showUploadProfilePicModal
                                   : controller.uploadProfilePic,
                               borderRadius: BorderRadius.circular(20),
-                              child: controller.selectedProfileImage == null ||
+                              child: controller.selectedProfileImage.value ==
+                                          null ||
                                       controller.profilePicIsUploaded.isTrue ||
                                       controller
                                           .profilePicUploadIsCanceled.value

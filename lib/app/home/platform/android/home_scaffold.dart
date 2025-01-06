@@ -28,9 +28,9 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
               children: [
                 SlidingUpPanel(
                   controller: controller.panelController,
-                  maxHeight: media.height,
+                  maxHeight: media.height * .8,
                   backdropTapClosesPanel: true,
-                  minHeight: media.height * .26,
+                  minHeight: media.height * .2,
                   backdropEnabled: true,
                   defaultPanelState: PanelState.CLOSED,
                   panelSnapping: false,

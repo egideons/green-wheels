@@ -8,7 +8,7 @@ rideGoogleMap(RideController controller, ColorScheme colorScheme) {
   return Obx(() {
     return controller.routeIsVisible.value
         ? GoogleMap(
-            mapType: MapType.normal,
+            mapType: MapType.hybrid,
             compassEnabled: false,
             mapToolbarEnabled: false,
             minMaxZoomPreference: MinMaxZoomPreference.unbounded,
@@ -29,7 +29,8 @@ rideGoogleMap(RideController controller, ColorScheme colorScheme) {
                 double.tryParse(controller.pickupLat)!,
                 double.tryParse(controller.pickupLong)!,
               ),
-              zoom: 18,
+              zoom: 17.4,
+              tilt: 40,
             ),
             markers: Set<Marker>.of(controller.markers),
             polylines: {
@@ -65,7 +66,8 @@ rideGoogleMap(RideController controller, ColorScheme colorScheme) {
                 double.tryParse(controller.pickupLat)!,
                 double.tryParse(controller.pickupLong)!,
               ),
-              zoom: 18,
+              zoom: 17.4,
+              tilt: 40,
             ),
             markers: Set<Marker>.of(controller.markers),
             polylines: {

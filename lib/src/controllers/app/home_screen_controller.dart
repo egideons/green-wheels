@@ -110,6 +110,7 @@ class HomeScreenController extends GetxController
   var isStopLocationVisible = false.obs;
   var isStopLocationTextFieldActive = false.obs;
   var mapSuggestionIsSelected = false.obs;
+  var routeIsVisible = false.obs;
 
   //================ Controllers =================\\
   final Completer<GoogleMapController> _googleMapController = Completer();
@@ -147,6 +148,7 @@ class HomeScreenController extends GetxController
 //================ Select Tab =================//
   void clickOnTabBarOption(int index) {
     selectedTabBar.value = index;
+    if (panelController.isPanelClosed) openPanel();
   }
 
   //=============================== Open Drawer =====================================\\
@@ -281,7 +283,7 @@ class HomeScreenController extends GetxController
 
     LatLng latLngPosition =
         LatLng(userLocation.latitude, userLocation.longitude);
-    cameraPosition = CameraPosition(target: latLngPosition, zoom: 20);
+    cameraPosition = CameraPosition(target: latLngPosition, zoom: 18);
 
     newGoogleMapController?.animateCamera(
       CameraUpdate.newCameraPosition(cameraPosition!),
@@ -405,8 +407,7 @@ class HomeScreenController extends GetxController
   }
 
   onCameraIdle() async {
-    locationPinIsVisible.value = true;
-
+    routeIsVisible.value = false;
     getPlaceMark(draggedLatLng);
 
     await Future.delayed(const Duration(seconds: 1));
@@ -437,21 +438,17 @@ class HomeScreenController extends GetxController
         pickupLong: double.tryParse(pickupLong!)!,
         polylineCoordinates: polylineCoordinates,
       );
+
+      await Future.delayed(const Duration(milliseconds: 1200));
+      routeIsVisible.value = true;
     }
-  }
-
-  RxInt polylineUpdateTrigger = 0.obs;
-
-  void updatePolylines(List<LatLng> newCoordinates) {
-    polylineCoordinates.assignAll(newCoordinates);
-    polylineUpdateTrigger.value++; // Trigger rebuild
   }
 
   onCameraMove(CameraPosition cameraPosition) {
     locationPinIsVisible.value = true;
     draggedLatLng = cameraPosition.target;
 
-    log("Dragged LatLng: $draggedLatLng");
+    log("Dragged LatLng on Camera Move: $draggedLatLng");
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -521,6 +518,8 @@ class HomeScreenController extends GetxController
 
 //! Calculate Ride Amount and Select Destination Suggestion
   void selectDestinationSuggestion(index) async {
+    routeIsVisible.value = false;
+
     final newLocation = destinationPlacePredictions[index].description;
 
     List location = await parseLatLng(newLocation);
@@ -549,6 +548,9 @@ class HomeScreenController extends GetxController
         pickupLat: pickupLat,
         pickupLong: pickupLong,
       );
+
+      await Future.delayed(const Duration(milliseconds: 500));
+      routeIsVisible.value = true;
     }
   }
 
@@ -621,6 +623,61 @@ class HomeScreenController extends GetxController
       } else {
         ApiProcessorController.errorSnack("An error occured");
         log("An error occured, Response body: ${response.body}");
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  bookInstantRide() async {
+    var url = ApiUrl.baseUrl + ApiUrl.bookInstantRide;
+
+    var userToken = prefs.getString("userToken");
+
+    Map<String, dynamic> data = {
+      "pickup_location": {
+        "address": pickupLocationEC.text,
+        "lat": pickupLat,
+        "long": pickupLong,
+      },
+      "destination": {
+        "address": destinationEC.text,
+        "lat": destinationLat,
+        "long": destinationLong,
+      },
+      "payment_type": "wallet",
+    };
+
+    log("URL=> $url\nUSERTOKEN=>$userToken\n$data");
+
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $userToken"
+    };
+
+    //HTTP Client Service
+    http.Response? response =
+        await HttpClientService.postRequest(url, userToken, data, headers);
+
+    if (response == null) {
+      return;
+    }
+
+    try {
+      dynamic responseJson;
+
+      responseJson = jsonDecode(response.body);
+
+      log("This is the responseJson: $responseJson");
+
+      if (response.statusCode == 200) {
+        ApiProcessorController.successSnack("${responseJson["message"]}");
+        showSearchingForDriverModalSheet();
+      } else {
+        ApiProcessorController.errorSnack(
+          "${responseJson["message"]}\nThe required amount: ${responseJson["data"]["required_amount"]}\n Deficit: ${responseJson["data"]["deficit"]}",
+        );
+        log(responseJson.toString());
       }
     } catch (e) {
       log(e.toString());

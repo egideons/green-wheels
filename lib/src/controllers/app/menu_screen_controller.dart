@@ -213,7 +213,7 @@ class MenuScreenController extends GetxController {
 
   //================ Upload Profile Picture ==================\\
   final ImagePicker picker = ImagePicker();
-  XFile? selectedProfileImage;
+  final Rxn<XFile> selectedProfileImage = Rxn<XFile>();
 
   showUploadProfilePicModal() {
     var media = MediaQuery.of(Get.context!).size;
@@ -243,63 +243,23 @@ class MenuScreenController extends GetxController {
     );
   }
 
-  // requestCameraPermission() async {
-  //   try {
-  //     log('Requesting camera permission');
-  //     var status = await Permission.camera.request();
-  //     log('Permission status: $status');
-
-  //     if (status.isGranted) {
-  //       cameraPermissionIsGranted.value = true;
-  //       Get.close(0);
-  //       uploadProfilePicWithCamera();
-  //     } else if (status.isDenied) {
-  //       await Permission.camera.request();
-  //     } else if (status.isPermanentlyDenied) {
-  //       openAppSettings();
-  //     }
-  //   } catch (e) {
-  //     log('Error while requesting camera permission: $e');
-  //   }
-  // }
-
-  // requestGalleryPermission() async {
-  //   try {
-  //     log('Requesting media library permission');
-  //     var status = await Permission.mediaLibrary.request();
-  //     log('Permission status: $status');
-
-  //     if (status.isGranted) {
-  //       cameraPermissionIsGranted.value = true;
-  //       Get.close(0);
-  //       uploadProfilePicWithGallery();
-  //     } else if (status.isDenied) {
-  //       await Permission.mediaLibrary.request();
-  //     } else if (status.isPermanentlyDenied) {
-  //       openAppSettings();
-  //     }
-  //   } catch (e) {
-  //     log('Error while requesting media library permission: $e');
-  //   }
-  // }
-
   uploadProfilePicWithCamera() async {
     final XFile? image = await picker.pickImage(source: ImageSource.camera);
     if (image != null) {
-      selectedProfileImage = image;
+      selectedProfileImage.value = image; // Update the reactive variable
       profilePicUploadIsCanceled.value = false;
-
-      update();
+      log("This is the image path: ${selectedProfileImage.value?.path}");
+      if (selectedProfileImage.value?.path.isNotEmpty == true) Get.close(0);
     }
   }
 
   uploadProfilePicWithGallery() async {
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      selectedProfileImage = image;
+      selectedProfileImage.value = image; // Update the reactive variable
       profilePicUploadIsCanceled.value = false;
-
-      update();
+      log("This is the image path: ${selectedProfileImage.value?.path}");
+      if (selectedProfileImage.value?.path.isNotEmpty == true) Get.close(0);
     }
   }
 
@@ -308,11 +268,11 @@ class MenuScreenController extends GetxController {
   }
 
   Future<void> uploadProfilePic() async {
-    if (selectedProfileImage == null) {
+    if (selectedProfileImage.value == null) {
       ApiProcessorController.warningSnack("No image selected");
       return;
     }
-    if (await checkXFileSize(selectedProfileImage)) {
+    if (await checkXFileSize(selectedProfileImage.value)) {
       ApiProcessorController.warningSnack("Image size must not exceed 5mb");
       return;
     }
@@ -327,7 +287,7 @@ class MenuScreenController extends GetxController {
     var streamedResponse = await HttpClientService.uploadProfilePicture(
       url,
       userToken,
-      selectedProfileImage!,
+      selectedProfileImage.value!,
     );
 
     if (streamedResponse == null) {
@@ -355,9 +315,6 @@ class MenuScreenController extends GetxController {
 
         var profileIsUpdated = await updateProfile(profileImageUrl);
         if (profileIsUpdated) {
-          ApiProcessorController.successSnack(
-            "Profile picture uploaded successfully",
-          );
           prefs.setString("profileImageUrl", profileImageUrl);
         }
       } else {
@@ -411,7 +368,6 @@ class MenuScreenController extends GetxController {
         riderModel.value = getRiderProfileResponseModel.value.data;
         getRiderProfile();
 
-        Get.back();
         ApiProcessorController.successSnack(responseJson["message"]);
         return true;
       } else {

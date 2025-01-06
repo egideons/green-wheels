@@ -165,7 +165,7 @@ class HttpClientService {
 
       log("Response status code: ${response.statusCode}");
     } catch (e) {
-      response = null;
+      // response = null;
       log("Error uploading profile image: $e");
     }
     return response;
