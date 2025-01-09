@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../../../src/constants/consts.dart';
-import '../../../src/utils/components/stars_widget.dart';
 import '../../../theme/colors.dart';
 
 carNameRating(
   ColorScheme colorScheme, {
   String? vehicleImage,
   String? vehicleName,
-  int? numOfStars,
+  String? vehiclePlateNumber,
   bool? isUserVerified,
+  int? numOfStars,
 }) {
   return Row(
     children: [
@@ -28,7 +28,30 @@ carNameRating(
               ),
             ),
             kSmallSizedBox,
-            starsWidget(colorScheme, numOfStars ?? 0, isUserVerified ?? false),
+            // starsWidget(colorScheme, numOfStars ?? 0, isUserVerified ?? false),
+            Row(
+              children: [
+                Text(
+                  "Plate number",
+                  style: defaultTextStyle(
+                    color: kTextBlackColor,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                kHalfWidthSizedBox,
+                Expanded(
+                  child: Text(
+                    vehiclePlateNumber ?? "",
+                    style: defaultTextStyle(
+                      color: kTextBlackColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

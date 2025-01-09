@@ -142,7 +142,6 @@ class CarRentalMenuScaffold extends GetView<CarRentalMenuController> {
           media,
           vehicleImage: Assets.car3Png,
           vehicleName: "Mustang Shelby GT",
-          numOfStars: 5,
           vehiclePlateNumber: "ABJ23 456",
           amount: controller.rentRideAmountPerHour.value,
         );

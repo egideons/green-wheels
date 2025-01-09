@@ -60,8 +60,8 @@ class MyApp extends StatelessWidget {
         defaultTransition: Transition.native,
         debugShowCheckedModeBanner: false,
         locale: Get.deviceLocale,
-        // initialRoute: Routes.startupSplashscreen,
-        // getPages: Routes.getPages,
+        initialRoute: Routes.startupSplashscreen,
+        getPages: Routes.getPages,
         theme: Get.isDarkMode ? iOSDarkTheme : iOSLightTheme,
       );
     }
@@ -83,8 +83,6 @@ class MyApp extends StatelessWidget {
       scrollBehavior: ScrollConfiguration.of(context).copyWith(
         multitouchDragStrategy: MultitouchDragStrategy.sumAllPointers,
       ),
-      // This is the home route
-      // home: const SplashGreen(),
     );
   }
 }

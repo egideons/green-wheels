@@ -116,7 +116,7 @@ class GreenWalletPaymentMenuScaffold
               ),
               kSizedBox,
               ListView.separated(
-                itemCount: 10,
+                itemCount: 0,
                 shrinkWrap: true,
                 physics: const BouncingScrollPhysics(),
                 separatorBuilder: (context, index) => kSizedBox,

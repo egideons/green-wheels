@@ -93,15 +93,12 @@ class FundWalletMenuScaffold extends GetView<GreenWalletPaymentMenuController> {
                   ),
                 ),
                 kSizedBox,
-                GetBuilder<GreenWalletPaymentMenuController>(
-                  init: GreenWalletPaymentMenuController(),
-                  builder: (controller) {
-                    return AndroidElevatedButton(
-                      title: "Proceed",
-                      isLoading: controller.isFunding.value,
-                      onPressed: controller.fundWallet,
-                    );
-                  },
+                Obx(
+                  () => AndroidElevatedButton(
+                    title: "Proceed",
+                    isLoading: controller.isFunding.value,
+                    onPressed: controller.fundWallet,
+                  ),
                 ),
               ],
             ),

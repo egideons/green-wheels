@@ -35,6 +35,7 @@ dependencies:
   http_parser:
   firebase_core:
   flutter_dotenv:
+  flutter_paystack_max:
 
 dev_dependencies:
   flutter_test:

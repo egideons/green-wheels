@@ -431,14 +431,6 @@ class HomeScreenController extends GetxController
         pickupLong: pickupLong,
       );
 
-      getPolyPoints(
-        destinationLat: double.tryParse(destinationLat!)!,
-        destinationLong: double.tryParse(destinationLong!)!,
-        pickupLat: double.tryParse(pickupLat!)!,
-        pickupLong: double.tryParse(pickupLong!)!,
-        polylineCoordinates: polylineCoordinates,
-      );
-
       await Future.delayed(const Duration(milliseconds: 1200));
       routeIsVisible.value = true;
     }

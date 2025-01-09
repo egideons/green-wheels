@@ -60,7 +60,7 @@ class RentRideBookingConfirmedModal extends GetView<HomeScreenController> {
                     colorScheme,
                     vehicleImage: controller.selectedVehicleImage.value,
                     vehicleName: controller.selectedVehicleName.value,
-                    numOfStars: controller.selectedVehicleNumOfStars.value,
+                    // numOfStars: controller.selectedVehicleNumOfStars.value,
                     isUserVerified: true,
                   ),
                   kSizedBox,
