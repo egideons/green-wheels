@@ -48,7 +48,7 @@ class GreenWalletPaymentMenuController extends GetxController {
 
   //================ Variables =================\\
   var walletBalance = Get.arguments?["wallet_balance"] ?? "";
-
+  var riderUUID = "".obs;
   //================ Models =================\\
   var getRiderProfileResponseModel =
       GetRiderProfileResponseModel.fromJson(null).obs;
@@ -184,10 +184,10 @@ class GreenWalletPaymentMenuController extends GetxController {
   }
 
   onFieldSubmitted(String value) {
-    fundWallet();
+    fundWalletWithPayStack();
   }
 
-  fundWallet() async {
+  Future<void> fundWalletWithPayStack() async {
     if (fundWalletFormkey.currentState!.validate()) {
       // fundWalletFormkey.currentState!.save();
       if (amountEC.text.isEmpty) {
@@ -253,56 +253,64 @@ class GreenWalletPaymentMenuController extends GetxController {
             // initializedTransaction.message,
             "Transaction Successful",
           );
-          isFunding.value = false;
+          var walletIsFunded = await fundWallet(
+            double.tryParse(unformattedAmountText.value)!,
+            riderUUID.value,
+            DateTime.now().toString(),
+          );
 
-          Get.off(
-            () => SuccessScreen(
-              loadScreen:
-                  SuccessScreenController.instance.goToGreenWalletScreen,
-              title: "Wallet credited!",
-              subtitleWidget: Column(
-                children: [
-                  Text(
-                    "Amount Paid",
-                    style: defaultTextStyle(
-                      color: kTextBlackColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text.rich(
-                    textAlign: TextAlign.end,
-                    TextSpan(
-                      text: '$nairaSign ',
+          if (walletIsFunded) {
+            isFunding.value = false;
+
+            Get.off(
+              () => SuccessScreen(
+                loadScreen:
+                    SuccessScreenController.instance.goToGreenWalletScreen,
+                title: "Wallet credited!",
+                subtitleWidget: Column(
+                  children: [
+                    Text(
+                      "Amount Paid",
                       style: defaultTextStyle(
                         color: kTextBlackColor,
                         fontSize: 18,
-                        fontFamily: "",
                         fontWeight: FontWeight.w600,
                       ),
-                      children: [
-                        TextSpan(
-                          text: intFormattedText(
-                              int.tryParse(unformattedAmountText.value) ?? 0),
-                          style: defaultTextStyle(
-                            color: kTextBlackColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
                     ),
-                  ),
-                ],
+                    Text.rich(
+                      textAlign: TextAlign.end,
+                      TextSpan(
+                        text: '$nairaSign ',
+                        style: defaultTextStyle(
+                          color: kTextBlackColor,
+                          fontSize: 18,
+                          fontFamily: "",
+                          fontWeight: FontWeight.w600,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: intFormattedText(
+                                int.tryParse(unformattedAmountText.value) ?? 0),
+                            style: defaultTextStyle(
+                              color: kTextBlackColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            transition: Transition.rightToLeft,
-            routeName: "/success-screen",
-            curve: Curves.easeInOut,
-            fullscreenDialog: true,
-            popGesture: true,
-            preventDuplicates: true,
-          );
+              transition: Transition.rightToLeft,
+              routeName: "/success-screen",
+              curve: Curves.easeInOut,
+              fullscreenDialog: true,
+              popGesture: true,
+              preventDuplicates: true,
+            );
+          }
         } else if (response.data.status == PaystackTransactionStatus.failed) {
           ApiProcessorController.errorSnack(
               "The transaction failed, please try again later"
@@ -342,7 +350,48 @@ class GreenWalletPaymentMenuController extends GetxController {
     }
   }
 
-  fundWithPayStack() async {}
+  Future<bool> fundWallet(
+    double amount,
+    String riderUUID,
+    String timeStamp,
+  ) async {
+    var url = ApiUrl.baseUrl + ApiUrl.transactionCallBackUrl;
+    var userToken = prefs.getString("userToken");
+
+    log("URL=> $url\nUSERTOKEN=>$userToken");
+
+    var data = {
+      "rideruuid": riderUUID,
+      "amount": amount,
+      "time_stamp": timeStamp,
+    };
+
+    //HTTP Client Service
+    http.Response? response =
+        await HttpClientService.postRequest(url, userToken, data);
+
+    if (response == null) {
+      return false;
+    }
+
+    log("Response body=> ${response.body}");
+
+    try {
+      if (response.statusCode == 200) {
+        // Convert to json
+        dynamic responseJson;
+
+        responseJson = jsonDecode(response.body);
+        return true;
+      } else {
+        log("An error occured, Response body: ${response.body}");
+        return false;
+      }
+    } catch (e) {
+      log("This is the error log: ${e.toString()}");
+      return false;
+    }
+  }
 
   //Get Rider Profile
   Future<void> getRiderProfile() async {
@@ -371,6 +420,7 @@ class GreenWalletPaymentMenuController extends GetxController {
             GetRiderProfileResponseModel.fromJson(responseJson);
 
         riderModel.value = getRiderProfileResponseModel.value.data;
+        riderUUID.value = riderModel.value.riderUuid;
         walletBalance.value = riderModel.value.walletBalance;
 
         log(getRiderProfileResponseModel.value.message);

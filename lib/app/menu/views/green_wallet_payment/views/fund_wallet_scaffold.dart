@@ -97,7 +97,7 @@ class FundWalletMenuScaffold extends GetView<GreenWalletPaymentMenuController> {
                   () => AndroidElevatedButton(
                     title: "Proceed",
                     isLoading: controller.isFunding.value,
-                    onPressed: controller.fundWallet,
+                    onPressed: controller.fundWalletWithPayStack,
                   ),
                 ),
               ],
