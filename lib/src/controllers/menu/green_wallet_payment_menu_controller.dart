@@ -378,9 +378,8 @@ class GreenWalletPaymentMenuController extends GetxController {
 
     try {
       if (response.statusCode == 200) {
-        // Convert to json
+        // Convert to jsongit
         dynamic responseJson;
-
         responseJson = jsonDecode(response.body);
         return true;
       } else {
