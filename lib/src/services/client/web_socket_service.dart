@@ -1,6 +1,8 @@
 import 'dart:convert';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'dart:developer';
+
 import 'package:web_socket_channel/status.dart' as status;
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ReverbWebSocketService {
   late WebSocketChannel channel;
@@ -15,8 +17,9 @@ class ReverbWebSocketService {
   void connect() {
     // Create WebSocket connection
     // Replace with your actual host and port
-    final wsUrl = Uri.parse('ws://api.essemobility.com/app/cygaoogiqefiuj5gb8t3');
-    
+    final wsUrl =
+        Uri.parse('ws://api.essemobility.com/app/cygaoogiqefiuj5gb8t3');
+
     channel = WebSocketChannel.connect(wsUrl);
 
     // Listen to incoming messages
@@ -26,11 +29,11 @@ class ReverbWebSocketService {
         handleWebSocketMessage(decodedMessage);
       },
       onError: (error) {
-        print('WebSocket Error: $error');
+        log('WebSocket Error: $error');
         // Implement reconnection logic here
       },
       onDone: () {
-        print('WebSocket connection closed');
+        log('WebSocket connection closed');
         // Implement reconnection logic here
       },
     );
@@ -53,10 +56,7 @@ class ReverbWebSocketService {
     // Subscribe to general booking channel
     final bookingSubscription = {
       'event': 'pusher:subscribe',
-      'data': {
-        'channel': 'private-booking.new',
-        'auth': authToken
-      }
+      'data': {'channel': 'private-booking.new', 'auth': authToken}
     };
     channel.sink.add(jsonEncode(bookingSubscription));
   }
@@ -80,17 +80,17 @@ class ReverbWebSocketService {
 
   void handleNewBooking(Map<String, dynamic> bookingData) {
     // Implement new booking handling logic
-    print('New booking received: $bookingData');
+    log('New booking received: $bookingData');
   }
 
   void handleBookingAccepted(Map<String, dynamic> bookingData) {
     // Implement booking accepted logic
-    print('Booking accepted: $bookingData');
+    log('Booking accepted: $bookingData');
   }
 
   void handleBookingCancelled(Map<String, dynamic> bookingData) {
     // Implement booking cancelled logic
-    print('Booking cancelled: $bookingData');
+    log('Booking cancelled: $bookingData');
   }
 
   void disconnect() {
@@ -98,7 +98,7 @@ class ReverbWebSocketService {
   }
 }
 
-// Usage example:
+// Usage example:git
 /*
 void main() {
   final webSocketService = ReverbWebSocketService(
