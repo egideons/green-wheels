@@ -79,7 +79,7 @@ scheduleTripSelectDateTimeRouteForm(
                 hintText: "Select Route",
                 readOnly: true,
                 enabled: isEnabled ?? true,
-                onTap: controller.showScheduleTripSelectRouteModal,
+                onTap: controller.goToScheduleTripSelectRoute,
                 controller: controller.selectedRouteEC,
                 textInputAction: TextInputAction.next,
                 focusNode: controller.selectedRouteFN,

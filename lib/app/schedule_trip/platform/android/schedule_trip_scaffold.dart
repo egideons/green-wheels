@@ -57,6 +57,7 @@ class ScheduleTripScaffold extends GetView<ScheduleTripController> {
                 title: "Confirm Booking",
                 disable: controller.confirmBookingButtonIsEnabled.isFalse,
                 onPressed: controller.confirmBooking,
+                isLoading: controller.isLoadingScheduleTripRequest.value,
               );
             },
           ),

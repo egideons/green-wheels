@@ -8,14 +8,16 @@ import 'package:green_wheels/main.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:green_wheels/src/services/client/http_client_service.dart';
+import 'package:green_wheels/src/services/google_maps/autocomplete_prediction_model.dart';
+import 'package:green_wheels/src/services/google_maps/location_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import '../../../app/schedule_trip/content/schedule_trip_request_canceled_dialog.dart';
+import '../../../app/schedule_trip/content/select_route.dart';
 import '../../../app/schedule_trip/modals/schedule_trip_cancel_request_modal.dart';
 import '../../../app/schedule_trip/modals/schedule_trip_ride_request_accepted_modal.dart';
 import '../../../app/schedule_trip/modals/schedule_trip_search_driver_modal.dart';
-import '../../../app/schedule_trip/modals/select_route_modal.dart';
 import '../../../app/splash/loading/screen/loading_screen.dart';
 import '../../../theme/colors.dart';
 import '../../constants/consts.dart';
@@ -32,12 +34,19 @@ class ScheduleTripController extends GetxController {
   DateTime? lastSelectedDate;
   TimeOfDay? lastSelectedTime;
   Rx<double> rideAmount = 8000.0.obs;
+  var isLoadingScheduleTripRequest = false.obs;
 
   //================ Variables =================\\
-  var pickupLocation = "123 Main Street, Lagos".obs;
-  var destination = "456 Marina Road, Lagos".obs;
+  var pickupLocation = "".obs;
+  var destination = "".obs;
   String? scheduledPickupTime;
   String? scheduledPickupDate;
+  String? pickupLat;
+  String? pickupLong;
+  String? destinationLat;
+  String? destinationLong;
+  List<GooglePlaceAutoCompletePredictionModel> pickupPlacePredictions = [];
+  List<GooglePlaceAutoCompletePredictionModel> destinationPlacePredictions = [];
 
   //================ Booleans =================\\
   var isPickupLocationTextFieldActive = false.obs;
@@ -53,8 +62,7 @@ class ScheduleTripController extends GetxController {
   var selectedTimeEC = TextEditingController();
   var selectedRouteEC = TextEditingController();
 
-  final pickupLocationEC =
-      TextEditingController(text: "123 Main Street, Lagos");
+  final pickupLocationEC = TextEditingController();
   final stop1LocationEC = TextEditingController();
   final stop2LocationEC = TextEditingController();
   final stop3LocationEC = TextEditingController();
@@ -140,46 +148,68 @@ class ScheduleTripController extends GetxController {
     }
   }
 
-  void showScheduleTripSelectRouteModal() async {
-    final media = MediaQuery.of(Get.context!).size;
-
-    await showModalBottomSheet(
-      isScrollControlled: true,
-      showDragHandle: true,
-      enableDrag: false,
-      context: Get.context!,
-      useSafeArea: true,
-      isDismissible: false,
-      constraints:
-          BoxConstraints(maxHeight: media.height, minWidth: media.width),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
-        ),
-      ),
-      builder: (context) {
-        return GestureDetector(
-          onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
-          child: const ScheduleTripSelectRouteModal(),
-        );
-      },
+  void goToScheduleTripSelectRoute() async {
+    Get.to(
+      () => const ScheduleTripSelectRoute(),
+      transition: Transition.rightToLeft,
+      routeName: "/schedule-trip-select-route",
+      curve: Curves.easeInOut,
+      fullscreenDialog: true,
+      popGesture: true,
+      preventDuplicates: true,
     );
+
+    // await showModalBottomSheet(
+    //   isScrollControlled: true,
+    //   showDragHandle: true,
+    //   enableDrag: false,
+    //   context: Get.context!,
+    //   useSafeArea: true,
+    //   isDismissible: false,
+    //   constraints:
+    //       BoxConstraints(maxHeight: media.height, minWidth: media.width),
+    //   shape: const RoundedRectangleBorder(
+    //     borderRadius: BorderRadius.only(
+    //       topLeft: Radius.circular(32),
+    //       topRight: Radius.circular(32),
+    //     ),
+    //   ),
+    //   builder: (context) {
+    //     return GestureDetector(
+    //       onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
+    //       child: const ScheduleTripSelectRoute(),
+    //     );
+    //   },
+    // );
   }
 
-  void selectPickupSuggestion() async {
-    FocusManager.instance.primaryFocus?.unfocus();
+  void selectPickupSuggestion(index) async {
+    final newLocation = pickupPlacePredictions[index].description;
+    List location = await parseLatLng(newLocation);
+    pickupLat = location[0];
+    pickupLong = location[1];
+    await Future.delayed(const Duration(milliseconds: 300));
+    pickupLocationEC.text = newLocation;
+    log("Pickup Location: ${pickupLocationEC.text}, $pickupLat, $pickupLong");
+
+    FocusManager.instance.primaryFocus?.nextFocus();
   }
 
   void selectStopLocationSuggestion() async {
     FocusManager.instance.primaryFocus?.unfocus();
   }
 
-  void selectDestinationSuggestion() async {
+  void selectDestinationSuggestion(index) async {
+    final newLocation = destinationPlacePredictions[index].description;
     mapSuggestionIsSelected.value = true;
-    destinationEC.text = destination.value;
-    // FocusScope.of(Get.context!).unfocus();
-    FocusManager.instance.primaryFocus?.unfocus();
+
+    List location = await parseLatLng(newLocation);
+    destinationLat = location[0];
+    destinationLong = location[1];
+    await Future.delayed(const Duration(milliseconds: 100));
+    destinationEC.text = newLocation;
+    FocusManager.instance.primaryFocus?.nextFocus();
+    log("Destination: ${destinationEC.text}, $destinationLat, $destinationLong");
   }
 
   void destinationOnTap() async {
@@ -195,15 +225,21 @@ class ScheduleTripController extends GetxController {
       isPickupLocationTextFieldActive.value = false;
       isDestinationTextFieldActive.value = false;
     } else {
-      if (stop1LocationEC.text.isEmpty) {
-        isDestinationTextFieldActive.value = false;
-        isStopLocationTextFieldActive.value = false;
-        isPickupLocationTextFieldActive.value = true;
-      } else {
-        isDestinationTextFieldActive.value = false;
-        isStopLocationTextFieldActive.value = true;
-        isPickupLocationTextFieldActive.value = true;
-      }
+      // if (stop1LocationEC.text.isEmpty) {
+      //   isDestinationTextFieldActive.value = false;
+      //   isStopLocationTextFieldActive.value = false;
+      //   isPickupLocationTextFieldActive.value = true;
+      // } else {
+      // isStopLocationTextFieldActive.value = true;
+
+      googlePlaceAutoComplete(
+        value,
+        pickupPlacePredictions,
+      );
+      update();
+      isPickupLocationTextFieldActive.value = true;
+      isDestinationTextFieldActive.value = false;
+      // }
     }
   }
 
@@ -214,15 +250,20 @@ class ScheduleTripController extends GetxController {
     if (value.isEmpty) {
       isDestinationTextFieldActive.value = false;
     } else {
-      if (stop1LocationEC.text.isEmpty) {
-        isStopLocationTextFieldActive.value = false;
-        isPickupLocationTextFieldActive.value = false;
-        isDestinationTextFieldActive.value = true;
-      } else {
-        isStopLocationTextFieldActive.value = true;
-        isPickupLocationTextFieldActive.value = false;
-        isDestinationTextFieldActive.value = true;
-      }
+      // if (stop1LocationEC.text.isEmpty) {
+      //   isStopLocationTextFieldActive.value = false;
+      //   isPickupLocationTextFieldActive.value = false;
+      //   isDestinationTextFieldActive.value = true;
+      // } else {
+      googlePlaceAutoComplete(
+        value,
+        destinationPlacePredictions,
+      );
+      update();
+      // isStopLocationTextFieldActive.value = true;
+      isDestinationTextFieldActive.value = true;
+      isPickupLocationTextFieldActive.value = false;
+      // }
     }
   }
 
@@ -246,7 +287,7 @@ class ScheduleTripController extends GetxController {
       confirmBookingButtonIsEnabled.value = true;
     } else {
       selectedRouteEC.text =
-          "${pickupLocationEC.text} to ${destinationEC.text}";
+          "From: ${pickupLocationEC.text}\n\nTo: ${destinationEC.text}";
       confirmBookingButtonIsEnabled.value = true;
     }
     Get.close(0);
@@ -298,6 +339,8 @@ class ScheduleTripController extends GetxController {
         return;
       }
 
+      isLoadingScheduleTripRequest.value = true;
+
       var url = ApiUrl.baseUrl + ApiUrl.scheduleRide;
 
       var userToken = prefs.getString("userToken");
@@ -339,15 +382,19 @@ class ScheduleTripController extends GetxController {
         // responseJson = jsonDecode(response.body);
         if (response.statusCode == 200) {
           await Future.delayed(const Duration(milliseconds: 800));
+
           await showSearchingForDriverModalSheet();
+          isLoadingScheduleTripRequest.value = false;
         } else {
           ApiProcessorController.errorSnack(
               "An error occured in scheduling your ride.\nPlease try again later");
           log("An error occured: ${response.body}");
+          isLoadingScheduleTripRequest.value = false;
         }
       } catch (e) {
         log(e.toString());
       }
+      isLoadingScheduleTripRequest.value = false;
     }
   }
 

@@ -11,13 +11,15 @@ scheduleTripPickupLocationMapSuggestions(
   Size media,
 ) {
   return ListView.separated(
-    itemCount: 20,
+    itemCount: controller.pickupPlacePredictions.length,
     shrinkWrap: true,
     physics: const BouncingScrollPhysics(),
     separatorBuilder: (context, index) => kSmallSizedBox,
     itemBuilder: (context, index) {
       return InkWell(
-        onTap: controller.selectPickupSuggestion,
+        onTap: () {
+          controller.selectPickupSuggestion(index);
+        },
         borderRadius: BorderRadius.circular(4),
         child: Container(
           padding: const EdgeInsets.all(10),
@@ -35,35 +37,20 @@ scheduleTripPickupLocationMapSuggestions(
               Icon(
                 Iconsax.location,
                 color: colorScheme.primary,
-                size: 32,
+                size: 20,
               ),
               kSmallWidthSizedBox,
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  SizedBox(
-                    width: media.width - 100,
-                    child: Text(
-                      "Pickup: Holy Family Catholic Church",
-                      overflow: TextOverflow.ellipsis,
-                      style: defaultTextStyle(
-                        color: kTextBlackColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+              Expanded(
+                child: Text(
+                  controller.pickupPlacePredictions[index].description,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: defaultTextStyle(
+                    color: kTextBlackColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
                   ),
-                  kSmallSizedBox,
-                  Text(
-                    "22 Road, Festac Town",
-                    style: defaultTextStyle(
-                      color: kTextBlackColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
-                ],
+                ),
               ),
             ],
           ),

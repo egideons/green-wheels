@@ -20,6 +20,9 @@ scheduleTripRouteForm(
         formFieldContainer(
           colorScheme,
           media,
+          containerHeight: controller.pickupLocationEC.text.isNotEmpty
+              ? media.height * .09
+              : null,
           borderSide: BorderSide(
             width: 1,
             color: colorScheme.primary,
@@ -29,7 +32,10 @@ scheduleTripRouteForm(
               controller: controller.pickupLocationEC,
               textInputAction: TextInputAction.next,
               focusNode: controller.pickupLocationFN,
-              textCapitalization: TextCapitalization.words,
+              textCapitalization: TextCapitalization.none,
+              hintText: "Enter pickup location",
+              minLines: 2,
+              maxLines: 10,
               onChanged: controller.pickupLocationOnChanged,
               validator: (value) {
                 return null;
@@ -67,6 +73,9 @@ scheduleTripRouteForm(
         formFieldContainer(
           colorScheme,
           media,
+          containerHeight: controller.destinationEC.text.isNotEmpty
+              ? media.height * .09
+              : null,
           borderSide: BorderSide(
             width: 1,
             color: colorScheme.primary,
@@ -84,8 +93,10 @@ scheduleTripRouteForm(
                   focusNode: controller.destinationFN,
                   textInputAction: TextInputAction.done,
                   onTap: controller.destinationOnTap,
-                  textCapitalization: TextCapitalization.words,
+                  textCapitalization: TextCapitalization.none,
                   hintText: "Enter destination",
+                  minLines: 2,
+                  maxLines: 10,
                   onChanged: controller.destinationOnChanged,
                   validator: (value) {
                     return null;
@@ -97,7 +108,7 @@ scheduleTripRouteForm(
         ),
       ],
     ),
-    //   );
-    // },
   );
 }
+//   );
+// }

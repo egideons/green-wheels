@@ -11,13 +11,15 @@ scheduleTripDestinationMapSuggestions(
   Size media,
 ) {
   return ListView.separated(
-    itemCount: 20,
+    itemCount: controller.destinationPlacePredictions.length,
     shrinkWrap: true,
     physics: const BouncingScrollPhysics(),
     separatorBuilder: (context, index) => kSmallSizedBox,
     itemBuilder: (context, index) {
       return InkWell(
-        onTap: controller.selectDestinationSuggestion,
+        onTap: () {
+          controller.selectDestinationSuggestion(index);
+        },
         borderRadius: BorderRadius.circular(4),
         child: Container(
           height: 50,
@@ -41,10 +43,12 @@ scheduleTripDestinationMapSuggestions(
               kSmallWidthSizedBox,
               Expanded(
                 child: Text(
-                  controller.destination.value,
+                  controller.destinationPlacePredictions[index].description,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                   style: defaultTextStyle(
                     color: kTextBlackColor,
-                    fontSize: 16,
+                    fontSize: 18,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:green_wheels/app/menu/views/edit_profile/screen/edit_profile_screen.dart';
 import 'package:green_wheels/app/menu/views/scheduled_trips_menu/views/scheduled_rides_menu/screen/scheduled_rides_menu_screen.dart';
+import 'package:green_wheels/app/schedule_trip/content/select_route.dart';
 
 import '../../app/auth/email_login/screen/email_login_screen.dart';
 import '../../app/auth/email_otp/screen/email_otp.dart';
@@ -63,6 +64,7 @@ class Routes {
   static const homeScreen = "/home";
   static const rideScreen = "/ride";
   static const scheduleTripScreen = "/schedule-trip";
+  static const scheduleTripSelectRoute = "/schedule-trip-select-route";
   static const schoolCommuteScreen = "/school-commute";
   static const chooseAvailableVehicle = "/choose-available-vehicle";
 
@@ -107,6 +109,10 @@ class Routes {
     GetPage(
       name: scheduleTripScreen,
       page: () => const ScheduleTripScreen(),
+    ),
+    GetPage(
+      name: scheduleTripSelectRoute,
+      page: () => const ScheduleTripSelectRoute(),
     ),
     GetPage(
       name: schoolCommuteScreen,
