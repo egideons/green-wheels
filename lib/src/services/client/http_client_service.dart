@@ -44,7 +44,7 @@ class HttpClientService {
   ]) async {
     http.Response? response;
     try {
-      if (token == null) {
+      if (token == null || token.isEmpty) {
         response = await http
             .post(
               Uri.parse(url!),

@@ -13,6 +13,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_wheels/app/home/content/rent_ride/choose_available_vehicle_scaffold.dart';
 import 'package:green_wheels/app/home/modals/book_ride_cancel_ride_fee_modal.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
+import 'package:green_wheels/src/models/ride/available_vehicles_response_model.dart';
 import 'package:green_wheels/src/models/ride/instant_ride_amount_response_model.dart';
 import 'package:green_wheels/src/models/ride/rent_ride_vehicle_model.dart';
 import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.dart';
@@ -1205,99 +1206,45 @@ class HomeScreenController extends GetxController
     },
   ];
 
-  //==== Rent Ride =========================================================================>
+  //!==== Rent Ride =========================================================================>
 
   //================ Variables =================\\
   var rentRideFormKey = GlobalKey<FormState>();
   DateTime? lastSelectedRentRideDate;
   TimeOfDay? lastSelectedRentRidePickupTime;
-  var rentRideAmountPerHour = 1500.obs;
+  var rentRideChargePerMinute = "0".obs;
   var selectedVehicleImage = "".obs;
   var selectedVehicleName = "".obs;
   var selectedVehiclePlateNumber = "".obs;
   var selectedVehicleNumOfStars = 0.obs;
+  String? rentRidePickupLat;
+  String? rentRidePickupLong;
+  List<GooglePlaceAutoCompletePredictionModel> rentRidePickupPlacePredictions =
+      [];
 
-  var rentRideAvailableVehicles = [
-    const RentRideVehicleModel(
-      vehicleName: "BMW Cabrio",
-      vehicleImage: Assets.car1Png,
-      vehicleGearType: "Automatic",
-      vehicleFuelType: "Electric",
-      model: "Cabrio",
-      vehiclePlateNumber: "ABJ23 456",
-      numOfSeats: 4,
-      acceleration: 3.0,
-      maxHorsePower: 2000,
-      maxSpeed: 200,
-      capacity: 600,
-      numOfstars: 4,
-      numOfReviews: 50,
-      rating: 4.5,
-    ),
-    const RentRideVehicleModel(
-      vehicleName: "Mustang Shelby GT",
-      vehicleImage: Assets.car3Png,
-      vehicleGearType: "Automatic",
-      vehicleFuelType: "Electric",
-      model: "GT 500",
-      vehiclePlateNumber: "ABJ23 456",
-      numOfSeats: 4,
-      acceleration: 2.3,
-      maxHorsePower: 2500,
-      maxSpeed: 230,
-      capacity: 760,
-      numOfReviews: 53,
-      numOfstars: 4,
-      rating: 4.9,
-    ),
-    const RentRideVehicleModel(
-      vehicleName: "BMW i8",
-      vehicleImage: Assets.car2Png,
-      vehicleGearType: "Automatic",
-      vehicleFuelType: "Electric",
-      model: "I-Series",
-      vehiclePlateNumber: "ABJ23 456",
-      numOfSeats: 2,
-      acceleration: 2.2,
-      maxHorsePower: 2600,
-      maxSpeed: 260,
-      capacity: 760,
-      numOfReviews: 60,
-      numOfstars: 4,
-      rating: 4.9,
-    ),
-    const RentRideVehicleModel(
-      vehicleName: "Jaguar Silber",
-      vehicleImage: Assets.car3Png,
-      vehicleGearType: "Automatic",
-      vehicleFuelType: "Electric",
-      model: "Silber",
-      vehiclePlateNumber: "ABJ23 456",
-      numOfSeats: 4,
-      acceleration: 2.0,
-      maxHorsePower: 2800,
-      maxSpeed: 240,
-      capacity: 800,
-      numOfReviews: 81,
-      numOfstars: 4,
-      rating: 4.8,
-    ),
-  ];
+  //================ Models =================\\
+  var rentRideVehicleModel = VehicleModel.fromJson(null).obs;
+  var availableVehiclesReponseModel =
+      AvailableVehiclesResponseModel.fromJson(null).obs;
 
   //================ Booleans =================\\
   var chooseAvailableVehicleTextFieldIsVisible = false.obs;
+  var isRentRidePickupLocationTextFieldActive = false.obs;
   var confirmRentRideBookingButtonIsEnabled = false.obs;
   var confirmRentRideBookingButtonIsLoading = false.obs;
+  var isLoadingAvailableVehicles = false.obs;
 
   //================ Controllers =================\\
   var rentRideDateEC = TextEditingController();
   var rentRidePickupTimeEC = TextEditingController();
   var chooseAvailableVehicleEC = TextEditingController();
+  var rentRidePickupLocationEC = TextEditingController();
 
   //================ Focus Nodes =================\\
   var rentRideDateFN = FocusNode();
   var rentRidePickupTimeFN = FocusNode();
   var chooseAvailableVehicleFN = FocusNode();
+  var rentRidePickupLocationFN = FocusNode();
 
   void selectRentRideDate() async {
     DateTime today = DateTime.now();
@@ -1312,7 +1259,7 @@ class HomeScreenController extends GetxController
         isDismissible: true,
         useSafeArea: true,
         onChanged: (dateTime) {
-          rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(dateTime);
+          rentRideDateEC.text = DateFormat("dd-MM-yyyy").format(dateTime);
         },
         options: const BoardDateTimeOptions(
           inputable: true,
@@ -1321,7 +1268,7 @@ class HomeScreenController extends GetxController
         ));
 
     if (selectedDate != null) {
-      rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
+      rentRideDateEC.text = DateFormat("dd-MM-yyyy").format(selectedDate);
     }
   }
 
@@ -1351,60 +1298,104 @@ class HomeScreenController extends GetxController
   }
 
   void chooseAvailableVehicle() async {
-    Get.to(
-      () => const ChooseAvailableVehicleScaffold(),
-      transition: Transition.rightToLeft,
-      routeName: "/choose-available-vehicle",
-      curve: Curves.easeInOut,
-      fullscreenDialog: true,
-      popGesture: true,
-      preventDuplicates: true,
-    );
+    var loadedAvailableVehicles = await getAvailableVehicles();
+    if (loadedAvailableVehicles) {
+      Get.to(
+        () => const ChooseAvailableVehicleScaffold(),
+        transition: Transition.rightToLeft,
+        routeName: "/choose-available-vehicle",
+        curve: Curves.easeInOut,
+        fullscreenDialog: true,
+        popGesture: true,
+        preventDuplicates: true,
+      );
+    }
   }
 
-  List<Map<String, dynamic>> vehicleSpecificationsInfo(
-    RentRideVehicleModel vehicle,
-  ) =>
+  Future<bool> getAvailableVehicles() async {
+    var url = ApiUrl.baseUrl + ApiUrl.getAvailableVehicles;
+    var userToken = prefs.getString("userToken");
+
+    log("URL=> $url\nUSERTOKEN=>$userToken");
+
+    isLoadingAvailableVehicles.value = true;
+
+    //HTTP Client Service
+    http.Response? response =
+        await HttpClientService.getRequest(url, userToken);
+
+    if (response == null) {
+      return false;
+    }
+
+    log("Response body=> ${response.body}");
+    try {
+      if (response.statusCode == 200) {
+        // Convert to json
+        dynamic responseJson;
+
+        responseJson = jsonDecode(response.body);
+
+        availableVehiclesReponseModel.value =
+            AvailableVehiclesResponseModel.fromJson(responseJson);
+
+        log("Total number of vehicles: ${availableVehiclesReponseModel.value.data.total}");
+        log("Number of vehicles on this page: ${availableVehiclesReponseModel.value.data.vehicles.length}");
+
+        isLoadingAvailableVehicles.value = false;
+        return true;
+      } else {
+        log("An error occured, Response body: ${response.body}");
+      }
+    } catch (e) {
+      log("This is the error log: ${e.toString()}");
+      return false;
+    }
+    isLoadingAvailableVehicles.value = false;
+    return false;
+  }
+
+  List<Map<String, dynamic>> vehicleSpecificationsInfo(VehicleModel vehicle) =>
       [
         {
           'icon': Iconsax.battery_charging,
           'title': "Max. power",
-          'subtitle': "${vehicle.maxHorsePower}hp",
+          'subtitle': "200 hp",
+          // 'subtitle': "${vehicle.specifications.maxPower}hp",
         },
         {
           'icon': Iconsax.speedometer,
           'title': "Max. speed",
-          'subtitle': "${vehicle.maxSpeed}kph",
+          'subtitle': "250kph",
+          // 'subtitle': "${vehicle.specifications.maxSpeed}kph",
         },
         {
           'icon': Iconsax.radar,
           'title': "0-60mph",
-          'subtitle': "${vehicle.acceleration}sec",
+          // 'subtitle': "${vehicle.specifications.acceleration}sec",
+          'subtitle': "2.4sec",
         },
       ];
-  List<Map<String, dynamic>> vehicleFeaturesInfo(
-    RentRideVehicleModel vehicle,
-  ) =>
-      [
+  List<Map<String, dynamic>> vehicleFeaturesInfo(VehicleModel vehicle) => [
         {
           'title': "Model",
-          'subtitle': vehicle.model,
+          'subtitle': vehicle.name,
         },
         {
           'title': "Capacity",
-          'subtitle': "${vehicle.capacity}hp",
+          'subtitle': "${vehicle.specifications.capacity} Seats",
         },
         {
           'title': "Color",
-          'subtitle': "${vehicle.acceleration}sec",
+          'subtitle': "Red",
         },
         {
           'title': "Fuel type",
-          'subtitle': vehicle.vehicleFuelType,
+          'subtitle': vehicle.specifications.fuelType,
         },
         {
           'title': "Gear type",
-          'subtitle': vehicle.vehicleGearType,
+          'subtitle': vehicle.specifications.gearType,
         },
       ];
 
@@ -1414,14 +1405,40 @@ class HomeScreenController extends GetxController
     confirmRentRideBookingButtonIsEnabled.value = false;
   }
 
-  selectAvailableRide(RentRideVehicleModel vehicle) async {
+  selectAvailableRide(VehicleModel vehicle) async {
     Get.close(2);
-    chooseAvailableVehicleEC.text = vehicle.vehicleName;
-    confirmRentRideBookingButtonIsEnabled.value = true;
+    chooseAvailableVehicleEC.text = vehicle.name;
     selectedVehicleName.value = chooseAvailableVehicleEC.text;
-    selectedVehiclePlateNumber.value = vehicle.vehiclePlateNumber;
-    selectedVehicleNumOfStars.value = vehicle.numOfstars;
-    selectedVehicleImage.value = vehicle.vehicleImage;
+    selectedVehiclePlateNumber.value = vehicle.details.plateNumber;
+    selectedVehicleImage.value = Assets.car3Png;
+    rentRideChargePerMinute.value = vehicle.pricing.pricePerMinute.toString();
+    // selectedVehicleImage.value = vehicle.image;
+  }
+
+  //================ OnTap and Onchanged =================\\
+
+  void selectRentRidePickupSuggestion(index) async {
+    final newLocation = rentRidePickupPlacePredictions[index].description;
+    List location = await parseLatLng(newLocation);
+    rentRidePickupLat = location[0];
+    rentRidePickupLong = location[1];
+    await Future.delayed(const Duration(milliseconds: 300));
+    rentRidePickupLocationEC.text = newLocation;
+    log("Rent Ride Pickup Location: ${rentRidePickupLocationEC.text}, $rentRidePickupLat, $rentRidePickupLong");
+    confirmRentRideBookingButtonIsEnabled.value = true;
+    // searchPlaceFunc(destinationEC.text);
+    FocusManager.instance.primaryFocus?.nextFocus();
+  }
+
+  rentRidePickupLocationOnChanged(String value) {
+    // Check if the text field is empty
+    if (value.isEmpty) {
+      isRentRidePickupLocationTextFieldActive.value = false;
+    } else {
+      googlePlaceAutoComplete(value, rentRidePickupPlacePredictions);
+      update();
+      isRentRidePickupLocationTextFieldActive.value = true;
+    }
   }
 
   Future<void> confirmRentRideBooking() async {
@@ -1436,13 +1453,75 @@ class HomeScreenController extends GetxController
       } else if (chooseAvailableVehicleEC.text.isEmpty) {
         ApiProcessorController.errorSnack("Please select a vehicle");
         return;
+      } else if (rentRidePickupLocationEC.text.isEmpty) {
+        ApiProcessorController.errorSnack("Please select a pickup location");
+        return;
+      } else if (rentRidePickupLat!.isEmpty || rentRidePickupLong!.isEmpty) {
+        ApiProcessorController.errorSnack(
+          "You must select a location from the options given",
+        );
+        return;
       }
       confirmRentRideBookingButtonIsLoading.value = true;
-      await Future.delayed(const Duration(milliseconds: 500));
-      confirmRentRideBookingButtonIsLoading.value = false;
+      var rentedRide = await rentRide();
 
-      showBookingConfirmedModal();
+      if (rentedRide) showBookingConfirmedModal();
+
+      confirmRentRideBookingButtonIsLoading.value = false;
     }
+  }
+
+  Future<bool> rentRide() async {
+    var url = ApiUrl.baseUrl + ApiUrl.getAvailableVehicles;
+    var userToken = prefs.getString("userToken");
+
+    log("URL=> $url\nUSERTOKEN=>$userToken");
+
+    confirmRentRideBookingButtonIsLoading.value = true;
+
+    var data = {
+      "pickup_location": {
+        "address": rentRidePickupLocationEC.text,
+        "lat": rentRidePickupLat,
+        "long": rentRidePickupLong,
+      },
+      "schedule_date": rentRideDateEC.text,
+      "schedule_pickup_time": rentRidePickupTimeEC.text,
+    };
+
+    log("Request body=> $data");
+
+    //HTTP Client Service
+    http.Response? response =
+        await HttpClientService.postRequest(url, userToken, data);
+
+    if (response == null) {
+      return false;
+    }
+
+    try {
+      if (response.statusCode == 200) {
+        // Convert to json
+        dynamic responseJson;
+
+        responseJson = jsonDecode(response.body);
+        log("Response body=> $responseJson");
+
+        confirmRentRideBookingButtonIsLoading.value = false;
+        return true;
+      } else {
+        ApiProcessorController.errorSnack(
+          "Booking failed, please try again later.\nWe're working to fix this issue.",
+        );
+        log("An error occured, Response Status code: ${response.statusCode}");
+        // log("An error occured, Response body: ${response.body}");
+      }
+    } catch (e) {
+      log("This is the error log: ${e.toString()}");
+      return false;
+    }
+    confirmRentRideBookingButtonIsLoading.value = false;
+    return false;
   }
 
   void showBookingConfirmedModal() async {

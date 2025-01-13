@@ -4,6 +4,7 @@ import 'package:green_wheels/src/constants/consts.dart';
 import 'package:green_wheels/src/controllers/menu/green_wallet_payment_menu_controller.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 import 'package:green_wheels/src/utils/components/my_app_bar.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../../../theme/colors.dart';
 import '../../content/green_wallet_payment_menu_card.dart';
@@ -33,102 +34,126 @@ class GreenWalletPaymentMenuScaffold
       ),
       body: SafeArea(
         child: Scrollbar(
-          child: ListView(
-            padding: const EdgeInsets.all(10),
-            controller: controller.scrollController,
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: SizedBox(
-                  width: media.width / 2.4,
-                  child: AndroidElevatedButton(
-                    title: "Fund Wallet",
-                    isRowVisible: true,
-                    buttonIcon: Icons.chevron_right,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    onPressed: controller.goToFundGreenWallet,
+          child: RefreshIndicator(
+            onRefresh: controller.onRefresh,
+            child: ListView(
+              padding: const EdgeInsets.all(10),
+              controller: controller.scrollController,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: SizedBox(
+                    width: media.width / 2.4,
+                    child: AndroidElevatedButton(
+                      title: "Fund Wallet",
+                      isRowVisible: true,
+                      buttonIcon: Icons.chevron_right,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      onPressed: controller.goToFundGreenWallet,
+                    ),
                   ),
                 ),
-              ),
-              kSizedBox,
-              Wrap(
-                alignment: WrapAlignment.center,
-                runAlignment: WrapAlignment.center,
-                // mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  controller.greenWalletPaymentMenuCards.length,
-                  (index) {
-                    var menuCard =
-                        controller.greenWalletPaymentMenuCards[index];
-                    return Padding(
+                kSizedBox,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  runAlignment: WrapAlignment.center,
+                  children: [
+                    Padding(
                       padding: const EdgeInsets.only(right: 10),
                       child: Obx(
-                        () => greenWalletPaymentMenuCard(
-                          media,
-                          controller,
-                          colorScheme,
-                          amount: menuCard["amount"],
-                          label: menuCard["label"],
+                        () => Skeletonizer(
+                          enabled: controller.isLoading.value,
+                          child: greenWalletPaymentMenuCard(
+                            media,
+                            controller,
+                            colorScheme,
+                            amount: controller.hideBalance.value
+                                ? "******"
+                                : convertToCurrency(
+                                    controller.walletBalance.value,
+                                  ),
+                            label: "Available balance",
+                          ),
                         ),
                       ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Obx(
+                        () => Skeletonizer(
+                          enabled: controller.isLoading.value,
+                          child: greenWalletPaymentMenuCard(
+                            media,
+                            controller,
+                            colorScheme,
+                            amount: controller.hideBalance.value
+                                ? "******"
+                                : convertToCurrency(
+                                    controller.totalExpenses.value,
+                                  ),
+                            label: "Total expenses",
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                kHalfSizedBox,
+                Obx(
+                  () => TextButton(
+                    onPressed: controller.changeVisibilityState,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          controller.hideBalance.value ? "Show" : "Hide",
+                          textAlign: TextAlign.center,
+                          style: defaultTextStyle(
+                            color: kTextBlackColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        kSmallWidthSizedBox,
+                        Icon(
+                          controller.hideBalance.value
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                          color: kBlackColor,
+                          size: 14,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                kHalfSizedBox,
+                Text(
+                  "Transactions",
+                  textAlign: TextAlign.start,
+                  style: defaultTextStyle(
+                    color: kTextBlackColor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                kSizedBox,
+                ListView.separated(
+                  itemCount: 0,
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  separatorBuilder: (context, index) => kSizedBox,
+                  itemBuilder: (context, index) {
+                    return transactionsInfoContainer(
+                      colorScheme,
+                      controller,
+                      amount: 10000,
                     );
                   },
                 ),
-              ),
-              kHalfSizedBox,
-              Obx(
-                () => TextButton(
-                  onPressed: controller.changeVisibilityState,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        controller.hideBalance.value ? "Show" : "Hide",
-                        textAlign: TextAlign.center,
-                        style: defaultTextStyle(
-                          color: kTextBlackColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      kSmallWidthSizedBox,
-                      Icon(
-                        controller.hideBalance.value
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                        color: kBlackColor,
-                        size: 14,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              kHalfSizedBox,
-              Text(
-                "Transactions",
-                textAlign: TextAlign.start,
-                style: defaultTextStyle(
-                  color: kTextBlackColor,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              kSizedBox,
-              ListView.separated(
-                itemCount: 0,
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                separatorBuilder: (context, index) => kSizedBox,
-                itemBuilder: (context, index) {
-                  return transactionsInfoContainer(
-                    colorScheme,
-                    controller,
-                    amount: 10000,
-                  );
-                },
-              ),
-            ],
+                SizedBox(height: media.height * .6),
+              ],
+            ),
           ),
         ),
       ),

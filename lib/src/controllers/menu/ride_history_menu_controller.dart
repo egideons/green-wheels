@@ -71,4 +71,6 @@ class RideHistoryMenuController extends GetxController
       isScrollToTopBtnVisible.value = false;
     }
   }
+
+  getRideHistory() {}
 }

@@ -1,12 +1,14 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/app/home/content/rent_ride/available_vehicle_details_scaffold.dart';
+import 'package:green_wheels/src/constants/assets.dart';
 import 'package:green_wheels/src/constants/consts.dart';
 import 'package:green_wheels/src/utils/components/my_app_bar.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../src/controllers/app/home_screen_controller.dart';
 import 'available_car_container.dart';
-import 'available_vehicle_details_scaffold.dart';
 
 class ChooseAvailableVehicleScaffold extends GetView<HomeScreenController> {
   const ChooseAvailableVehicleScaffold({super.key});
@@ -25,35 +27,43 @@ class ChooseAvailableVehicleScaffold extends GetView<HomeScreenController> {
       ),
       body: SafeArea(
         child: Scrollbar(
-          child: ListView.separated(
-            physics: const ScrollPhysics(),
-            padding: const EdgeInsets.all(10),
-            itemCount: controller.rentRideAvailableVehicles.length,
-            separatorBuilder: (context, index) => kSizedBox,
-            itemBuilder: (context, index) {
-              var vehicle = controller.rentRideAvailableVehicles[index];
-              return FadeInRight(
-                child: availableCarContainer(
-                  vehicleName: vehicle.vehicleName,
-                  vehicleImage: vehicle.vehicleImage,
-                  vehicleFuelType: vehicle.vehicleFuelType,
-                  vehicleGearType: vehicle.vehicleGearType,
-                  numOfSeats: vehicle.numOfSeats,
-                  goToAvailableVehicleDetails: () {
-                    Get.to(
-                      () => AvailableVehicleDetailsScaffold(vehicle: vehicle),
-                      transition: Transition.rightToLeft,
-                      routeName: "/available-vehicle-details",
-                      curve: Curves.easeInOut,
-                      fullscreenDialog: true,
-                      popGesture: true,
-                      preventDuplicates: true,
-                    );
-                  },
-                ),
-              );
-            },
-          ),
+          child: Obx(() {
+            var vehicles =
+                controller.availableVehiclesReponseModel.value.data.vehicles;
+            return ListView.separated(
+              physics: const ScrollPhysics(),
+              padding: const EdgeInsets.all(10),
+              itemCount: vehicles.length,
+              separatorBuilder: (context, index) => kSizedBox,
+              itemBuilder: (context, index) {
+                var vehicle = vehicles[index];
+                return FadeInRight(
+                  child: Skeletonizer(
+                    enabled: controller.isLoadingAvailableVehicles.value,
+                    child: availableCarContainer(
+                      vehicleName: vehicle.name,
+                      vehicleImage: Assets.car3Png,
+                      vehicleFuelType: vehicle.specifications.fuelType,
+                      vehicleGearType: vehicle.specifications.gearType,
+                      numOfSeats: vehicle.specifications.capacity,
+                      goToAvailableVehicleDetails: () {
+                        Get.to(
+                          () =>
+                              AvailableVehicleDetailsScaffold(vehicle: vehicle),
+                          transition: Transition.rightToLeft,
+                          routeName: "/available-vehicle-details",
+                          curve: Curves.easeInOut,
+                          fullscreenDialog: true,
+                          popGesture: true,
+                          preventDuplicates: true,
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+            );
+          }),
         ),
       ),
     );

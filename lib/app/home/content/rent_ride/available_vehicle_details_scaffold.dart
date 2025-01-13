@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/src/constants/assets.dart';
 import 'package:green_wheels/src/constants/consts.dart';
 import 'package:green_wheels/src/models/ride/rent_ride_vehicle_model.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
@@ -13,7 +14,7 @@ import '../../../../src/controllers/app/home_screen_controller.dart';
 class AvailableVehicleDetailsScaffold extends GetView<HomeScreenController> {
   const AvailableVehicleDetailsScaffold({required this.vehicle, super.key});
 
-  final RentRideVehicleModel vehicle;
+  final VehicleModel vehicle;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class AvailableVehicleDetailsScaffold extends GetView<HomeScreenController> {
             padding: const EdgeInsets.all(10),
             children: [
               Text(
-                vehicle.vehicleName,
+                vehicle.name,
                 style: defaultTextStyle(
                   color: kTextBlackColor,
                   fontSize: 24,
@@ -39,24 +40,25 @@ class AvailableVehicleDetailsScaffold extends GetView<HomeScreenController> {
                 ),
               ),
               kHalfSizedBox,
-              Row(
-                children: [
-                  const Icon(Icons.star_rounded, color: kStarColor),
-                  Text(
-                    vehicle.numOfReviews == 1
-                        ? "${vehicle.rating} (${intFormattedText(vehicle.numOfReviews)} Review)"
-                        : "${vehicle.rating} (${intFormattedText(vehicle.numOfReviews)} Reviews)",
-                    style: defaultTextStyle(
-                      color: kDisabledTextColor,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
+              // Row(
+              //   children: [
+              //     const Icon(Icons.star_rounded, color: kStarColor),
+              //     Text(
+              //       vehicle.numOfReviews == 1
+              //           ? "${vehicle.rating} (${intFormattedText(vehicle.numOfReviews)} Review)"
+              //           : "${vehicle.rating} (${intFormattedText(vehicle.numOfReviews)} Reviews)",
+              //       style: defaultTextStyle(
+              //         color: kDisabledTextColor,
+              //         fontSize: 13,
+              //         fontWeight: FontWeight.w600,
+              //       ),
+              //     ),
+              //   ],
+              // ),
               FadeInRight(
                 child: Image.asset(
-                  vehicle.vehicleImage,
+                  Assets.car3Png,
+                  // vehicle.image,
                   filterQuality: FilterQuality.high,
                   scale: .4,
                 ),

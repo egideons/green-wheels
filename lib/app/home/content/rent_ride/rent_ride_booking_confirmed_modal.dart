@@ -59,6 +59,7 @@ class RentRideBookingConfirmedModal extends GetView<HomeScreenController> {
                   carNameRating(
                     colorScheme,
                     vehicleImage: controller.selectedVehicleImage.value,
+                    // vehicleImage: controller.selectedVehicleImage.value,
                     vehicleName: controller.selectedVehicleName.value,
                     // numOfStars: controller.selectedVehicleNumOfStars.value,
                     isUserVerified: true,
@@ -125,8 +126,8 @@ class RentRideBookingConfirmedModal extends GetView<HomeScreenController> {
                             ),
                             children: [
                               TextSpan(
-                                text: intFormattedText(
-                                  controller.rentRideAmountPerHour.value,
+                                text: convertToCurrency(
+                                  controller.rentRideChargePerMinute.value,
                                 ),
                                 style: defaultTextStyle(
                                   color: kTextBlackColor,

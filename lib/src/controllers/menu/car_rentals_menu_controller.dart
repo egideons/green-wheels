@@ -10,7 +10,7 @@ class CarRentalMenuController extends GetxController
   late TabController tabBarController;
   var selectedTabBar = 0.obs;
   var isLoading = false.obs;
-  var rentRideAmountPerHour = 50.obs;
+  var rentRideChargePerMinute = 50.obs;
 
   //================ controllers =================\\
   var scrollController = ScrollController();

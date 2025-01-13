@@ -5,20 +5,20 @@ import 'package:iconsax/iconsax.dart';
 import '../../../../src/constants/consts.dart';
 import '../../../../theme/colors.dart';
 
-bookRideDestinationMapSuggestions(
+rentRidePickupLocationMapSuggestions(
   ColorScheme colorScheme,
   HomeScreenController controller,
   Size media,
 ) {
   return ListView.separated(
-    itemCount: controller.destinationPlacePredictions.length,
+    itemCount: controller.rentRidePickupPlacePredictions.length,
     shrinkWrap: true,
     physics: const BouncingScrollPhysics(),
     separatorBuilder: (context, index) => kSmallSizedBox,
     itemBuilder: (context, index) {
       return InkWell(
         onTap: () {
-          controller.selectDestinationSuggestion(index);
+          controller.selectRentRidePickupSuggestion(index);
         },
         borderRadius: BorderRadius.circular(4),
         child: Container(
@@ -42,7 +42,7 @@ bookRideDestinationMapSuggestions(
               kSmallWidthSizedBox,
               Expanded(
                 child: Text(
-                  controller.destinationPlacePredictions[index].description,
+                  controller.rentRidePickupPlacePredictions[index].description,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   style: defaultTextStyle(

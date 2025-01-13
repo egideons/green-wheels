@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 
 import '../../routes/routes.dart';
 
@@ -28,10 +29,11 @@ class ScheduledTripsMenuController extends GetxController {
 
   //==To School Commutes==>
   goToSchoolCommutes() async {
-    Get.toNamed(
-      Routes.schoolCommutesMenu,
-      preventDuplicates: true,
-    );
+    ApiProcessorController.warningSnack("School Commutes is coming soon");
+    // Get.toNamed(
+    //   Routes.schoolCommutesMenu,
+    //   preventDuplicates: true,
+    // );
     // Get.to(
     //   () => const SchoolCommutesMenuScreen(),
     //   transition: Transition.rightToLeft,

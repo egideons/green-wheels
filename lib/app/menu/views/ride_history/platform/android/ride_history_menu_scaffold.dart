@@ -85,7 +85,7 @@ class RideHistoryMenuScaffold extends GetView<RideHistoryMenuController> {
     ColorScheme colorScheme,
   ) {
     return ListView.separated(
-      itemCount: 10,
+      itemCount: 0,
       controller: controller.scrollController,
       padding: const EdgeInsets.all(10),
       physics: const BouncingScrollPhysics(),
@@ -106,7 +106,7 @@ class RideHistoryMenuScaffold extends GetView<RideHistoryMenuController> {
     ColorScheme colorScheme,
   ) {
     return ListView.separated(
-      itemCount: 10,
+      itemCount: 0,
       controller: controller.scrollController,
       padding: const EdgeInsets.all(10),
       physics: const BouncingScrollPhysics(),

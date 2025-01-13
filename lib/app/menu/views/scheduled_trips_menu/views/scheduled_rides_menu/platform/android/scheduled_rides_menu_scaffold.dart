@@ -106,7 +106,7 @@ class ScheduledRidesMenuScaffold extends GetView<ScheduledRidesMenuController> {
 
   buildPendingScheduledRidesList(ColorScheme colorScheme, Size media) {
     return ListView.separated(
-      itemCount: 10,
+      itemCount: 0,
       shrinkWrap: true,
       controller: controller.scrollController,
       physics: const ScrollPhysics(),
@@ -131,7 +131,7 @@ class ScheduledRidesMenuScaffold extends GetView<ScheduledRidesMenuController> {
 
   buildCompletedScheduledRidesList(ColorScheme colorScheme, Size media) {
     return ListView.separated(
-      itemCount: 10,
+      itemCount: 0,
       shrinkWrap: true,
       physics: const ScrollPhysics(),
       padding: const EdgeInsets.all(10),
@@ -156,7 +156,7 @@ class ScheduledRidesMenuScaffold extends GetView<ScheduledRidesMenuController> {
 
   buildCancelledScheduledRidesList(ColorScheme colorScheme, Size media) {
     return ListView.separated(
-      itemCount: 10,
+      itemCount: 0,
       shrinkWrap: true,
       controller: controller.scrollController,
       physics: const ScrollPhysics(),

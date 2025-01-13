@@ -107,7 +107,7 @@ class CarRentalMenuScaffold extends GetView<CarRentalMenuController> {
 
   buildOngoingCarRentalList(ColorScheme colorScheme, Size media) {
     return ListView.separated(
-      itemCount: 10,
+      itemCount: 0,
       shrinkWrap: true,
       controller: controller.scrollController,
       physics: const ScrollPhysics(),
@@ -121,7 +121,7 @@ class CarRentalMenuScaffold extends GetView<CarRentalMenuController> {
           vehicleName: "Mustang Shelby GT",
           numOfStars: 5,
           vehiclePlateNumber: "ABJ23 456",
-          amount: controller.rentRideAmountPerHour.value,
+          amount: controller.rentRideChargePerMinute.value,
           view: () {},
         );
       },
@@ -130,7 +130,7 @@ class CarRentalMenuScaffold extends GetView<CarRentalMenuController> {
 
   buildCompletedCarRentalList(ColorScheme colorScheme, Size media) {
     return ListView.separated(
-      itemCount: 10,
+      itemCount: 0,
       shrinkWrap: true,
       controller: controller.scrollController,
       physics: const ScrollPhysics(),
@@ -143,7 +143,7 @@ class CarRentalMenuScaffold extends GetView<CarRentalMenuController> {
           vehicleImage: Assets.car3Png,
           vehicleName: "Mustang Shelby GT",
           vehiclePlateNumber: "ABJ23 456",
-          amount: controller.rentRideAmountPerHour.value,
+          amount: controller.rentRideChargePerMinute.value,
         );
       },
     );
@@ -151,7 +151,7 @@ class CarRentalMenuScaffold extends GetView<CarRentalMenuController> {
 
   buildCancelledCarRentalList(ColorScheme colorScheme, Size media) {
     return ListView.separated(
-      itemCount: 10,
+      itemCount: 0,
       shrinkWrap: true,
       controller: controller.scrollController,
       physics: const ScrollPhysics(),
@@ -165,7 +165,7 @@ class CarRentalMenuScaffold extends GetView<CarRentalMenuController> {
           vehicleName: "Mustang Shelby GT",
           numOfStars: 5,
           vehiclePlateNumber: "ABJ23 456",
-          amount: controller.rentRideAmountPerHour.value,
+          amount: controller.rentRideChargePerMinute.value,
         );
       },
     );

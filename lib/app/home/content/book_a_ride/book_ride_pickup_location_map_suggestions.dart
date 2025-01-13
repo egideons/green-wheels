@@ -43,6 +43,8 @@ bookRidePickupLocationMapSuggestions(
               Expanded(
                 child: Text(
                   controller.pickupPlacePredictions[index].description,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                   style: defaultTextStyle(
                     color: kTextBlackColor,
                     fontSize: 18,

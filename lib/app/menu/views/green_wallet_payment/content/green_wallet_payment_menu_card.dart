@@ -8,7 +8,7 @@ greenWalletPaymentMenuCard(
   Size media,
   GreenWalletPaymentMenuController controller,
   ColorScheme colorScheme, {
-  int? amount,
+  String? amount,
   String? label,
 }) {
   return Container(
@@ -40,8 +40,8 @@ greenWalletPaymentMenuCard(
             children: [
               TextSpan(
                 text: controller.hideBalance.value
-                    ? "XXX"
-                    : intFormattedText(amount ?? 0),
+                    ? "******"
+                    : "${convertToCurrency(amount!)}",
                 style: defaultTextStyle(
                   color: kTextBlackColor,
                   fontSize: 18,

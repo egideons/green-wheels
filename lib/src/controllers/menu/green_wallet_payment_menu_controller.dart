@@ -13,10 +13,12 @@ import 'package:green_wheels/src/constants/keys.dart';
 import 'package:green_wheels/src/controllers/auth/success_screen_controller.dart';
 import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.dart';
 import 'package:green_wheels/src/models/rider/rider_model.dart';
+import 'package:green_wheels/src/models/wallet/wallet_fund_response_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:green_wheels/src/services/client/http_client_service.dart';
 import 'package:green_wheels/theme/colors.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../../../main.dart';
 import '../others/api_processor_controller.dart';
@@ -29,13 +31,11 @@ class GreenWalletPaymentMenuController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    loadVisibilityState();
+    await loadVisibilityState();
+    await getRiderProfile();
     amountEC.clear();
     scrollController.addListener(_scrollListener);
-    amountFN.requestFocus();
     amountEC.addListener(formatAmount);
-
-    await getRiderProfile();
   }
 
   @override
@@ -44,11 +44,15 @@ class GreenWalletPaymentMenuController extends GetxController {
     super.onClose();
     amountEC.removeListener(formatAmount);
     amountEC.dispose();
+    amountFN.dispose();
   }
 
   //================ Variables =================\\
-  var walletBalance = Get.arguments?["wallet_balance"] ?? "";
+
+  var walletBalance = "0".obs;
+  var totalExpenses = "0".obs;
   var riderUUID = "".obs;
+
   //================ Models =================\\
   var getRiderProfileResponseModel =
       GetRiderProfileResponseModel.fromJson(null).obs;
@@ -68,7 +72,7 @@ class GreenWalletPaymentMenuController extends GetxController {
     isLoading.value = true;
     update();
 
-    await Future.delayed(const Duration(seconds: 2));
+    await getRiderProfile();
 
     isLoading.value = false;
     update();
@@ -78,10 +82,6 @@ class GreenWalletPaymentMenuController extends GetxController {
   void scrollToTop() {
     scrollController.animateTo(0,
         duration: const Duration(seconds: 1), curve: Curves.fastOutSlowIn);
-  }
-
-  void setLoading(bool value) {
-    isLoading.value = value;
   }
 
   //================ Scroll Listener =================//
@@ -112,8 +112,6 @@ class GreenWalletPaymentMenuController extends GetxController {
     // await Get.toNamed(Routes.fundWalletMenu, preventDuplicates: true);
   }
 
-  late final List<Map<String, dynamic>> greenWalletPaymentMenuCards;
-
   //================ Wallet functions ================\\
 
   // Save visibility state to SharedPreferences
@@ -127,20 +125,12 @@ class GreenWalletPaymentMenuController extends GetxController {
     update();
   }
 
-  //=========================== Save card state ============================//
+  //=========================== Load Visibility State ============================//
   // Load visibility state from SharedPreferences
   Future<void> loadVisibilityState() async {
     hideBalance.value = prefs.getBool('hideBalance') ?? hideBalance.value;
-    greenWalletPaymentMenuCards = [
-      {
-        "amount": int.tryParse(walletBalance),
-        "label": "Available balance",
-      },
-      {
-        "amount": 0,
-        "label": "Total expenses",
-      },
-    ];
+
+    log("This is the wallet balance: $walletBalance");
   }
 
   //=========================== Fund wallet ============================//
@@ -150,6 +140,8 @@ class GreenWalletPaymentMenuController extends GetxController {
 
   var amountEC = TextEditingController();
   var amountFN = FocusNode();
+
+  var walletFundResponseModel = WalletFundResponseModel.fromJson(null).obs;
 
   void formatAmount() {
     // Get the current value
@@ -248,19 +240,12 @@ class GreenWalletPaymentMenuController extends GetxController {
         log("Payment Service Response: ${response.toString()}");
 
         if (response.data.status == PaystackTransactionStatus.success) {
-          //Show toast to notify the user of the transaction status
-          ApiProcessorController.successSnack(
-            // initializedTransaction.message,
-            "Transaction Successful",
-          );
-          var walletIsFunded = await fundWallet(
-            double.tryParse(unformattedAmountText.value)!,
-            riderUUID.value,
-            DateTime.now().toString(),
-          );
+          var walletIsFunded = await fundWallet();
 
           if (walletIsFunded) {
             isFunding.value = false;
+            //           //Show toast to notify the user of the transaction status
+            // ApiProcessorController.successSnack("Transaction Successful");
 
             Get.off(
               () => SuccessScreen(
@@ -350,21 +335,24 @@ class GreenWalletPaymentMenuController extends GetxController {
     }
   }
 
-  Future<bool> fundWallet(
-    double amount,
-    String riderUUID,
-    String timeStamp,
-  ) async {
+  Future<bool> fundWallet() async {
     var url = ApiUrl.baseUrl + ApiUrl.transactionCallBackUrl;
     var userToken = prefs.getString("userToken");
 
     log("URL=> $url\nUSERTOKEN=>$userToken");
+    // Get the current DateTime
+    DateTime now = DateTime.now();
+
+    // Format the DateTime
+    String formattedDate = DateFormat('yyyy-MM-dd, hh:mma').format(now);
 
     var data = {
-      "rideruuid": riderUUID,
-      "amount": amount,
-      "time_stamp": timeStamp,
+      "rideruuid": "bebb4d56-a71c-4c66-8a03-11094978598a",
+      "amount": unformattedAmountText.value,
+      "time_stamp": formattedDate,
     };
+
+    log(jsonEncode(data));
 
     //HTTP Client Service
     http.Response? response =
@@ -381,6 +369,11 @@ class GreenWalletPaymentMenuController extends GetxController {
         // Convert to json
         dynamic responseJson;
         responseJson = jsonDecode(response.body);
+
+        walletFundResponseModel.value =
+            WalletFundResponseModel.fromJson(responseJson);
+        walletBalance.value =
+            walletFundResponseModel.value.data.newBalance.toString();
         return true;
       } else {
         log("An error occured, Response body: ${response.body}");
@@ -398,6 +391,8 @@ class GreenWalletPaymentMenuController extends GetxController {
     var userToken = prefs.getString("userToken");
 
     log("URL=> $url\nUSERTOKEN=>$userToken");
+
+    isLoading.value = true;
 
     //HTTP Client Service
     http.Response? response =
@@ -421,14 +416,19 @@ class GreenWalletPaymentMenuController extends GetxController {
         riderModel.value = getRiderProfileResponseModel.value.data;
         riderUUID.value = riderModel.value.riderUuid;
         walletBalance.value = riderModel.value.walletBalance;
+        // totalExpenses.value = riderModel.value.totalExpenses;
+
+        await Future.delayed(const Duration(milliseconds: 500));
 
         log(getRiderProfileResponseModel.value.message);
         log(jsonEncode(riderModel.value));
+        isLoading.value = false;
       } else {
         log("An error occured, Response body: ${response.body}");
       }
     } catch (e) {
       log("This is the error log: ${e.toString()}");
     }
+    isLoading.value = false;
   }
 }
