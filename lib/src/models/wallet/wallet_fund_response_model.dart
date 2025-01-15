@@ -11,6 +11,8 @@ class WalletFundResponseModel {
 
   factory WalletFundResponseModel.fromJson(Map<String, dynamic>? json) {
     json ??= {};
+    // log("This is the json data: $json");
+
     return WalletFundResponseModel(
       status: json['status'] ?? 0,
       message: json['message'] ?? "",
@@ -65,7 +67,7 @@ class WalletFundData {
 class Transaction {
   final String reference;
   final String riderUuid;
-  final int amount;
+  final String amount;
   final String status;
   final String channel;
   final String currency;
@@ -87,11 +89,10 @@ class Transaction {
 
   factory Transaction.fromJson(Map<String, dynamic>? json) {
     json ??= {};
-
     return Transaction(
       reference: json['reference'] ?? "",
       riderUuid: json['rider_uuid'] ?? "",
-      amount: json['amount'] ?? 0,
+      amount: json['amount'] ?? "",
       status: json['status'] ?? "",
       channel: json['channel'] ?? "",
       currency: json['currency'] ?? "",

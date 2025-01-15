@@ -347,22 +347,23 @@ class GreenWalletPaymentMenuController extends GetxController {
     String formattedDate = DateFormat('yyyy-MM-dd, hh:mma').format(now);
 
     var data = {
-      "rideruuid": "bebb4d56-a71c-4c66-8a03-11094978598a",
+      "rideruuid": riderUUID.value,
       "amount": unformattedAmountText.value,
       "time_stamp": formattedDate,
     };
-
-    log(jsonEncode(data));
-
+//
     //HTTP Client Service
     http.Response? response =
-        await HttpClientService.postRequest(url, userToken, data);
+        await HttpClientService.postRequest(url, userToken, data, null, false);
+
+    log(jsonEncode(data));
 
     if (response == null) {
       return false;
     }
 
     log("Response body=> ${response.body}");
+    log("Response Status code=> ${response.statusCode}");
 
     try {
       if (response.statusCode == 200) {

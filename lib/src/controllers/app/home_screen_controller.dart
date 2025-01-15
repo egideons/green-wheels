@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:ui' as ui;
 
-import 'package:board_datetime_picker/board_datetime_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
@@ -650,7 +650,8 @@ class HomeScreenController extends GetxController
 
     //HTTP Client Service
     http.Response? response =
-        await HttpClientService.postRequest(url, userToken, data, headers);
+        await HttpClientService.postRequest(url, userToken, data);
+    // await HttpClientService.postRequest(url, userToken, data, headers);
 
     if (response == null) {
       return;
@@ -1221,6 +1222,8 @@ class HomeScreenController extends GetxController
   String? rentRidePickupLong;
   List<GooglePlaceAutoCompletePredictionModel> rentRidePickupPlacePredictions =
       [];
+  var selectedDuration = Duration().obs;
+  var formattedTime = ''.obs;
 
   //================ Models =================\\
   var rentRideVehicleModel = VehicleModel.fromJson(null).obs;
@@ -1248,53 +1251,138 @@ class HomeScreenController extends GetxController
 
   void selectRentRideDate() async {
     DateTime today = DateTime.now();
+    var context = Get.context!;
+    var formattedDate = "".obs;
 
-    final selectedDate = await showBoardDateTimePickerForDate(
-        context: Get.context!,
-        enableDrag: false,
-        showDragHandle: false,
-        initialDate: lastSelectedRentRideDate ?? today,
-        minimumDate: DateTime.now(),
-        maximumDate: DateTime(2101),
-        isDismissible: true,
-        useSafeArea: true,
-        onChanged: (dateTime) {
-          rentRideDateEC.text = DateFormat("dd-MM-yyyy").format(dateTime);
-        },
-        options: const BoardDateTimeOptions(
-          inputable: true,
-          showDateButton: true,
-          startDayOfWeek: DateTime.sunday,
-        ));
+    final selectedDate = await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 260,
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 220,
+                child: CupertinoDatePicker(
+                  initialDateTime: today,
+                  minimumDate: today,
+                  maximumDate: DateTime(2101),
+                  use24hFormat: false,
+                  showDayOfWeek: true,
+                  dateOrder: DatePickerDateOrder.mdy,
+                  mode: CupertinoDatePickerMode.date,
+                  onDateTimeChanged: (DateTime dateTime) {
+                    rentRideDateEC.text =
+                        DateFormat("dd/MM/yyyy").format(dateTime);
+                    formattedDate.value =
+                        DateFormat("dd/MM/yyyy").format(dateTime);
+                    lastSelectedRentRideDate = dateTime;
+                  },
+                ),
+              ),
+              kSmallSizedBox,
+              Obx(() {
+                return Text(
+                  formattedDate.value,
+                  textAlign: TextAlign.center,
+                  style: defaultTextStyle(
+                    color: kTextBlackColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                );
+              }),
+            ],
+          ),
+        );
+      },
+    );
 
     if (selectedDate != null) {
-      rentRideDateEC.text = DateFormat("dd-MM-yyyy").format(selectedDate);
+      rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
+      lastSelectedRentRideDate = selectedDate;
+      formattedDate.value = DateFormat("dd/MM/yyyy").format(selectedDate);
+      update();
     }
+    log("This is the scheduled Datte: ${rentRideDateEC.text}");
   }
 
   void selectRentRidePickupTime() async {
     TimeOfDay now = TimeOfDay.now();
+    var context = Get.context!;
 
-    var selectedTime = await showTimePicker(
-      context: Get.context!,
-      initialTime: lastSelectedRentRidePickupTime ?? now,
-      cancelText: "Cancel",
-      confirmText: "Confirm",
+    await showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 260,
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 200,
+                child: CupertinoTimerPicker(
+                  mode: CupertinoTimerPickerMode.hm,
+                  initialTimerDuration: Duration(
+                    hours: now.hour,
+                    minutes: now.minute,
+                  ),
+                  onTimerDurationChanged: (Duration duration) {
+                    updateTime(duration);
+                  },
+                ),
+              ),
+              kSmallSizedBox,
+              Obx(() {
+                return Text(
+                  formattedTime.value,
+                  textAlign: TextAlign.center,
+                  style: defaultTextStyle(
+                    color: kTextBlackColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                );
+              }),
+            ],
+          ),
+        );
+      },
     );
 
-    if (selectedTime != null) {
-      final now = DateTime.now();
-      final formattedTime = DateFormat("hh:mm a").format(DateTime(
-        now.year,
-        now.month,
-        now.day,
-        selectedTime.hour,
-        selectedTime.minute,
-      ));
-      rentRidePickupTimeEC.text = formattedTime;
-      lastSelectedRentRidePickupTime = selectedTime;
-      chooseAvailableVehicleTextFieldIsVisible.value = true;
-    }
+    log("This is the scheduled time: $lastSelectedRentRidePickupTime");
+  }
+
+  void updateTime(Duration duration) {
+    selectedDuration.value = duration;
+
+    // Get the current time and update it based on the selected duration
+    final now = DateTime.now();
+    final selectedTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      duration.inHours,
+      duration.inMinutes % 60,
+    );
+
+    // Format the time in "hh:mm a" format
+    formattedTime.value = DateFormat("hh:mm a").format(selectedTime);
+    update();
+
+    // Update the TextEditingController
+    rentRidePickupTimeEC.text = formattedTime.value;
+    log("This is the scheduled time: ${formattedTime.value}");
+
+    // Convert DateTime to TimeOfDay and assign to lastSelectedTime
+    lastSelectedRentRidePickupTime = TimeOfDay(
+      hour: selectedTime.hour,
+      minute: selectedTime.minute,
+    );
+    chooseAvailableVehicleTextFieldIsVisible.value = true;
   }
 
   void chooseAvailableVehicle() async {

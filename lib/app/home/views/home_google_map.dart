@@ -22,9 +22,9 @@ homeGoogleMap(HomeScreenController controller, ColorScheme colorScheme) {
                     ? GoogleMap(
                         mapType: MapType.normal,
                         buildingsEnabled: true,
-                        compassEnabled: true,
-                        trafficEnabled: true,
-                        mapToolbarEnabled: true,
+                        compassEnabled: false,
+                        trafficEnabled: false,
+                        mapToolbarEnabled: false,
                         minMaxZoomPreference: MinMaxZoomPreference.unbounded,
                         tiltGesturesEnabled: true,
                         zoomControlsEnabled: false,
@@ -47,7 +47,7 @@ homeGoogleMap(HomeScreenController controller, ColorScheme colorScheme) {
                             userPosition.latitude,
                             userPosition.longitude,
                           ),
-                          zoom: 17.4,
+                          zoom: 15,
                           tilt: 40,
                         ),
                       )

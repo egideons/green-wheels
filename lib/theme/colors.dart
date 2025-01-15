@@ -15,7 +15,8 @@ const kGreyColor2 = Color(0xFFAFAFAF);
 const kGreyLightColor = Color(0xFF899A91);
 const kInformationColor = Color(0xFF75807a);
 
-const kLightBackgroundColor = Color(0xFFE9FFF3);
+const kLightBackgroundColor = Color(0xFFFFFFFF);
+// const kLightBackgroundColor = Color(0xFFE9FFF3);
 const kAvatarBackgroundColor = Color(0xFFD6D8C0);
 const kLightShade = Color(0xFFF6F6F6);
 

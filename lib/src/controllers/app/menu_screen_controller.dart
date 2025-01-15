@@ -96,12 +96,12 @@ class MenuScreenController extends GetxController {
         "label": "Green Wallet Payment",
         "trailingIsVisible": true,
       },
-      {
-        "icon": Iconsax.message_question,
-        "nav": goToFAQs,
-        "label": "FAQ",
-        "trailingIsVisible": true,
-      },
+      // {
+      //   "icon": Iconsax.message_question,
+      //   "nav": goToFAQs,
+      //   "label": "FAQ",
+      //   "trailingIsVisible": true,
+      // },
       {
         "icon": Iconsax.logout_1,
         "nav": logOut,
@@ -150,7 +150,7 @@ class MenuScreenController extends GetxController {
 
   goToFAQs() async {
     UrlLaunchController.launchWeb(
-      "https://essemobility.com/about-us",
+      "https://essemobility.com/",
       LaunchMode.externalApplication,
     );
   }

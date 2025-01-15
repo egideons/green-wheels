@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:board_datetime_picker/board_datetime_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/main.dart';
@@ -35,6 +35,8 @@ class ScheduleTripController extends GetxController {
   TimeOfDay? lastSelectedTime;
   Rx<double> rideAmount = 8000.0.obs;
   var isLoadingScheduleTripRequest = false.obs;
+  var selectedDuration = Duration().obs;
+  var formattedTime = ''.obs;
 
   //================ Variables =================\\
   var pickupLocation = "".obs;
@@ -81,27 +83,39 @@ class ScheduleTripController extends GetxController {
 //================ OnTap and Onchanged =================\\
   void selectDateFunc() async {
     DateTime today = DateTime.now();
+    var context = Get.context!;
 
-    final selectedDate = await showBoardDateTimePicker(
-      context: Get.context!,
-      enableDrag: false,
-      showDragHandle: false,
-      pickerType: DateTimePickerType.date,
-      initialDate: lastSelectedDate ?? today,
-      minimumDate: today,
-      maximumDate: DateTime(2101),
-      isDismissible: true,
-      useSafeArea: true,
-      onChanged: (dateTime) {
-        selectedDateEC.text = DateFormat("dd/MM/yyyy").format(dateTime);
-        scheduledPickupDate = DateFormat('yyyy-MM-dd').format(dateTime);
-        lastSelectedDate = dateTime;
+    final selectedDate = await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 220,
+          color: Colors.white,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 200,
+                child: CupertinoDatePicker(
+                  initialDateTime: today,
+                  minimumDate: today,
+                  maximumDate: DateTime(2101),
+                  use24hFormat: false,
+                  showDayOfWeek: true,
+                  dateOrder: DatePickerDateOrder.mdy,
+                  mode: CupertinoDatePickerMode.date,
+                  onDateTimeChanged: (DateTime dateTime) {
+                    selectedDateEC.text =
+                        DateFormat("dd/MM/yyyy").format(dateTime);
+                    scheduledPickupDate =
+                        DateFormat('yyyy-MM-dd').format(dateTime);
+                    lastSelectedDate = dateTime;
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
       },
-      options: const BoardDateTimeOptions(
-        inputable: true,
-        showDateButton: true,
-        startDayOfWeek: DateTime.sunday,
-      ),
     );
 
     if (selectedDate != null) {
@@ -114,38 +128,64 @@ class ScheduleTripController extends GetxController {
 
   void selectTimeFunc() async {
     TimeOfDay now = TimeOfDay.now();
-
-    var selectedTime = await showTimePicker(
-      context: Get.context!,
-      initialTime: lastSelectedTime ?? now,
-      cancelText: "Cancel",
-      confirmText: "Confirm",
+    var context = Get.context!;
+    await showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 220,
+          color: Colors.white,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 200,
+                child: CupertinoTimerPicker(
+                  mode: CupertinoTimerPickerMode.hm,
+                  initialTimerDuration: Duration(
+                    hours: now.hour,
+                    minutes: now.minute,
+                  ),
+                  onTimerDurationChanged: (Duration duration) {
+                    updateTime(duration);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
 
-    if (selectedTime != null) {
-      final now = DateTime.now();
-      final formattedTime = DateFormat("hh:mm a").format(DateTime(
-        now.year,
-        now.month,
-        now.day,
-        selectedTime.hour,
-        selectedTime.minute,
-      ));
+    log("This is the scheduled time: $scheduledPickupTime");
+  }
 
-      // Format time in 24-hour format
-      scheduledPickupTime = DateFormat("HH:mm").format(DateTime(
-        now.year,
-        now.month,
-        now.day,
-        selectedTime.hour,
-        selectedTime.minute,
-      ));
+  void updateTime(Duration duration) {
+    selectedDuration.value = duration;
 
-      log("This is the scheduled time: $scheduledPickupTime");
+    // Get the current time and update it based on the selected duration
+    final now = DateTime.now();
+    final selectedTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      duration.inHours,
+      duration.inMinutes % 60,
+    );
 
-      selectedTimeEC.text = formattedTime;
-      lastSelectedTime = selectedTime;
-    }
+    scheduledPickupTime = DateFormat("HH:mm").format(selectedTime);
+
+    // Format the time in "hh:mm a" format
+    formattedTime.value = DateFormat("hh:mm a").format(selectedTime);
+
+    // Update the TextEditingController
+    selectedTimeEC.text = formattedTime.value;
+    log("This is the scheduled time: $scheduledPickupTime");
+
+    // Convert DateTime to TimeOfDay and assign to lastSelectedTime
+    lastSelectedTime = TimeOfDay(
+      hour: selectedTime.hour,
+      minute: selectedTime.minute,
+    );
   }
 
   void goToScheduleTripSelectRoute() async {
