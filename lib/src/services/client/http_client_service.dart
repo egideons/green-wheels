@@ -41,10 +41,11 @@ class HttpClientService {
     String? token,
     dynamic data,
     Map<String, String>? headers,
-    bool? isEncoded,
+    bool isEncoded = true,
   ]) async {
     http.Response? response;
     try {
+      final encodedBody = isEncoded ? jsonEncode(data) : data;
       if (token == null || token.isEmpty) {
         response = await http
             .post(
@@ -67,7 +68,7 @@ class HttpClientService {
                     "Content-Type": content,
                     HttpHeaders.authorizationHeader: "Bearer $token",
                   },
-              body: isEncoded ?? false ? jsonEncode(data) : data,
+              body: encodedBody,
             )
             .timeout(const Duration(seconds: 20));
 

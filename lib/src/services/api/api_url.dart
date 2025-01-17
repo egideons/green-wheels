@@ -1,6 +1,7 @@
 class ApiUrl {
 //============= Base URL ===============\\
   static const baseUrl = "https://api.essemobility.com/api";
+  static const webSocketBaseUrl = "ws://api.essemobility.com/app";
 
 //============ Auth Section =============\\
   static const login = "/riders/login";

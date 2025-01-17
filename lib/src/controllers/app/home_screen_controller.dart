@@ -20,6 +20,7 @@ import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.d
 import 'package:green_wheels/src/models/rider/rider_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:green_wheels/src/services/client/http_client_service.dart';
+import 'package:green_wheels/src/services/client/web_socket_service.dart';
 import 'package:green_wheels/src/services/google_maps/autocomplete_prediction_model.dart';
 import 'package:green_wheels/src/services/google_maps/location_service.dart';
 import 'package:green_wheels/theme/colors.dart';
@@ -434,6 +435,7 @@ class HomeScreenController extends GetxController
 
       await Future.delayed(const Duration(milliseconds: 1200));
       routeIsVisible.value = true;
+      FocusManager.instance.primaryFocus?.unfocus();
     }
   }
 
@@ -559,7 +561,7 @@ class HomeScreenController extends GetxController
 
     var userToken = prefs.getString("userToken");
 
-    Map<String, dynamic> data = {
+    var data = {
       "type": "instant",
       "pickup_location": {
         "address": pickup,
@@ -573,8 +575,6 @@ class HomeScreenController extends GetxController
       }
     };
 
-    log("URL=> $url\nUSERTOKEN=>$userToken\n$data");
-
     Map<String, String> headers = {
       "Content-Type": "application/json",
       "Authorization": "Bearer $userToken"
@@ -582,7 +582,12 @@ class HomeScreenController extends GetxController
 
     //HTTP Client Service
     http.Response? response =
+        // await HttpClientService.postRequest(url, userToken, data);
         await HttpClientService.postRequest(url, userToken, data, headers);
+
+    log("Encoded Data: ${jsonEncode(data)}");
+
+    log("URL=> $url\nUSERTOKEN=>$userToken\nData=>$data");
 
     if (response == null) {
       return;
@@ -593,7 +598,7 @@ class HomeScreenController extends GetxController
 
       responseJson = jsonDecode(response.body);
 
-      // log("Response Json=> $responseJson");
+      log("Response Json=> $responseJson");
 
       if (response.statusCode == 200) {
         instantRideAmountResponseModel.value =
@@ -612,20 +617,20 @@ class HomeScreenController extends GetxController
         mapSuggestionIsSelected.value = true;
 
         // FocusScope.of(Get.context!).unfocus();
-        FocusManager.instance.primaryFocus?.unfocus();
+        // FocusManager.instance.primaryFocus?.unfocus();
       } else {
         ApiProcessorController.errorSnack("An error occured");
         log("An error occured, Response body: ${response.body}");
       }
     } catch (e) {
-      log(e.toString());
+      log("This is the error:$e");
     }
   }
 
   bookInstantRide() async {
     var url = ApiUrl.baseUrl + ApiUrl.bookInstantRide;
 
-    var userToken = prefs.getString("userToken");
+    var userToken = prefs.getString("userToken") ?? "";
 
     Map<String, dynamic> data = {
       "pickup_location": {
@@ -641,7 +646,7 @@ class HomeScreenController extends GetxController
       "payment_type": "wallet",
     };
 
-    log("URL=> $url\nUSERTOKEN=>$userToken\n$data");
+    log("URL=> $url\nUSERTOKEN=>$userToken\nData=>$data");
 
     Map<String, String> headers = {
       "Content-Type": "application/json",
@@ -650,8 +655,8 @@ class HomeScreenController extends GetxController
 
     //HTTP Client Service
     http.Response? response =
-        await HttpClientService.postRequest(url, userToken, data);
-    // await HttpClientService.postRequest(url, userToken, data, headers);
+        // await HttpClientService.postRequest(url, userToken, data);
+        await HttpClientService.postRequest(url, userToken, data, headers);
 
     if (response == null) {
       return;
@@ -662,16 +667,24 @@ class HomeScreenController extends GetxController
 
       responseJson = jsonDecode(response.body);
 
-      log("This is the responseJson: $responseJson");
+      log("This is the responseJson: $responseJson\nResponse status code: ${response.statusCode}");
 
       if (response.statusCode == 200) {
         ApiProcessorController.successSnack("${responseJson["message"]}");
-        showSearchingForDriverModalSheet();
-      } else {
-        ApiProcessorController.errorSnack(
-          "${responseJson["message"]}\nThe required amount: ${responseJson["data"]["required_amount"]}\n Deficit: ${responseJson["data"]["deficit"]}",
+        final webSocketService = ReverbWebSocketService(
+          driverUUID: 'your-driver-uuid',
+          authToken: userToken,
         );
+
+        // showSearchingForDriverModalSheet();
+      } else {
+        if (responseJson["data"]["deficit"].contains("deficit")) {
+          ApiProcessorController.errorSnack(
+            "${responseJson["message"]}\nThe required amount: ${responseJson["data"]["required_amount"]}\n Deficit: ${responseJson["data"]["deficit"]}",
+          );
+        }
         log(responseJson.toString());
+        ApiProcessorController.errorSnack("${responseJson["message"]}");
       }
     } catch (e) {
       log(e.toString());

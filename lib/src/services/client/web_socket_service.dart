@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -14,11 +16,12 @@ class ReverbWebSocketService {
     required this.authToken,
   });
 
+  var webSocketKey = dotenv.env["WebSocketKey"];
   void connect() {
     // Create WebSocket connection
-    // Replace with your actual host and port
-    final wsUrl =
-        Uri.parse('ws://api.essemobility.com/app/cygaoogiqefiuj5gb8t3');
+    var url = "${ApiUrl.webSocketBaseUrl}/$webSocketKey";
+    final wsUrl = Uri.parse(url);
+    //! Uri.parse('ws://api.essemobility.com/app/cygaoogiqefiuj5gb8t3');
 
     channel = WebSocketChannel.connect(wsUrl);
 
@@ -27,6 +30,7 @@ class ReverbWebSocketService {
       (dynamic message) {
         final decodedMessage = jsonDecode(message);
         handleWebSocketMessage(decodedMessage);
+        log("Stream listening decoded message: $decodedMessage");
       },
       onError: (error) {
         log('WebSocket Error: $error');
@@ -46,10 +50,7 @@ class ReverbWebSocketService {
     // Subscribe to driver's private channel
     final driverSubscription = {
       'event': 'pusher:subscribe',
-      'data': {
-        'channel': 'private-driver.$driverUUID',
-        'auth': authToken // You'll need to implement proper auth
-      }
+      'data': {'channel': 'private-driver.$driverUUID', 'auth': authToken}
     };
     channel.sink.add(jsonEncode(driverSubscription));
 
