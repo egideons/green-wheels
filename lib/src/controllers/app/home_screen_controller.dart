@@ -20,7 +20,6 @@ import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.d
 import 'package:green_wheels/src/models/rider/rider_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:green_wheels/src/services/client/http_client_service.dart';
-import 'package:green_wheels/src/services/client/web_socket_service.dart';
 import 'package:green_wheels/src/services/google_maps/autocomplete_prediction_model.dart';
 import 'package:green_wheels/src/services/google_maps/location_service.dart';
 import 'package:green_wheels/theme/colors.dart';
@@ -671,10 +670,10 @@ class HomeScreenController extends GetxController
 
       if (response.statusCode == 200) {
         ApiProcessorController.successSnack("${responseJson["message"]}");
-        final webSocketService = ReverbWebSocketService(
-          driverUUID: 'your-driver-uuid',
-          authToken: userToken,
-        );
+        // final webSocketService = ReverbWebSocketService(
+        //   driverUUID: 'your-driver-uuid',
+        //   authToken: userToken,
+        // );
 
         // showSearchingForDriverModalSheet();
       } else {
