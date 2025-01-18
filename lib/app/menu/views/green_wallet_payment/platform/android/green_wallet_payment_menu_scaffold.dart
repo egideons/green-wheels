@@ -128,31 +128,30 @@ class GreenWalletPaymentMenuScaffold
                   ),
                 ),
                 kHalfSizedBox,
-                  Text.rich(
-          textAlign: TextAlign.end,
-          TextSpan(
-            text: 'Total Green Points earned: ',
-            style: defaultTextStyle(
-              color: kTextBlackColor,
-              fontSize: 18,
-              fontFamily: "",
-              fontWeight: FontWeight.w600,
-            ),
-            children: [
-              TextSpan(
-                text: controller.hideBalance.value
-                    ? "******"
-                    : "${convertToCurrency(0!)}",
-                style: defaultTextStyle(
-                  color: kTextBlackColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+                Text.rich(
+                  textAlign: TextAlign.end,
+                  TextSpan(
+                    text: 'Total Green Points earned: ',
+                    style: defaultTextStyle(
+                      color: kTextBlackColor,
+                      fontSize: 18,
+                      fontFamily: "",
+                      fontWeight: FontWeight.w600,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: controller.hideBalance.value
+                            ? "******"
+                            : "${convertToCurrency("0")}",
+                        style: defaultTextStyle(
+                          color: kTextBlackColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
-             
                 kSizedBox,
                 Text(
                   "Transactions",
