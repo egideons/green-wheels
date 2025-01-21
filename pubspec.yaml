@@ -25,6 +25,7 @@ dependencies:
   google_maps_flutter:
   geolocator:
   geocoding:
+  firebase_core:
   flutter_polyline_points:
   url_launcher:
   sliding_up_panel: ^2.0.0+1
@@ -32,7 +33,6 @@ dependencies:
   skeletonizer:
   connectivity_plus:
   http_parser:
-  firebase_core:
   flutter_dotenv:
   flutter_paystack_max:
   web_socket_channel:

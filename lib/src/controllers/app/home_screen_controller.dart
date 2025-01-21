@@ -72,7 +72,7 @@ class HomeScreenController extends GetxController
   //================ Variables =================\\
   var infoMessage = "".obs;
   var pinnedLocation = "".obs;
-  var riderName = "Emmanuel Daniel".obs;
+  var riderName = "".obs;
   Uint8List? markerImage;
   late LatLng draggedLatLng;
   var markers = <Marker>[].obs;
