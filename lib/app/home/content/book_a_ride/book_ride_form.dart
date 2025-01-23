@@ -18,32 +18,45 @@ bookRideForm(
       key: controller.bookRideFormKey,
       child: Column(
         children: [
-          formFieldContainer(
-            colorScheme,
-            media,
-            containerHeight: media.height * .1,
-            borderSide: BorderSide(
-              width: 1,
-              color: colorScheme.primary,
-            ),
-            child: Center(
-              child: AndroidTextFormField(
-                readOnly: userPosition == null ? true : false,
-                controller: controller.pickupLocationEC,
-                textInputAction: TextInputAction.next,
-                focusNode: controller.pickupLocationFN,
-                hintText: userPosition == null
-                    ? "Retrieving your location"
-                    : "Enter pickup location",
-                textCapitalization: TextCapitalization.words,
-                onChanged: controller.pickupLocationOnChanged,
-                minLines: 1,
-                maxLines: 10,
-                validator: (value) {
-                  return null;
-                },
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: formFieldContainer(
+                  colorScheme,
+                  media,
+                  containerHeight: media.height * .1,
+                  borderSide: BorderSide(
+                    width: 1,
+                    color: colorScheme.primary,
+                  ),
+                  child: Center(
+                    child: AndroidTextFormField(
+                      readOnly: userPosition == null ? true : false,
+                      controller: controller.pickupLocationEC,
+                      textInputAction: TextInputAction.next,
+                      focusNode: controller.pickupLocationFN,
+                      hintText: userPosition == null
+                          ? "Retrieving your location"
+                          : "Enter pickup location",
+                      textCapitalization: TextCapitalization.words,
+                      onChanged: controller.pickupLocationOnChanged,
+                      minLines: 1,
+                      maxLines: 10,
+                      validator: (value) {
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
               ),
-            ),
+              kSmallWidthSizedBox,
+              InkWell(
+                onTap: () {},
+                borderRadius: BorderRadius.circular(10),
+                child: Icon(Iconsax.map5, color: colorScheme.primary),
+              ),
+            ],
           ),
           kHalfSizedBox,
           // controller.isStopLocationVisible.value
@@ -72,41 +85,54 @@ bookRideForm(
           // controller.isStopLocationVisible.value
           //     ? kHalfSizedBox
           //     : const SizedBox(),
-          formFieldContainer(
-            colorScheme,
-            media,
-            containerHeight: media.height * .1,
-            borderSide: BorderSide(
-              width: 1,
-              color: colorScheme.primary,
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Iconsax.search_normal,
-                  color: colorScheme.inversePrimary,
-                ),
-                kSmallWidthSizedBox,
-                Expanded(
-                  child: AndroidTextFormField(
-                    readOnly: userPosition == null ? true : false,
-                    controller: controller.destinationEC,
-                    focusNode: controller.destinationFN,
-                    textInputAction: TextInputAction.done,
-                    onTap: controller.destinationOnTap,
-                    textCapitalization: TextCapitalization.words,
-                    hintText: "Enter destination",
-                    minLines: 1,
-                    maxLines: 10,
-                    onChanged: controller.destinationOnChanged,
-                    onFieldSubmitted: controller.onFieldSubmitted,
-                    validator: (value) {
-                      return null;
-                    },
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: formFieldContainer(
+                  colorScheme,
+                  media,
+                  containerHeight: media.height * .1,
+                  borderSide: BorderSide(
+                    width: 1,
+                    color: colorScheme.primary,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Iconsax.search_normal,
+                        color: colorScheme.inversePrimary,
+                      ),
+                      kSmallWidthSizedBox,
+                      Expanded(
+                        child: AndroidTextFormField(
+                          readOnly: userPosition == null ? true : false,
+                          controller: controller.destinationEC,
+                          focusNode: controller.destinationFN,
+                          textInputAction: TextInputAction.done,
+                          onTap: controller.destinationOnTap,
+                          textCapitalization: TextCapitalization.words,
+                          hintText: "Enter destination",
+                          minLines: 1,
+                          maxLines: 10,
+                          onChanged: controller.destinationOnChanged,
+                          onFieldSubmitted: controller.onFieldSubmitted,
+                          validator: (value) {
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              kSmallWidthSizedBox,
+              InkWell(
+                onTap: () {},
+                borderRadius: BorderRadius.circular(10),
+                child: Icon(Iconsax.map5, color: colorScheme.primary),
+              )
+            ],
           ),
         ],
       ),
