@@ -21,7 +21,7 @@ homeGoogleMap(HomeScreenController controller, ColorScheme colorScheme) {
                 routeIsVisible == false
                     ? GoogleMap(
                         mapType: MapType.normal,
-                        buildingsEnabled: true,
+                        buildingsEnabled: false,
                         compassEnabled: false,
                         trafficEnabled: false,
                         mapToolbarEnabled: false,
@@ -41,22 +41,20 @@ homeGoogleMap(HomeScreenController controller, ColorScheme colorScheme) {
                         markers: Set<Marker>.of(controller.markers),
                         onCameraIdle: controller.onCameraIdle,
                         onCameraMove: controller.onCameraMove,
-                        polylines: {},
                         initialCameraPosition: CameraPosition(
                           target: LatLng(
                             userPosition.latitude,
                             userPosition.longitude,
                           ),
-                          zoom: 15,
-                          tilt: 40,
+                          zoom: 16,
                         ),
                       )
                     : GoogleMap(
                         mapType: MapType.normal,
-                        buildingsEnabled: true,
-                        compassEnabled: true,
-                        trafficEnabled: true,
-                        mapToolbarEnabled: true,
+                        buildingsEnabled: false,
+                        compassEnabled: false,
+                        trafficEnabled: false,
+                        mapToolbarEnabled: false,
                         minMaxZoomPreference: MinMaxZoomPreference.unbounded,
                         tiltGesturesEnabled: true,
                         zoomControlsEnabled: false,

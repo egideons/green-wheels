@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
+import 'package:green_wheels/app/google_maps/google_maps.dart';
 import 'package:green_wheels/app/menu/views/edit_profile/screen/edit_profile_screen.dart';
 import 'package:green_wheels/app/menu/views/scheduled_trips_menu/views/scheduled_rides_menu/screen/scheduled_rides_menu_screen.dart';
 import 'package:green_wheels/app/schedule_trip/content/select_route.dart';
+import 'package:green_wheels/src/controllers/app/google_maps_controller.dart';
 
 import '../../app/auth/email_login/screen/email_login_screen.dart';
 import '../../app/auth/email_otp/screen/email_otp.dart';
@@ -67,6 +69,7 @@ class Routes {
   static const scheduleTripSelectRoute = "/schedule-trip-select-route";
   static const schoolCommuteScreen = "/school-commute";
   static const chooseAvailableVehicle = "/choose-available-vehicle";
+  static const googleMaps = "/google-maps";
 
   //Menu Section
   static const menu = "/menu";
@@ -105,6 +108,12 @@ class Routes {
 
     //Main App Section
     GetPage(name: homeScreen, page: () => const HomeScreen()),
+    GetPage(
+        name: googleMaps,
+        page: () => const GoogleMaps(),
+        binding: BindingsBuilder(() => Get.lazyPut<GoogleMapsController>(
+              () => GoogleMapsController(),
+            ))),
     GetPage(name: rideScreen, page: () => const RideScreen()),
     GetPage(
       name: scheduleTripScreen,

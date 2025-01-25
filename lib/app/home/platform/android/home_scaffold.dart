@@ -12,7 +12,7 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
 
   @override
   Widget build(BuildContext context) {
-    var media = MediaQuery.of(context).size;
+    var size = MediaQuery.sizeOf(context);
     var colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -28,9 +28,9 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
               children: [
                 SlidingUpPanel(
                   controller: controller.panelController,
-                  maxHeight: media.height * .8,
+                  maxHeight: size.height * .8,
                   backdropTapClosesPanel: true,
-                  minHeight: media.height * .2,
+                  minHeight: size.height * .2,
                   backdropEnabled: true,
                   defaultPanelState: PanelState.CLOSED,
                   panelSnapping: false,
@@ -44,14 +44,15 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
                   // panelBuilder: (sc) {
                   //   return homePanelSection(
                   //     colorScheme,
-                  //     media,
+                  //     size,
                   //     context,
                   //     // sc,
                   //   );
                   // },
+
                   panel: homePanelSection(
                     colorScheme,
-                    media,
+                    size,
                     context,
                     controller,
                   ),

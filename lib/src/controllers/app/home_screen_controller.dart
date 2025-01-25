@@ -10,8 +10,10 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:green_wheels/app/google_maps/google_maps.dart';
 import 'package:green_wheels/app/home/content/rent_ride/choose_available_vehicle_scaffold.dart';
 import 'package:green_wheels/app/home/modals/book_ride_cancel_ride_fee_modal.dart';
+import 'package:green_wheels/src/controllers/app/google_maps_controller.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:green_wheels/src/models/ride/available_vehicles_response_model.dart';
 import 'package:green_wheels/src/models/ride/instant_ride_amount_response_model.dart';
@@ -215,13 +217,17 @@ class HomeScreenController extends GetxController
         "Please note that every vehicle has a security camera for safety reasons.";
     await Future.delayed(const Duration(seconds: 3));
     infoMessage.value = "";
+    pinnedLocation.value = "";
+    markerTitle = <String>["Me"];
+    markerSnippet = <String>["My Location"];
+    await loadMapData();
     var loadDriverDetails = await getRiderProfile();
 
     if (loadDriverDetails) {
-      pinnedLocation.value = "";
-      markerTitle = <String>["Me"];
-      markerSnippet = <String>["My Location"];
-      await loadMapData();
+      // pinnedLocation.value = "";
+      // markerTitle = <String>["Me"];
+      // markerSnippet = <String>["My Location"];
+      // await loadMapData();
 
       log("User Position: ${userPosition.value}");
       log("User pickupLocation: ${pickupLocationEC.text}");
@@ -284,7 +290,7 @@ class HomeScreenController extends GetxController
 
     LatLng latLngPosition =
         LatLng(userLocation.latitude, userLocation.longitude);
-    cameraPosition = CameraPosition(target: latLngPosition, zoom: 18);
+    cameraPosition = CameraPosition(target: latLngPosition, zoom: 16);
 
     newGoogleMapController?.animateCamera(
       CameraUpdate.newCameraPosition(cameraPosition!),
@@ -392,7 +398,7 @@ class HomeScreenController extends GetxController
     await getPlaceMark(position);
   }
 
-//========================================================== Get PlaceMark Address and LatLng =============================================================\\
+//============================ Get PlaceMark Address and LatLng ============================\\
 
   Future getPlaceMark(LatLng position) async {
     List<Placemark> placemarks =
@@ -752,6 +758,70 @@ class HomeScreenController extends GetxController
       isDestinationTextFieldActive.value = false;
       isPickupLocationTextFieldActive.value = false;
       isStopLocationTextFieldActive.value = true;
+    }
+  }
+
+  //!================== Goto Google Maps ========================\\
+
+  setPickupGoogleMapsLocation() async {
+    final result = await Get.to(
+      () => const GoogleMaps(),
+      routeName: '/google-maps',
+      duration: const Duration(milliseconds: 300),
+      fullscreenDialog: true,
+      curve: Curves.easeIn,
+      preventDuplicates: true,
+      popGesture: true,
+      transition: Transition.downToUp,
+      binding: BindingsBuilder(() => Get.lazyPut<GoogleMapsController>(
+            () => GoogleMapsController(),
+          )),
+    );
+
+    if (result != null) {
+      final latitude = result["latitude"];
+      final longitude = result["longitude"];
+      final address = result["address"];
+
+      pickupLocationEC.text = address;
+      pickupLocation.value = address;
+      pickupLat = latitude;
+      pickupLong = longitude;
+
+      log(
+        "This are the result details:\nAddress: ${pickupLocation.value}\nLatitude: $pickupLat\nLongitude: $pickupLong",
+      );
+    }
+  }
+
+  setDestinationGoogleMapsLocation() async {
+    final result = await Get.to(
+      () => const GoogleMaps(),
+      routeName: '/google-maps',
+      duration: const Duration(milliseconds: 300),
+      fullscreenDialog: true,
+      curve: Curves.easeIn,
+      preventDuplicates: true,
+      popGesture: true,
+      transition: Transition.downToUp,
+      binding: BindingsBuilder(() => Get.lazyPut<GoogleMapsController>(
+            () => GoogleMapsController(),
+          )),
+    );
+
+    if (result != null) {
+      final latitude = result["latitude"];
+      final longitude = result["longitude"];
+      final address = result["address"];
+
+      destinationEC.text = address;
+      destinationLocation.value = address;
+      destinationLat = latitude;
+      destinationLong = longitude;
+
+      log(
+        "This are the result details:\nAddress: ${destinationLocation.value}\nLatitude: $destinationLat\nLongitude: $destinationLong",
+      );
     }
   }
 

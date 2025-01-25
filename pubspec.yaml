@@ -23,6 +23,7 @@ dependencies:
   loading_animation_widget:
   http:
   google_maps_flutter:
+  place_picker_google:
   geolocator:
   geocoding:
   firebase_core:
