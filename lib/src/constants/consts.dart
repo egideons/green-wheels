@@ -111,7 +111,7 @@ defaultTextStyle({
       decorationStyle: decorationStyle,
       decorationThickness: decorationThickness,
       debugLabel: debugLabel,
-      fontFamily: fontFamily ?? "",
+      // fontFamily: fontFamily ?? "",
       fontSize: fontSize ?? 14.0,
       fontStyle: fontStyle ?? FontStyle.normal,
       fontWeight: fontWeight ?? FontWeight.w600,
