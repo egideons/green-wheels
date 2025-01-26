@@ -73,7 +73,8 @@ class AvailableVehicleDetailsScaffold extends GetView<HomeScreenController> {
                 ),
               ),
               kSmallSizedBox,
-              Row(
+              Wrap(
+                runSpacing: 10,
                 children: List.generate(
                   3,
                   (index) {
@@ -84,6 +85,7 @@ class AvailableVehicleDetailsScaffold extends GetView<HomeScreenController> {
                         padding: const EdgeInsets.only(right: 10),
                         child: Container(
                           padding: const EdgeInsets.all(10),
+                          constraints: BoxConstraints(minWidth: 60),
                           decoration: ShapeDecoration(
                             color: colorScheme.surface,
                             shape: RoundedRectangleBorder(
@@ -102,7 +104,7 @@ class AvailableVehicleDetailsScaffold extends GetView<HomeScreenController> {
                                 specificationsInfo["title"],
                                 style: defaultTextStyle(
                                   color: kTextBlackColor,
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),

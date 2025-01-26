@@ -47,6 +47,7 @@ class GreenWalletPaymentMenuScaffold
                     child: AndroidElevatedButton(
                       title: "Fund Wallet",
                       isRowVisible: true,
+                      fontSize: 12,
                       buttonIcon: Icons.chevron_right,
                       mainAxisAlignment: MainAxisAlignment.center,
                       onPressed: controller.goToFundGreenWallet,

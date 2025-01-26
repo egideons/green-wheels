@@ -7,8 +7,6 @@ import 'package:green_wheels/theme/colors.dart';
 import '../../../src/constants/consts.dart';
 import '../../../src/controllers/app/schedule_trip_controller.dart';
 import '../../../src/utils/buttons/android/android_elevated_button.dart';
-import 'schedule_trip_destination_map_suggestions.dart';
-import 'schedule_trip_pickup_location_map_suggestions.dart';
 import 'schedule_trip_route_form.dart';
 
 class ScheduleTripSelectRoute extends GetView<ScheduleTripController> {
@@ -80,30 +78,12 @@ class ScheduleTripSelectRoute extends GetView<ScheduleTripController> {
               kSizedBox,
               Column(
                 children: () {
-                  if (controller.mapSuggestionIsSelected.value) {
+                  if (controller.submitFormButtonIsVisible.value) {
                     return <Widget>[
                       AndroidElevatedButton(
                         title: "Done",
                         onPressed: controller.submitRouteForm,
                       )
-                    ];
-                  } else if (controller.isPickupLocationTextFieldActive.value) {
-                    return <Widget>[
-                      scheduleTripPickupLocationMapSuggestions(
-                        colorScheme,
-                        controller,
-                        media,
-                      ),
-                      SizedBox(height: media.height * .2),
-                    ];
-                  } else if (controller.isDestinationTextFieldActive.value) {
-                    return <Widget>[
-                      scheduleTripDestinationMapSuggestions(
-                        colorScheme,
-                        controller,
-                        media,
-                      ),
-                      SizedBox(height: media.height * .2),
                     ];
                   }
                   // else if (controller.isStopLocationTextFieldActive.value) {

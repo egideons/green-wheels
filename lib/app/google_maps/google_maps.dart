@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:green_wheels/src/constants/consts.dart';
 import 'package:green_wheels/src/controllers/app/google_maps_controller.dart';
+import 'package:green_wheels/theme/colors.dart';
 import 'package:place_picker_google/place_picker_google.dart';
 
 class GoogleMaps extends GetView<GoogleMapsController> {
@@ -9,14 +11,14 @@ class GoogleMaps extends GetView<GoogleMapsController> {
 
   @override
   Widget build(BuildContext context) {
-    var colorScheme = Theme.of(context).colorScheme;
+    // var colorScheme = Theme.of(context).colorScheme;
     // var size = MediaQuery.sizeOf(context);
     return Scaffold(
       body: Obx(
         () {
           final userPosition = controller.userPosition.value;
-          final locationPinIsVisible = controller.locationPinIsVisible.value;
-          final pinnedLocation = controller.pinnedLocation.value;
+          // final locationPinIsVisible = controller.locationPinIsVisible.value;
+          // final pinnedLocation = controller.pinnedLocation.value;
           if (userPosition == null) {
             return const Center(
               child: CircularProgressIndicator.adaptive(),
@@ -24,23 +26,60 @@ class GoogleMaps extends GetView<GoogleMapsController> {
           } else {
             return PlacePicker(
               apiKey: controller.googlePlacesApiKey ?? "",
-              onPlacePicked: (LocationResult result) {
-                debugPrint("Place picked: ${result.formattedAddress}");
-              },
+              onMapCreated: controller.onMapCreated,
+              onPlacePicked: controller.onPlacePicked,
+              enableNearbyPlaces: false,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
+              usePinPointingSearch: true,
+              showSearchInput: true,
+              autocompletePlacesSearchRadius: userPosition.latitude,
+              pinPointingDebounceDuration: 2,
               initialLocation: LatLng(
                 userPosition.latitude,
                 userPosition.longitude,
               ),
-              searchInputConfig: const SearchInputConfig(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
-                ),
-                autofocus: false,
-                textDirection: TextDirection.ltr,
+              nearbyPlaceItemStyle: defaultTextStyle(
+                color: kTextBlackColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
               ),
-              searchInputDecorationConfig: const SearchInputDecorationConfig(
+              nearbyPlaceStyle: defaultTextStyle(
+                color: kTextBlackColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+              selectedLocationNameStyle: defaultTextStyle(
+                color: kTextBlackColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+              selectedFormattedAddressStyle: defaultTextStyle(
+                color: kTextGreyColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+              searchInputConfig: SearchInputConfig(
+                autofocus: false,
+                showCursor: true,
+                textAlignVertical: TextAlignVertical.center,
+                textDirection: TextDirection.ltr,
+                padding: EdgeInsets.all(10),
+                textCapitalization: TextCapitalization.words,
+                style: defaultTextStyle(
+                  color: kTextBlackColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              searchInputDecorationConfig: SearchInputDecorationConfig(
                 hintText: "Search for a building, street or ...",
+                contentPadding: const EdgeInsets.all(10),
+                hintStyle: defaultTextStyle(
+                  color: kTextGreyColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             );
             // return Stack(

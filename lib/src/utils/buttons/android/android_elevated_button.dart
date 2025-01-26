@@ -85,14 +85,16 @@ class AndroidElevatedButton extends StatelessWidget {
                         mainAxisAlignment == null
                             ? const SizedBox()
                             : kHalfWidthSizedBox,
-                        Text(
-                          title,
-                          textAlign: TextAlign.center,
-                          style: defaultTextStyle(
-                            color: textColor ?? colorScheme.surface,
-                            fontSize: fontSize ?? 14.0,
-                            fontFamily: fontFamily,
-                            fontWeight: fontWeight ?? FontWeight.w600,
+                        Expanded(
+                          child: Text(
+                            title,
+                            textAlign: TextAlign.center,
+                            style: defaultTextStyle(
+                              color: textColor ?? colorScheme.surface,
+                              fontSize: fontSize ?? 14.0,
+                              fontFamily: fontFamily,
+                              fontWeight: fontWeight ?? FontWeight.w600,
+                            ),
                           ),
                         ),
                       ],
@@ -101,14 +103,16 @@ class AndroidElevatedButton extends StatelessWidget {
                       mainAxisAlignment:
                           mainAxisAlignment ?? MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          title,
-                          textAlign: TextAlign.center,
-                          style: defaultTextStyle(
-                            color: textColor ?? colorScheme.surface,
-                            fontSize: fontSize ?? 14.0,
-                            fontFamily: fontFamily,
-                            fontWeight: fontWeight ?? FontWeight.w600,
+                        Expanded(
+                          child: Text(
+                            title,
+                            textAlign: TextAlign.center,
+                            style: defaultTextStyle(
+                              color: textColor ?? colorScheme.surface,
+                              fontSize: fontSize ?? 14.0,
+                              fontFamily: fontFamily,
+                              fontWeight: fontWeight ?? FontWeight.w600,
+                            ),
                           ),
                         ),
                         mainAxisAlignment == null

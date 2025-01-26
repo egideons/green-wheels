@@ -25,6 +25,7 @@ const kSecondaryColor = Color(0xFFFFFFFF);
 const kStarColor = Color(0xFFFB8A00);
 const kSuccessColor = Color(0xFF43a048);
 const kTextBlackColor = Color(0xFF000000);
+Color kTextGreyColor = Colors.grey.shade600;
 const kTextWhiteColor = Color(0xFFF6F6F6);
 const kTransparentColor = Colors.transparent;
 const kWarningColor = Color(0xFFfb8a00);

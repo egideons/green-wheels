@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:ui' as ui;
 
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
+import 'package:place_picker_google/place_picker_google.dart';
 
 class GoogleMapsController extends GetxController {
   static GoogleMapsController get instance {
@@ -17,7 +15,8 @@ class GoogleMapsController extends GetxController {
 
   @override
   void onInit() {
-    initFunctions();
+    loadMapData();
+
     super.onInit();
   }
 
@@ -28,8 +27,6 @@ class GoogleMapsController extends GetxController {
   String? pickedUpLat;
   String? pickedUpLong;
   var pinnedLocation = "".obs;
-  Uint8List? markerImage;
-  late LatLng draggedLatLng;
   var googlePlacesApiKey = dotenv.env['GooglePlacesAPIKey'];
 
   //!================ Controllers =================\\
@@ -41,9 +38,6 @@ class GoogleMapsController extends GetxController {
   var routeIsVisible = false.obs;
 
   //!================ Functions =================\\
-  Future<void> initFunctions() async {
-    await loadMapData();
-  }
 
   Future<void> loadMapData() async {
     bool serviceEnabled;
@@ -107,56 +101,20 @@ class GoogleMapsController extends GetxController {
     log("User Position: $userLocation");
     log("Pickup Location: Latitude: $pickedUpLat, Longitude: $pickedUpLong");
 
-    getPlaceMark(latLngPosition);
-
     return userLocation;
   }
 
-  //====================================== Get bytes from assets =========================================\\
+  onPlacePicked(LocationResult result) {
+    pickedUpLat = result.latLng!.latitude.toString();
+    pickedUpLong = result.latLng!.longitude.toString();
+    pinnedLocation.value = result.formattedAddress ?? "";
+    update();
 
-  Future<Uint8List> getBytesFromAssets(String path, int width) async {
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(
-      data.buffer.asUint8List(),
-      targetHeight: width,
-    );
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
-        .buffer
-        .asUint8List();
-  }
-
-  Future getPlaceMark(LatLng position) async {
-    List<Placemark> placemarks =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
-    Placemark address = placemarks[0];
-    String addressStr =
-        "${address.name} ${address.street}, ${address.locality}, ${address.country}";
-    pinnedLocation.value = addressStr;
-
-    // log("LatLng: ${LatLng(position.latitude, position.longitude)}");
-    log("AddressStr: $addressStr");
-    log("PinnedLocation: $addressStr");
-  }
-
-  onCameraMove(CameraPosition cameraPosition) {
-    draggedLatLng = cameraPosition.target;
-
-    // locationPinIsVisible.value = true;
-    // log("Dragged LatLng on Camera Move: $draggedLatLng");
-  }
-
-  onCameraIdle() async {
-    routeIsVisible.value = false;
-    getPlaceMark(draggedLatLng);
-
-    await Future.delayed(const Duration(seconds: 1));
-    pickedUpLat = draggedLatLng.latitude.toString();
-    pickedUpLong = draggedLatLng.longitude.toString();
-
+    log("Place picked: ${result.formattedAddress}");
     log("Pinned Locaiton on Camera Idle: ${pinnedLocation.value}");
     log("Picked up Latitude Lat on Camera Idle: $pickedUpLat");
     log("Picked up Longitude on Camera Idle: $pickedUpLong");
+    save();
   }
 
   void onMapCreated(GoogleMapController controller) {

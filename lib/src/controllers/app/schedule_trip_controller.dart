@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/app/google_maps/google_maps.dart';
 import 'package:green_wheels/main.dart';
+import 'package:green_wheels/src/controllers/app/google_maps_controller.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:green_wheels/src/services/client/http_client_service.dart';
-import 'package:green_wheels/src/services/google_maps/autocomplete_prediction_model.dart';
-import 'package:green_wheels/src/services/google_maps/location_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -31,14 +30,9 @@ class ScheduleTripController extends GetxController {
   //================ Global =================\\
   var scheduleTripFormKey = GlobalKey<FormState>();
   var scheduleTripRouteFormKey = GlobalKey<FormState>();
-  DateTime? lastSelectedDate;
-  TimeOfDay? lastSelectedTime;
-  Rx<double> rideAmount = 8000.0.obs;
-  var isLoadingScheduleTripRequest = false.obs;
-  var selectedDuration = Duration().obs;
-  var formattedTime = ''.obs;
 
   //================ Variables =================\\
+  var formattedTime = "".obs;
   var pickupLocation = "".obs;
   var destination = "".obs;
   String? scheduledPickupTime;
@@ -47,16 +41,14 @@ class ScheduleTripController extends GetxController {
   String? pickupLong;
   String? destinationLat;
   String? destinationLong;
-  List<GooglePlaceAutoCompletePredictionModel> pickupPlacePredictions = [];
-  List<GooglePlaceAutoCompletePredictionModel> destinationPlacePredictions = [];
+  DateTime? lastSelectedDate;
+  TimeOfDay? lastSelectedTime;
+  Rx<double> rideAmount = 0.0.obs;
 
   //================ Booleans =================\\
-  var isPickupLocationTextFieldActive = false.obs;
-  var isDestinationTextFieldActive = false.obs;
-  var isStopLocationVisible = false.obs;
-  var isStopLocationTextFieldActive = false.obs;
-  var mapSuggestionIsSelected = false.obs;
   var confirmBookingButtonIsEnabled = false.obs;
+  var isLoadingScheduleTripRequest = false.obs;
+  var submitFormButtonIsVisible = false.obs;
 
   //================ Controllers =================\\
   var scrollController = ScrollController();
@@ -82,110 +74,56 @@ class ScheduleTripController extends GetxController {
 
 //================ OnTap and Onchanged =================\\
   void selectDateFunc() async {
-    DateTime today = DateTime.now();
     var context = Get.context!;
+    var formattedDate = "".obs;
 
-    final selectedDate = await showModalBottomSheet(
+    final selectedDate = await showDatePicker(
       context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 220,
-          color: Colors.white,
-          child: Column(
-            children: [
-              SizedBox(
-                height: 200,
-                child: CupertinoDatePicker(
-                  initialDateTime: today,
-                  minimumDate: today,
-                  maximumDate: DateTime(2101),
-                  use24hFormat: false,
-                  showDayOfWeek: true,
-                  dateOrder: DatePickerDateOrder.mdy,
-                  mode: CupertinoDatePickerMode.date,
-                  onDateTimeChanged: (DateTime dateTime) {
-                    selectedDateEC.text =
-                        DateFormat("dd/MM/yyyy").format(dateTime);
-                    scheduledPickupDate =
-                        DateFormat('yyyy-MM-dd').format(dateTime);
-                    lastSelectedDate = dateTime;
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+      initialDate: lastSelectedDate ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2030),
     );
-
     if (selectedDate != null) {
       selectedDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
+      formattedDate.value = DateFormat("dd/MM/yyyy").format(selectedDate);
       scheduledPickupDate = DateFormat('yyyy-MM-dd').format(selectedDate);
       lastSelectedDate = selectedDate;
     }
+
     log("This is the scheduled Datte: $scheduledPickupDate");
   }
 
   void selectTimeFunc() async {
     TimeOfDay now = TimeOfDay.now();
-    var context = Get.context!;
-    await showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 220,
-          color: Colors.white,
-          child: Column(
-            children: [
-              SizedBox(
-                height: 200,
-                child: CupertinoTimerPicker(
-                  mode: CupertinoTimerPickerMode.hm,
-                  initialTimerDuration: Duration(
-                    hours: now.hour,
-                    minutes: now.minute,
-                  ),
-                  onTimerDurationChanged: (Duration duration) {
-                    updateTime(duration);
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+
+    var selectedTime = await showTimePicker(
+      context: Get.context!,
+      initialTime: lastSelectedTime ?? now,
+      cancelText: "Cancel",
+      confirmText: "Confirm",
     );
 
-    log("This is the scheduled time: $scheduledPickupTime");
-  }
-
-  void updateTime(Duration duration) {
-    selectedDuration.value = duration;
-
-    // Get the current time and update it based on the selected duration
-    final now = DateTime.now();
-    final selectedTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      duration.inHours,
-      duration.inMinutes % 60,
-    );
-
-    scheduledPickupTime = DateFormat("HH:mm").format(selectedTime);
-
-    // Format the time in "hh:mm a" format
-    formattedTime.value = DateFormat("hh:mm a").format(selectedTime);
-
-    // Update the TextEditingController
-    selectedTimeEC.text = formattedTime.value;
-    log("This is the scheduled time: $scheduledPickupTime");
-
-    // Convert DateTime to TimeOfDay and assign to lastSelectedTime
-    lastSelectedTime = TimeOfDay(
-      hour: selectedTime.hour,
-      minute: selectedTime.minute,
-    );
+    if (selectedTime != null) {
+      final now = DateTime.now();
+      final formattedTime = DateFormat("hh:mm a").format(DateTime(
+        now.year,
+        now.month,
+        now.day,
+        selectedTime.hour,
+        selectedTime.minute,
+      ));
+      // Format time in 24-hour format
+      scheduledPickupTime = DateFormat("HH:mm").format(DateTime(
+        now.year,
+        now.month,
+        now.day,
+        selectedTime.hour,
+        selectedTime.minute,
+      ));
+      log("This is the scheduled time: $scheduledPickupTime");
+      selectedTimeEC.text = formattedTime;
+      lastSelectedTime = selectedTime;
+    }
   }
 
   void goToScheduleTripSelectRoute() async {
@@ -223,100 +161,78 @@ class ScheduleTripController extends GetxController {
     // );
   }
 
-  void selectPickupSuggestion(index) async {
-    final newLocation = pickupPlacePredictions[index].description;
-    List location = await parseLatLng(newLocation);
-    pickupLat = location[0];
-    pickupLong = location[1];
-    await Future.delayed(const Duration(milliseconds: 300));
-    pickupLocationEC.text = newLocation;
-    log("Pickup Location: ${pickupLocationEC.text}, $pickupLat, $pickupLong");
+  setPickupGoogleMapsLocation() async {
+    final result = await Get.to(
+      () => const GoogleMaps(),
+      routeName: '/google-maps',
+      duration: const Duration(milliseconds: 300),
+      fullscreenDialog: true,
+      curve: Curves.easeIn,
+      preventDuplicates: true,
+      popGesture: true,
+      transition: Transition.downToUp,
+      binding: BindingsBuilder(() => Get.lazyPut<GoogleMapsController>(
+            () => GoogleMapsController(),
+          )),
+    );
 
-    FocusManager.instance.primaryFocus?.nextFocus();
-  }
+    if (result != null) {
+      final latitude = result["latitude"];
+      final longitude = result["longitude"];
+      final address = result["address"];
 
-  void selectStopLocationSuggestion() async {
-    FocusManager.instance.primaryFocus?.unfocus();
-  }
+      pickupLocationEC.text = address;
+      pickupLocation.value = address;
+      pickupLat = latitude;
+      pickupLong = longitude;
 
-  void selectDestinationSuggestion(index) async {
-    final newLocation = destinationPlacePredictions[index].description;
-    mapSuggestionIsSelected.value = true;
-
-    List location = await parseLatLng(newLocation);
-    destinationLat = location[0];
-    destinationLong = location[1];
-    await Future.delayed(const Duration(milliseconds: 100));
-    destinationEC.text = newLocation;
-    FocusManager.instance.primaryFocus?.nextFocus();
-    log("Destination: ${destinationEC.text}, $destinationLat, $destinationLong");
-  }
-
-  void destinationOnTap() async {
-    isStopLocationVisible.value = true;
-    mapSuggestionIsSelected.value = false;
-  }
-
-  pickupLocationOnChanged(String value) {
-    mapSuggestionIsSelected.value = false;
-
-    // Check if the text field is empty
-    if (value.isEmpty) {
-      isPickupLocationTextFieldActive.value = false;
-      isDestinationTextFieldActive.value = false;
-    } else {
-      // if (stop1LocationEC.text.isEmpty) {
-      //   isDestinationTextFieldActive.value = false;
-      //   isStopLocationTextFieldActive.value = false;
-      //   isPickupLocationTextFieldActive.value = true;
-      // } else {
-      // isStopLocationTextFieldActive.value = true;
-
-      googlePlaceAutoComplete(
-        value,
-        pickupPlacePredictions,
+      log(
+        "This are the result details:\nAddress: ${pickupLocation.value}\nLatitude: $pickupLat\nLongitude: $pickupLong",
       );
-      update();
-      isPickupLocationTextFieldActive.value = true;
-      isDestinationTextFieldActive.value = false;
-      // }
+      if (pickupLocationEC.text.isNotEmpty &&
+          destinationEC.text.isNotEmpty &&
+          pickupLat!.isNotEmpty &&
+          destinationLat!.isNotEmpty) {
+        submitFormButtonIsVisible.value = true;
+      }
     }
   }
 
-  destinationOnChanged(String value) {
-    mapSuggestionIsSelected.value = false;
+  setDestinationGoogleMapsLocation() async {
+    final result = await Get.to(
+      () => const GoogleMaps(),
+      routeName: '/google-maps',
+      duration: const Duration(milliseconds: 300),
+      fullscreenDialog: true,
+      curve: Curves.easeIn,
+      preventDuplicates: true,
+      popGesture: true,
+      transition: Transition.downToUp,
+      binding: BindingsBuilder(() => Get.lazyPut<GoogleMapsController>(
+            () => GoogleMapsController(),
+          )),
+    );
 
-    // Check if the text field is empty
-    if (value.isEmpty) {
-      isDestinationTextFieldActive.value = false;
-    } else {
-      // if (stop1LocationEC.text.isEmpty) {
-      //   isStopLocationTextFieldActive.value = false;
-      //   isPickupLocationTextFieldActive.value = false;
-      //   isDestinationTextFieldActive.value = true;
-      // } else {
-      googlePlaceAutoComplete(
-        value,
-        destinationPlacePredictions,
+    if (result != null) {
+      final latitude = result["latitude"];
+      final longitude = result["longitude"];
+      final address = result["address"];
+
+      destinationEC.text = address;
+      destination.value = address;
+      destinationLat = latitude;
+      destinationLong = longitude;
+
+      log(
+        "This are the result details:\nAddress: ${destination.value}\nLatitude: $destinationLat\nLongitude: $destinationLong",
       );
-      update();
-      // isStopLocationTextFieldActive.value = true;
-      isDestinationTextFieldActive.value = true;
-      isPickupLocationTextFieldActive.value = false;
-      // }
-    }
-  }
 
-  stopLocationOnChanged(String value) {
-    mapSuggestionIsSelected.value = false;
-
-    // Check if the text field is empty
-    if (value.isEmpty) {
-      isStopLocationTextFieldActive.value = false;
-    } else {
-      isDestinationTextFieldActive.value = false;
-      isPickupLocationTextFieldActive.value = false;
-      isStopLocationTextFieldActive.value = true;
+      if (pickupLocationEC.text.isNotEmpty &&
+          destinationEC.text.isNotEmpty &&
+          pickupLat!.isNotEmpty &&
+          destinationLat!.isNotEmpty) {
+        submitFormButtonIsVisible.value = true;
+      }
     }
   }
 

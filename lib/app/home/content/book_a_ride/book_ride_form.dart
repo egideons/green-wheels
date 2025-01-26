@@ -37,7 +37,6 @@ bookRideForm(
                     ? "Retrieving your location"
                     : "Enter pickup location",
                 textCapitalization: TextCapitalization.words,
-                onChanged: controller.pickupLocationOnChanged,
                 minLines: 1,
                 maxLines: 10,
                 validator: (value) {
@@ -100,8 +99,6 @@ bookRideForm(
                     hintText: "Enter destination",
                     minLines: 1,
                     maxLines: 10,
-                    onChanged: controller.destinationOnChanged,
-                    onFieldSubmitted: controller.onFieldSubmitted,
                     validator: (value) {
                       return null;
                     },
