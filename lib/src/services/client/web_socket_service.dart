@@ -16,7 +16,7 @@ class ReverbWebSocketService {
     required this.authToken,
   });
 
-  var webSocketKey = dotenv.env["WebSocketKey"];
+  var webSocketKey = dotenv.env["WebSocketAppKey"];
   void connect() {
     // Create WebSocket connection
     var url = "${ApiUrl.webSocketBaseUrl}/$webSocketKey";
