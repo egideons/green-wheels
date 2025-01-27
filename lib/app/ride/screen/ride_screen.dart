@@ -14,12 +14,12 @@ class RideScreen extends StatelessWidget {
     //Initialize the controller
     Get.put(RideController());
 
-    if (Platform.isIOS) {
-      return GestureDetector(
-        onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
-        // child: const HomeScreenCupertinoScaffold(),
-      );
-    }
+    // if (Platform.isIOS) {
+    //   return GestureDetector(
+    //     onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
+    //     // child: const MenuScreenCupertinoScaffold(),
+    //   );
+    // }
     return GestureDetector(
       onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
       child: const RideScreenScaffold(),

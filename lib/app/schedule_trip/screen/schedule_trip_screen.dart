@@ -14,12 +14,12 @@ class ScheduleTripScreen extends StatelessWidget {
     //Initialize the controller
     Get.put(ScheduleTripController());
 
-    if (Platform.isIOS) {
-      return GestureDetector(
-        onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
-        // child: const HomeScreenCupertinoScaffold(),
-      );
-    }
+    // if (Platform.isIOS) {
+    //   return GestureDetector(
+    //     onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
+    //     // child: const HomeScreenCupertinoScaffold(),
+    //   );
+    // }
     return GestureDetector(
       onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
       child: const ScheduleTripScaffold(),

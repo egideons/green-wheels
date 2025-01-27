@@ -52,19 +52,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //iOS App
-    if (Platform.isIOS) {
-      return GetCupertinoApp(
-        title: "Green Wheels",
-        color: kPrimaryColor,
-        navigatorKey: Get.key,
-        defaultTransition: Transition.native,
-        debugShowCheckedModeBanner: false,
-        locale: Get.deviceLocale,
-        initialRoute: Routes.startupSplashscreen,
-        getPages: Routes.getPages,
-        theme: Get.isDarkMode ? iOSDarkTheme : iOSLightTheme,
-      );
-    }
+    // if (Platform.isIOS) {
+    //   return GetCupertinoApp(
+    //     title: "Green Wheels",
+    //     color: kPrimaryColor,
+    //     navigatorKey: Get.key,
+    //     defaultTransition: Transition.native,
+    //     debugShowCheckedModeBanner: false,
+    //     locale: Get.deviceLocale,
+    //     initialRoute: Routes.startupSplashscreen,
+    //     getPages: Routes.getPages,
+    //     theme: Get.isDarkMode ? iOSDarkTheme : iOSLightTheme,
+    //   );
+    // }
 
     //Android App
     return GetMaterialApp(
