@@ -207,18 +207,13 @@ class HomeScreenController extends GetxController
     infoMessage.value =
         "Please note that every vehicle has a security camera for safety reasons.";
     await Future.delayed(const Duration(seconds: 3));
-    infoMessage.value = "";
-    pinnedLocation.value = "";
-    markerTitle = <String>["Me"];
-    markerSnippet = <String>["My Location"];
-    await loadMapData();
     var loadDriverDetails = await getRiderProfile();
 
     if (loadDriverDetails) {
-      // pinnedLocation.value = "";
-      // markerTitle = <String>["Me"];
-      // markerSnippet = <String>["My Location"];
-      // await loadMapData();
+      pinnedLocation.value = "";
+      markerTitle = <String>["Me"];
+      markerSnippet = <String>["My Location"];
+      await loadMapData();
 
       log("User Position: ${userPosition.value}");
       log("User pickupLocation: ${pickupLocationEC.text}");
@@ -293,9 +288,6 @@ class HomeScreenController extends GetxController
 
     getPlaceMark(latLngPosition);
 
-    await Future.delayed(const Duration(seconds: 2));
-    pickupLocationEC.text = pinnedLocation.value;
-
     return userLocation;
   }
 
@@ -306,10 +298,12 @@ class HomeScreenController extends GetxController
     String addressStr =
         "${address.name} ${address.street}, ${address.locality}, ${address.country}";
     pinnedLocation.value = addressStr;
+    await Future.delayed(const Duration(milliseconds: 400));
+    pickupLocationEC.text = pinnedLocation.value;
 
     log("LatLng: ${LatLng(position.latitude, position.longitude)}");
-    log("AddressStr: $addressStr");
     log("PinnedLocation: $addressStr");
+    log("Pickup Location EC: ${pickupLocationEC.text}");
   }
   //====================================== Get bytes from assets =========================================\\
 
