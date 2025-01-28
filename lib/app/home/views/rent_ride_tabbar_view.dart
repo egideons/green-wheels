@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 import 'package:green_wheels/theme/colors.dart';
+import 'package:iconsax/iconsax.dart';
 
 import '../../../src/constants/assets.dart';
 import '../../../src/constants/consts.dart';
@@ -121,50 +122,41 @@ rentRideTabBarView(
                               ),
                             ],
                           ),
-                          kSizedBox,
-                          if (controller.selectedVehicleName.value.isNotEmpty)
-                            Row(
-                              // crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 32,
-                                  height: 32,
-                                  decoration: ShapeDecoration(
-                                      shape: const CircleBorder(),
-                                      color: colorScheme.primary),
-                                  child: Icon(
-                                    Icons.location_on_outlined,
-                                    color: colorScheme.secondary,
-                                    size: 16,
-                                  ),
-                                ),
-                                kHalfWidthSizedBox,
-                                Expanded(
-                                  child: AndroidTextFormField(
-                                    readOnly: true,
-                                    onTap: controller
-                                        .setRentRidePickupGoogleMapsLocation,
-                                    controller:
-                                        controller.rentRidePickupLocationEC,
-                                    hintText: "Enter your pickup location",
-                                    textInputAction: TextInputAction.next,
-                                    focusNode:
-                                        controller.rentRidePickupLocationFN,
-                                    textCapitalization: TextCapitalization.none,
-                                    filled: true,
-                                    inputBorder: defaultTextFieldBorderStyle,
-                                    focusedBorder: defaultTextFieldBorderStyle,
-                                    enabledBorder: defaultTextFieldBorderStyle,
-                                    validator: (value) {
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
                         ],
                       )
                     : const SizedBox(),
+                kSizedBox,
+                if (controller.rentRidePickupLocationTextFieldIsVisible.value)
+                  Row(
+                    // mainAxisAlignment: MainAxisAlignment.start,
+                    // crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Iconsax.location,
+                        color: colorScheme.primary,
+                        size: 22,
+                      ),
+                      kHalfWidthSizedBox,
+                      Expanded(
+                        child: AndroidTextFormField(
+                          readOnly: true,
+                          onTap: controller.setRentRidePickupGoogleMapsLocation,
+                          controller: controller.rentRidePickupLocationEC,
+                          hintText: "Enter your pickup location",
+                          textInputAction: TextInputAction.next,
+                          focusNode: controller.rentRidePickupLocationFN,
+                          textCapitalization: TextCapitalization.none,
+                          filled: true,
+                          inputBorder: defaultTextFieldBorderStyle,
+                          focusedBorder: defaultTextFieldBorderStyle,
+                          enabledBorder: defaultTextFieldBorderStyle,
+                          validator: (value) {
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),

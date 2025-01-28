@@ -7,7 +7,9 @@ import 'package:green_wheels/theme/colors.dart';
 import 'package:place_picker_google/place_picker_google.dart';
 
 class GoogleMaps extends GetView<GoogleMapsController> {
-  const GoogleMaps({super.key});
+  final double? latitude;
+  final double? longitude;
+  const GoogleMaps({this.latitude, this.longitude, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +38,12 @@ class GoogleMaps extends GetView<GoogleMapsController> {
               autocompletePlacesSearchRadius: userPosition.latitude,
               pinPointingDebounceDuration: 2,
               initialLocation: LatLng(
-                userPosition.latitude,
-                userPosition.longitude,
+                (latitude != null && latitude.toString().isNotEmpty)
+                    ? latitude!
+                    : userPosition.latitude,
+                (longitude != null && longitude.toString().isNotEmpty)
+                    ? longitude!
+                    : userPosition.longitude,
               ),
               nearbyPlaceItemStyle: defaultTextStyle(
                 color: kTextBlackColor,

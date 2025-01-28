@@ -163,7 +163,10 @@ class ScheduleTripController extends GetxController {
 
   setPickupGoogleMapsLocation() async {
     final result = await Get.to(
-      () => const GoogleMaps(),
+      () => GoogleMaps(
+        latitude: pickupLat!.isEmpty ? null : double.tryParse(pickupLat!)!,
+        longitude: pickupLong!.isEmpty ? null : double.tryParse(pickupLong!)!,
+      ),
       routeName: '/google-maps',
       duration: const Duration(milliseconds: 300),
       fullscreenDialog: true,
@@ -200,7 +203,13 @@ class ScheduleTripController extends GetxController {
 
   setDestinationGoogleMapsLocation() async {
     final result = await Get.to(
-      () => const GoogleMaps(),
+      () => GoogleMaps(
+        latitude:
+            destinationLat!.isEmpty ? null : double.tryParse(destinationLat!)!,
+        longitude: destinationLong!.isEmpty
+            ? null
+            : double.tryParse(destinationLong!)!,
+      ),
       routeName: '/google-maps',
       duration: const Duration(milliseconds: 300),
       fullscreenDialog: true,

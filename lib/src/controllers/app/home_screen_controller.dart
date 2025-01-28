@@ -206,7 +206,8 @@ class HomeScreenController extends GetxController
   initFunctions() async {
     infoMessage.value =
         "Please note that every vehicle has a security camera for safety reasons.";
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 5));
+    infoMessage.value = "";
     var loadDriverDetails = await getRiderProfile();
 
     if (loadDriverDetails) {
@@ -356,16 +357,16 @@ class HomeScreenController extends GetxController
   //!============ Book Instant Ride Section ==========================================================>
 
   //================ Variables =================\\
-  String? pickupLat;
-  String? pickupLong;
+  String pickupLat = "";
+  String pickupLong = "";
   var pickupLocation = "".obs;
   var stopLocation1 = "".obs;
   var destinationLocation = "".obs;
   Timer? bookRideTimer;
   var progress = .0.obs;
   var totalInstantRideTime = "".obs;
-  String? destinationLat;
-  String? destinationLong;
+  String destinationLat = "";
+  String destinationLong = "";
   var instantRideAmount = 0.0.obs;
 
   //================ Controllers =================\\
@@ -535,8 +536,13 @@ class HomeScreenController extends GetxController
   //!================== Goto Google Maps ========================\\
 
   setPickupGoogleMapsLocation() async {
+    var latitude = double.tryParse(pickupLat)!;
+    var longitude = double.tryParse(pickupLong)!;
     final result = await Get.to(
-      () => const GoogleMaps(),
+      () => GoogleMaps(
+        latitude: latitude,
+        longitude: longitude,
+      ),
       routeName: '/google-maps',
       duration: const Duration(milliseconds: 300),
       fullscreenDialog: true,
@@ -564,29 +570,29 @@ class HomeScreenController extends GetxController
       );
       if (pickupLocationEC.text.isNotEmpty &&
           destinationEC.text.isNotEmpty &&
-          pickupLat!.isNotEmpty &&
-          destinationLat!.isNotEmpty) {
-        // getRideAmount(
-        //   pickup: pickupLocationEC.text,
-        //   pickupLat: pickupLat,
-        //   pickupLong: pickupLong,
-        //   destination: destinationEC.text,
-        //   destinationLat: destinationLat,
-        //   destinationLong: destinationLong,
-        // );
+          pickupLat.isNotEmpty &&
+          destinationLat.isNotEmpty) {
+        getRideAmount(
+          pickup: pickupLocationEC.text,
+          pickupLat: pickupLat,
+          pickupLong: pickupLong,
+          destination: destinationEC.text,
+          destinationLat: destinationLat,
+          destinationLong: destinationLong,
+        );
 
         await Future.delayed(const Duration(seconds: 1));
         routeIsVisible.value = false;
         getPolyPoints(
-          destinationLat: double.tryParse(destinationLat!)!,
-          destinationLong: double.tryParse(destinationLong!)!,
-          pickupLat: double.tryParse(pickupLat!)!,
-          pickupLong: double.tryParse(pickupLong!)!,
+          destinationLat: double.tryParse(destinationLat)!,
+          destinationLong: double.tryParse(destinationLong)!,
+          pickupLat: double.tryParse(pickupLat)!,
+          pickupLong: double.tryParse(pickupLong)!,
           polylineCoordinates: polylineCoordinates,
         );
 
-        LatLng latLngPosition = LatLng(double.tryParse(destinationLat!)!,
-            double.tryParse(destinationLong!)!);
+        LatLng latLngPosition = LatLng(double.tryParse(destinationLat)!,
+            double.tryParse(destinationLong)!);
 
         cameraPosition = CameraPosition(target: latLngPosition, zoom: 16);
 
@@ -603,7 +609,7 @@ class HomeScreenController extends GetxController
 
   setDestinationGoogleMapsLocation() async {
     final result = await Get.to(
-      () => const GoogleMaps(),
+      () => GoogleMaps(),
       routeName: '/google-maps',
       duration: const Duration(milliseconds: 300),
       fullscreenDialog: true,
@@ -632,27 +638,27 @@ class HomeScreenController extends GetxController
 
       if (pickupLocationEC.text.isNotEmpty &&
           destinationEC.text.isNotEmpty &&
-          pickupLat!.isNotEmpty &&
-          destinationLat!.isNotEmpty) {
-        // getRideAmount(
-        //   pickup: pickupLocationEC.text,
-        //   pickupLat: pickupLat,
-        //   pickupLong: pickupLong,
-        //   destination: destinationEC.text,
-        //   destinationLat: destinationLat,
-        //   destinationLong: destinationLong,
-        // );
+          pickupLat.isNotEmpty &&
+          destinationLat.isNotEmpty) {
+        getRideAmount(
+          pickup: pickupLocationEC.text,
+          pickupLat: pickupLat,
+          pickupLong: pickupLong,
+          destination: destinationEC.text,
+          destinationLat: destinationLat,
+          destinationLong: destinationLong,
+        );
         await Future.delayed(const Duration(seconds: 1));
         routeIsVisible.value = false;
         getPolyPoints(
-          destinationLat: double.tryParse(destinationLat!)!,
-          destinationLong: double.tryParse(destinationLong!)!,
-          pickupLat: double.tryParse(pickupLat!)!,
-          pickupLong: double.tryParse(pickupLong!)!,
+          destinationLat: double.tryParse(destinationLat)!,
+          destinationLong: double.tryParse(destinationLong)!,
+          pickupLat: double.tryParse(pickupLat)!,
+          pickupLong: double.tryParse(pickupLong)!,
           polylineCoordinates: polylineCoordinates,
         );
-        LatLng latLngPosition = LatLng(double.tryParse(destinationLat!)!,
-            double.tryParse(destinationLong!)!);
+        LatLng latLngPosition = LatLng(double.tryParse(destinationLat)!,
+            double.tryParse(destinationLong)!);
 
         cameraPosition = CameraPosition(target: latLngPosition, zoom: 16);
 
@@ -1156,6 +1162,7 @@ class HomeScreenController extends GetxController
   //================ Booleans =================\\
   var chooseAvailableVehicleTextFieldIsVisible = false.obs;
   var isRentRidePickupLocationTextFieldActive = false.obs;
+  var rentRidePickupLocationTextFieldIsVisible = false.obs;
   var confirmRentRideBookingButtonIsEnabled = false.obs;
   var confirmRentRideBookingButtonIsLoading = false.obs;
   var isLoadingAvailableVehicles = false.obs;
@@ -1203,6 +1210,7 @@ class HomeScreenController extends GetxController
     var selectedTime = await showTimePicker(
       context: context,
       initialTime: lastSelectedRentRidePickupTime ?? now,
+      initialEntryMode: TimePickerEntryMode.dial,
       cancelText: "Cancel",
       confirmText: "Confirm",
     );
@@ -1218,15 +1226,25 @@ class HomeScreenController extends GetxController
       ));
       rentRidePickupTimeEC.text = formattedTime;
       lastSelectedRentRidePickupTime = selectedTime;
-      chooseAvailableVehicleTextFieldIsVisible.value = true;
+      rentRidePickupLocationTextFieldIsVisible.value =
+          rentRidePickupTimeEC.text.isNotEmpty;
+      // chooseAvailableVehicleTextFieldIsVisible.value = true;
     }
 
+    log("Pickup Location Text Field is visible: ${rentRidePickupLocationTextFieldIsVisible.value}");
     log("This is the scheduled time: $lastSelectedRentRidePickupTime");
   }
 
   setRentRidePickupGoogleMapsLocation() async {
     final result = await Get.to(
-      () => const GoogleMaps(),
+      () => GoogleMaps(
+        latitude: rentRidePickupLat!.isEmpty
+            ? null
+            : double.tryParse(rentRidePickupLat!)!,
+        longitude: rentRidePickupLong!.isEmpty
+            ? null
+            : double.tryParse(rentRidePickupLong!)!,
+      ),
       routeName: '/google-maps',
       duration: const Duration(milliseconds: 300),
       fullscreenDialog: true,
@@ -1389,10 +1407,12 @@ class HomeScreenController extends GetxController
       } else if (rentRidePickupTimeEC.text.isEmpty) {
         ApiProcessorController.errorSnack("Please select a pick-up time");
         return;
-      } else if (chooseAvailableVehicleEC.text.isEmpty) {
-        ApiProcessorController.errorSnack("Please select a vehicle");
-        return;
-      } else if (rentRidePickupLocationEC.text.isEmpty) {
+      }
+      // else if (chooseAvailableVehicleEC.text.isEmpty) {
+      //   ApiProcessorController.errorSnack("Please select a vehicle");
+      //   return;
+      // }
+      else if (rentRidePickupLocationEC.text.isEmpty) {
         ApiProcessorController.errorSnack("Please select a pickup location");
         return;
       } else if (rentRidePickupLat!.isEmpty || rentRidePickupLong!.isEmpty) {
