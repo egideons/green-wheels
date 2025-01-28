@@ -47,6 +47,7 @@ class GreenWalletPaymentMenuScaffold
                     child: AndroidElevatedButton(
                       title: "Fund Wallet",
                       isRowVisible: true,
+                      fontSize: 12,
                       buttonIcon: Icons.chevron_right,
                       mainAxisAlignment: MainAxisAlignment.center,
                       onPressed: controller.goToFundGreenWallet,
@@ -116,7 +117,7 @@ class GreenWalletPaymentMenuScaffold
                               ? "******"
                               : "${convertToCurrency("0")}",
                           style: defaultTextStyle(
-                            color: kTextBlackColor,
+                            color: colorScheme.primary,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),

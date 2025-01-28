@@ -3,15 +3,16 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:ui' as ui;
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:green_wheels/app/google_maps/google_maps.dart';
 import 'package:green_wheels/app/home/content/rent_ride/choose_available_vehicle_scaffold.dart';
 import 'package:green_wheels/app/home/modals/book_ride_cancel_ride_fee_modal.dart';
+import 'package:green_wheels/src/controllers/app/google_maps_controller.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:green_wheels/src/models/ride/available_vehicles_response_model.dart';
 import 'package:green_wheels/src/models/ride/instant_ride_amount_response_model.dart';
@@ -102,15 +103,7 @@ class HomeScreenController extends GetxController
   final bookRideFormKey = GlobalKey<FormState>();
 
   //================ Boolean =================\\
-  var locationPinIsVisible = true.obs;
-  var isRefreshing = false.obs;
-  var isLocationPermissionGranted = false.obs;
   var showInfo = false.obs;
-  var isPickupLocationTextFieldActive = false.obs;
-  var isDestinationTextFieldActive = false.obs;
-  var isStopLocationVisible = false.obs;
-  var isStopLocationTextFieldActive = false.obs;
-  var mapSuggestionIsSelected = false.obs;
   var routeIsVisible = false.obs;
 
   //================ Controllers =================\\
@@ -215,13 +208,17 @@ class HomeScreenController extends GetxController
         "Please note that every vehicle has a security camera for safety reasons.";
     await Future.delayed(const Duration(seconds: 3));
     infoMessage.value = "";
+    pinnedLocation.value = "";
+    markerTitle = <String>["Me"];
+    markerSnippet = <String>["My Location"];
+    await loadMapData();
     var loadDriverDetails = await getRiderProfile();
 
     if (loadDriverDetails) {
-      pinnedLocation.value = "";
-      markerTitle = <String>["Me"];
-      markerSnippet = <String>["My Location"];
-      await loadMapData();
+      // pinnedLocation.value = "";
+      // markerTitle = <String>["Me"];
+      // markerSnippet = <String>["My Location"];
+      // await loadMapData();
 
       log("User Position: ${userPosition.value}");
       log("User pickupLocation: ${pickupLocationEC.text}");
@@ -271,8 +268,6 @@ class HomeScreenController extends GetxController
     await getAndGoToUserCurrentLocation();
 
     await loadCustomMarkers();
-
-    destinationEC.clear();
   }
 
   Future<Position> getAndGoToUserCurrentLocation() async {
@@ -302,6 +297,19 @@ class HomeScreenController extends GetxController
     pickupLocationEC.text = pinnedLocation.value;
 
     return userLocation;
+  }
+
+  Future getPlaceMark(LatLng position) async {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark address = placemarks[0];
+    String addressStr =
+        "${address.name} ${address.street}, ${address.locality}, ${address.country}";
+    pinnedLocation.value = addressStr;
+
+    log("LatLng: ${LatLng(position.latitude, position.longitude)}");
+    log("AddressStr: $addressStr");
+    log("PinnedLocation: $addressStr");
   }
   //====================================== Get bytes from assets =========================================\\
 
@@ -345,105 +353,6 @@ class HomeScreenController extends GetxController
       );
     }
   }
-//========================================================== Locate a place =============================================================\\
-
-  Future<void> locatePlace(
-    Map<String, dynamic> place,
-  ) async {
-    double lat;
-    double lng;
-
-    lat = place['geometry']['location']['lat'];
-    lng = place['geometry']['location']['lng'];
-
-    goToSpecifiedLocation(LatLng(lat, lng), 18);
-
-    // log("${LatLng(lat, lng)}");
-
-    // _markers.add(
-    //   Marker(
-    //     markerId: const MarkerId("1"),
-    //     icon: BitmapDescriptor.defaultMarker,
-    //     position: LatLng(lat, lng),
-    //     infoWindow: InfoWindow(
-    //       title: _searchEC.text,
-    //       snippet: "Pinned Location",
-    //     ),
-    //   ),
-    // );
-  }
-
-  void searchPlaceFunc(String? location) async {
-    locationPinIsVisible.value = false;
-
-    var place = await LocationService().getPlace(location!);
-    await Future.delayed(const Duration(milliseconds: 100));
-    locatePlace(place);
-  }
-
-//============================================== Go to specified location by LatLng ==================================================\\
-  Future goToSpecifiedLocation(LatLng position, double zoom) async {
-    GoogleMapController mapController = await _googleMapController.future;
-    mapController.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(target: position, zoom: zoom),
-      ),
-    );
-    await getPlaceMark(position);
-  }
-
-//========================================================== Get PlaceMark Address and LatLng =============================================================\\
-
-  Future getPlaceMark(LatLng position) async {
-    List<Placemark> placemarks =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
-    Placemark address = placemarks[0];
-    String addressStr =
-        "${address.name} ${address.street}, ${address.locality}, ${address.country}";
-    pinnedLocation.value = addressStr;
-
-    log("LatLng: ${LatLng(position.latitude, position.longitude)}");
-    log("AddressStr: $addressStr");
-    log("PinnedLocation: $addressStr");
-  }
-
-  onCameraIdle() async {
-    routeIsVisible.value = false;
-    getPlaceMark(draggedLatLng);
-
-    await Future.delayed(const Duration(seconds: 1));
-    destinationLat = draggedLatLng.latitude.toString();
-    destinationLong = draggedLatLng.longitude.toString();
-
-    if (destinationLat!.isNotEmpty && destinationLong!.isNotEmpty) {
-      destinationEC.text = pinnedLocation.value;
-    }
-    // log("Destination on Camera Idle: ${destinationEC.text}");
-    // log("Destination Lat on Camera Idle: $destinationLat");
-    // log("Destination Long on Camera Idle: $destinationLong");
-
-    if (pickupLocationEC.text.isNotEmpty && destinationEC.text.isNotEmpty) {
-      await getRideAmount(
-        destination: destinationEC.text,
-        destinationLat: destinationLat,
-        destinationLong: destinationLong,
-        pickup: pickupLocationEC.text,
-        pickupLat: pickupLat,
-        pickupLong: pickupLong,
-      );
-
-      await Future.delayed(const Duration(milliseconds: 1200));
-      routeIsVisible.value = true;
-      FocusManager.instance.primaryFocus?.unfocus();
-    }
-  }
-
-  onCameraMove(CameraPosition cameraPosition) {
-    locationPinIsVisible.value = true;
-    draggedLatLng = cameraPosition.target;
-
-    log("Dragged LatLng on Camera Move: $draggedLatLng");
-  }
 
   void onMapCreated(GoogleMapController controller) {
     _googleMapController.complete(controller);
@@ -455,10 +364,23 @@ class HomeScreenController extends GetxController
   //================ Variables =================\\
   String? pickupLat;
   String? pickupLong;
+  var pickupLocation = "".obs;
+  var stopLocation1 = "".obs;
+  var destinationLocation = "".obs;
+  Timer? bookRideTimer;
+  var progress = .0.obs;
+  var totalInstantRideTime = "".obs;
   String? destinationLat;
   String? destinationLong;
-  List<GooglePlaceAutoCompletePredictionModel> pickupPlacePredictions = [];
-  List<GooglePlaceAutoCompletePredictionModel> destinationPlacePredictions = [];
+  var instantRideAmount = 0.0.obs;
+
+  //================ Controllers =================\\
+  var pickupLocationEC = TextEditingController();
+  var destinationEC = TextEditingController();
+
+  //================ Focus Nodes =================\\
+  var pickupLocationFN = FocusNode();
+  var destinationFN = FocusNode();
 
   //================ Models =================\\
   var instantRideAmountResponseModel =
@@ -466,88 +388,14 @@ class HomeScreenController extends GetxController
   var instantRideData = InstantRideData.fromJson(null).obs;
   var priceBreakdown = PriceBreakdown.fromJson(null).obs;
 
-  //================ Controllers =================\\
-  var pickupLocation = "".obs;
-  var stopLocation1 = "".obs;
-  var destinationLocation = "".obs;
-  final pickupLocationEC = TextEditingController();
-  final stop1LocationEC = TextEditingController();
-  final stop2LocationEC = TextEditingController();
-  final stop3LocationEC = TextEditingController();
-  final destinationEC = TextEditingController();
+  //================ Variables =================\\
 
-  //================ Focus Nodes =================\\
-  final pickupLocationFN = FocusNode();
-  final stop1LocationFN = FocusNode();
-  final stop2LocationFN = FocusNode();
-  final stop3LocationFN = FocusNode();
-  final destinationFN = FocusNode();
-
-  Timer? bookRideTimer;
-
-  var progress = .0.obs;
-  var totalInstantRideTime = "".obs;
+  //================ Booleans =================\\
   var bookDriverTimerFinished = false.obs;
   var bookDriverFound = false.obs;
   var driverHasArrived = false.obs;
 
-  //================ OnTap and Onchanged =================\\
-  void selectPickupSuggestion(index) async {
-    final newLocation = pickupPlacePredictions[index].description;
-    List location = await parseLatLng(newLocation);
-    pickupLat = location[0];
-    pickupLong = location[1];
-    await Future.delayed(const Duration(milliseconds: 300));
-    pickupLocationEC.text = newLocation;
-    log("Pickup Location: ${pickupLocationEC.text}, $pickupLat, $pickupLong");
-    searchPlaceFunc(destinationEC.text);
-    FocusManager.instance.primaryFocus?.nextFocus();
-  }
-
-  void selectStopLocationSuggestion() async {
-    stop1LocationEC.text = stopLocation1.value;
-    // FocusManager.instance.primaryFocus?.unfocus();
-    FocusManager.instance.primaryFocus?.nextFocus();
-  }
-
-//! Calculate Ride Amount and Select Destination Suggestion
-  void selectDestinationSuggestion(index) async {
-    routeIsVisible.value = false;
-
-    final newLocation = destinationPlacePredictions[index].description;
-
-    List location = await parseLatLng(newLocation);
-    destinationLat = location[0];
-    destinationLong = location[1];
-    await Future.delayed(const Duration(milliseconds: 100));
-    destinationEC.text = newLocation;
-    FocusManager.instance.primaryFocus?.nextFocus();
-    log("Destination: ${destinationEC.text}, $destinationLat, $destinationLong");
-
-    if (pickupLocationEC.text.isNotEmpty && destinationEC.text.isNotEmpty) {
-      // searchPlaceFunc(destinationEC.text);
-      getPolyPoints(
-        destinationLat: double.tryParse(destinationLat!)!,
-        destinationLong: double.tryParse(destinationLong!)!,
-        pickupLat: double.tryParse(pickupLat!)!,
-        pickupLong: double.tryParse(pickupLong!)!,
-        polylineCoordinates: polylineCoordinates,
-      );
-
-      await getRideAmount(
-        destination: destinationEC.text,
-        destinationLat: destinationLat,
-        destinationLong: destinationLong,
-        pickup: pickupLocationEC.text,
-        pickupLat: pickupLat,
-        pickupLong: pickupLong,
-      );
-
-      await Future.delayed(const Duration(milliseconds: 500));
-      routeIsVisible.value = true;
-    }
-  }
-
+  //================ Functions =================\\
   getRideAmount({
     String? pickup,
     String? pickupLat,
@@ -606,14 +454,14 @@ class HomeScreenController extends GetxController
         priceBreakdown.value =
             instantRideAmountResponseModel.value.data.priceBreakdown;
 
+        instantRideAmount.value = instantRideData.value.amount;
+
         calculateReadableTravelTime(
           priceBreakdown.value.distanceInMeters,
           totalInstantRideTime.value,
         );
 
         await Future.delayed(const Duration(milliseconds: 300));
-
-        mapSuggestionIsSelected.value = true;
 
         // FocusScope.of(Get.context!).unfocus();
         // FocusManager.instance.primaryFocus?.unfocus();
@@ -690,68 +538,137 @@ class HomeScreenController extends GetxController
     }
   }
 
-  void destinationOnTap() async {
-    isStopLocationVisible.value = true;
-    mapSuggestionIsSelected.value = false;
-  }
+  //!================== Goto Google Maps ========================\\
 
-  pickupLocationOnChanged(String value) {
-    mapSuggestionIsSelected.value = false;
+  setPickupGoogleMapsLocation() async {
+    final result = await Get.to(
+      () => const GoogleMaps(),
+      routeName: '/google-maps',
+      duration: const Duration(milliseconds: 300),
+      fullscreenDialog: true,
+      curve: Curves.easeIn,
+      preventDuplicates: true,
+      popGesture: true,
+      transition: Transition.downToUp,
+      binding: BindingsBuilder(() => Get.lazyPut<GoogleMapsController>(
+            () => GoogleMapsController(),
+          )),
+    );
 
-    // Check if the text field is empty
-    if (value.isEmpty) {
-      isPickupLocationTextFieldActive.value = false;
-      isDestinationTextFieldActive.value = false;
-    } else {
-      // if (stop1LocationEC.text.isEmpty) {
-      //   isDestinationTextFieldActive.value = false;
-      //   isStopLocationTextFieldActive.value = false;
-      //   isPickupLocationTextFieldActive.value = true;
-      // } else {
-      // isStopLocationTextFieldActive.value = true;
-      googlePlaceAutoComplete(value, pickupPlacePredictions);
-      update();
+    if (result != null) {
+      final latitude = result["latitude"];
+      final longitude = result["longitude"];
+      final address = result["address"];
 
-      isPickupLocationTextFieldActive.value = true;
-      isDestinationTextFieldActive.value = false;
-      // }
-    }
-  }
+      pickupLocationEC.text = address;
+      pickupLocation.value = address;
+      pickupLat = latitude;
+      pickupLong = longitude;
 
-  destinationOnChanged(String value) {
-    mapSuggestionIsSelected.value = false;
-
-    // Check if the text field is empty
-    if (value.isEmpty) {
-      isDestinationTextFieldActive.value = false;
-    } else {
-      // if (stop1LocationEC.text.isEmpty) {
-      //   isStopLocationTextFieldActive.value = false;
-      //   isPickupLocationTextFieldActive.value = false;
-      //   isDestinationTextFieldActive.value = true;
-      // } else {
-      googlePlaceAutoComplete(
-        value,
-        destinationPlacePredictions,
+      log(
+        "This are the result details:\nAddress: ${pickupLocation.value}\nLatitude: $pickupLat\nLongitude: $pickupLong",
       );
-      update();
-      // isStopLocationTextFieldActive.value = true;
-      isDestinationTextFieldActive.value = true;
-      isPickupLocationTextFieldActive.value = false;
-      // }
+      if (pickupLocationEC.text.isNotEmpty &&
+          destinationEC.text.isNotEmpty &&
+          pickupLat!.isNotEmpty &&
+          destinationLat!.isNotEmpty) {
+        // getRideAmount(
+        //   pickup: pickupLocationEC.text,
+        //   pickupLat: pickupLat,
+        //   pickupLong: pickupLong,
+        //   destination: destinationEC.text,
+        //   destinationLat: destinationLat,
+        //   destinationLong: destinationLong,
+        // );
+
+        await Future.delayed(const Duration(seconds: 1));
+        routeIsVisible.value = false;
+        getPolyPoints(
+          destinationLat: double.tryParse(destinationLat!)!,
+          destinationLong: double.tryParse(destinationLong!)!,
+          pickupLat: double.tryParse(pickupLat!)!,
+          pickupLong: double.tryParse(pickupLong!)!,
+          polylineCoordinates: polylineCoordinates,
+        );
+
+        LatLng latLngPosition = LatLng(double.tryParse(destinationLat!)!,
+            double.tryParse(destinationLong!)!);
+
+        cameraPosition = CameraPosition(target: latLngPosition, zoom: 16);
+
+        newGoogleMapController?.animateCamera(
+          CameraUpdate.newCameraPosition(cameraPosition!),
+        );
+
+        await Future.delayed(const Duration(seconds: 1));
+        routeIsVisible.value = true;
+        update();
+      }
     }
   }
 
-  stopLocationOnChanged(String value) {
-    mapSuggestionIsSelected.value = false;
+  setDestinationGoogleMapsLocation() async {
+    final result = await Get.to(
+      () => const GoogleMaps(),
+      routeName: '/google-maps',
+      duration: const Duration(milliseconds: 300),
+      fullscreenDialog: true,
+      curve: Curves.easeIn,
+      preventDuplicates: true,
+      popGesture: true,
+      transition: Transition.downToUp,
+      binding: BindingsBuilder(() => Get.lazyPut<GoogleMapsController>(
+            () => GoogleMapsController(),
+          )),
+    );
 
-    // Check if the text field is empty
-    if (value.isEmpty) {
-      isStopLocationTextFieldActive.value = false;
-    } else {
-      isDestinationTextFieldActive.value = false;
-      isPickupLocationTextFieldActive.value = false;
-      isStopLocationTextFieldActive.value = true;
+    if (result != null) {
+      final latitude = result["latitude"];
+      final longitude = result["longitude"];
+      final address = result["address"];
+
+      destinationEC.text = address;
+      destinationLocation.value = address;
+      destinationLat = latitude;
+      destinationLong = longitude;
+
+      log(
+        "This are the result details:\nAddress: ${destinationLocation.value}\nLatitude: $destinationLat\nLongitude: $destinationLong",
+      );
+
+      if (pickupLocationEC.text.isNotEmpty &&
+          destinationEC.text.isNotEmpty &&
+          pickupLat!.isNotEmpty &&
+          destinationLat!.isNotEmpty) {
+        // getRideAmount(
+        //   pickup: pickupLocationEC.text,
+        //   pickupLat: pickupLat,
+        //   pickupLong: pickupLong,
+        //   destination: destinationEC.text,
+        //   destinationLat: destinationLat,
+        //   destinationLong: destinationLong,
+        // );
+        await Future.delayed(const Duration(seconds: 1));
+        routeIsVisible.value = false;
+        getPolyPoints(
+          destinationLat: double.tryParse(destinationLat!)!,
+          destinationLong: double.tryParse(destinationLong!)!,
+          pickupLat: double.tryParse(pickupLat!)!,
+          pickupLong: double.tryParse(pickupLong!)!,
+          polylineCoordinates: polylineCoordinates,
+        );
+        LatLng latLngPosition = LatLng(double.tryParse(destinationLat!)!,
+            double.tryParse(destinationLong!)!);
+
+        cameraPosition = CameraPosition(target: latLngPosition, zoom: 16);
+
+        newGoogleMapController?.animateCamera(
+          CameraUpdate.newCameraPosition(cameraPosition!),
+        );
+        await Future.delayed(const Duration(seconds: 1));
+        routeIsVisible.value = true;
+        update();
+      }
     }
   }
 
@@ -1262,61 +1179,25 @@ class HomeScreenController extends GetxController
   var rentRidePickupLocationFN = FocusNode();
 
   void selectRentRideDate() async {
-    DateTime today = DateTime.now();
     var context = Get.context!;
     var formattedDate = "".obs;
 
-    final selectedDate = await showModalBottomSheet(
+    final selectedDate = await showDatePicker(
       context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 260,
-          color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 220,
-                child: CupertinoDatePicker(
-                  initialDateTime: today,
-                  minimumDate: today,
-                  maximumDate: DateTime(2101),
-                  use24hFormat: false,
-                  showDayOfWeek: true,
-                  dateOrder: DatePickerDateOrder.mdy,
-                  mode: CupertinoDatePickerMode.date,
-                  onDateTimeChanged: (DateTime dateTime) {
-                    rentRideDateEC.text =
-                        DateFormat("dd/MM/yyyy").format(dateTime);
-                    formattedDate.value =
-                        DateFormat("dd/MM/yyyy").format(dateTime);
-                    lastSelectedRentRideDate = dateTime;
-                  },
-                ),
-              ),
-              kSmallSizedBox,
-              Obx(() {
-                return Text(
-                  formattedDate.value,
-                  textAlign: TextAlign.center,
-                  style: defaultTextStyle(
-                    color: kTextBlackColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                );
-              }),
-            ],
-          ),
-        );
-      },
+      initialDate: lastSelectedRentRideDate ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2030),
     );
+    if (selectedDate != null) {
+      rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
+      formattedDate.value = DateFormat("dd/MM/yyyy").format(selectedDate);
+      lastSelectedRentRideDate = selectedDate;
+    }
 
     if (selectedDate != null) {
       rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
       lastSelectedRentRideDate = selectedDate;
       formattedDate.value = DateFormat("dd/MM/yyyy").format(selectedDate);
-      update();
     }
     log("This is the scheduled Datte: ${rentRideDateEC.text}");
   }
@@ -1325,76 +1206,64 @@ class HomeScreenController extends GetxController
     TimeOfDay now = TimeOfDay.now();
     var context = Get.context!;
 
-    await showCupertinoModalPopup(
+    var selectedTime = await showTimePicker(
       context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 260,
-          color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 200,
-                child: CupertinoTimerPicker(
-                  mode: CupertinoTimerPickerMode.hm,
-                  initialTimerDuration: Duration(
-                    hours: now.hour,
-                    minutes: now.minute,
-                  ),
-                  onTimerDurationChanged: (Duration duration) {
-                    updateTime(duration);
-                  },
-                ),
-              ),
-              kSmallSizedBox,
-              Obx(() {
-                return Text(
-                  formattedTime.value,
-                  textAlign: TextAlign.center,
-                  style: defaultTextStyle(
-                    color: kTextBlackColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                );
-              }),
-            ],
-          ),
-        );
-      },
+      initialTime: lastSelectedRentRidePickupTime ?? now,
+      cancelText: "Cancel",
+      confirmText: "Confirm",
     );
+
+    if (selectedTime != null) {
+      final now = DateTime.now();
+      final formattedTime = DateFormat("hh:mm a").format(DateTime(
+        now.year,
+        now.month,
+        now.day,
+        selectedTime.hour,
+        selectedTime.minute,
+      ));
+      rentRidePickupTimeEC.text = formattedTime;
+      lastSelectedRentRidePickupTime = selectedTime;
+      chooseAvailableVehicleTextFieldIsVisible.value = true;
+    }
 
     log("This is the scheduled time: $lastSelectedRentRidePickupTime");
   }
 
-  void updateTime(Duration duration) {
-    selectedDuration.value = duration;
-
-    // Get the current time and update it based on the selected duration
-    final now = DateTime.now();
-    final selectedTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      duration.inHours,
-      duration.inMinutes % 60,
+  setRentRidePickupGoogleMapsLocation() async {
+    final result = await Get.to(
+      () => const GoogleMaps(),
+      routeName: '/google-maps',
+      duration: const Duration(milliseconds: 300),
+      fullscreenDialog: true,
+      curve: Curves.easeIn,
+      preventDuplicates: true,
+      popGesture: true,
+      transition: Transition.downToUp,
+      binding: BindingsBuilder(() => Get.lazyPut<GoogleMapsController>(
+            () => GoogleMapsController(),
+          )),
     );
 
-    // Format the time in "hh:mm a" format
-    formattedTime.value = DateFormat("hh:mm a").format(selectedTime);
-    update();
+    if (result != null) {
+      final latitude = result["latitude"];
+      final longitude = result["longitude"];
+      final address = result["address"];
 
-    // Update the TextEditingController
-    rentRidePickupTimeEC.text = formattedTime.value;
-    log("This is the scheduled time: ${formattedTime.value}");
+      rentRidePickupLocationEC.text = address;
+      // rentRidePickupLocation.value = address;
+      rentRidePickupLat = latitude;
+      rentRidePickupLong = longitude;
 
-    // Convert DateTime to TimeOfDay and assign to lastSelectedTime
-    lastSelectedRentRidePickupTime = TimeOfDay(
-      hour: selectedTime.hour,
-      minute: selectedTime.minute,
-    );
-    chooseAvailableVehicleTextFieldIsVisible.value = true;
+      log(
+        "This are the result details:\nAddress: ${rentRidePickupLocationEC.text}\nLatitude: $rentRidePickupLat\nLongitude: $rentRidePickupLong",
+      );
+      if (rentRidePickupLocationEC.text.isNotEmpty &&
+          rentRidePickupLat!.isNotEmpty &&
+          rentRidePickupLong!.isNotEmpty) {
+        confirmRentRideBookingButtonIsEnabled.value = true;
+      }
+    }
   }
 
   void chooseAvailableVehicle() async {
@@ -1516,30 +1385,6 @@ class HomeScreenController extends GetxController
   }
 
   //================ OnTap and Onchanged =================\\
-
-  void selectRentRidePickupSuggestion(index) async {
-    final newLocation = rentRidePickupPlacePredictions[index].description;
-    List location = await parseLatLng(newLocation);
-    rentRidePickupLat = location[0];
-    rentRidePickupLong = location[1];
-    await Future.delayed(const Duration(milliseconds: 300));
-    rentRidePickupLocationEC.text = newLocation;
-    log("Rent Ride Pickup Location: ${rentRidePickupLocationEC.text}, $rentRidePickupLat, $rentRidePickupLong");
-    confirmRentRideBookingButtonIsEnabled.value = true;
-    // searchPlaceFunc(destinationEC.text);
-    FocusManager.instance.primaryFocus?.nextFocus();
-  }
-
-  rentRidePickupLocationOnChanged(String value) {
-    // Check if the text field is empty
-    if (value.isEmpty) {
-      isRentRidePickupLocationTextFieldActive.value = false;
-    } else {
-      googlePlaceAutoComplete(value, rentRidePickupPlacePredictions);
-      update();
-      isRentRidePickupLocationTextFieldActive.value = true;
-    }
-  }
 
   Future<void> confirmRentRideBooking() async {
     if (rentRideFormKey.currentState!.validate()) {

@@ -16,12 +16,11 @@ class ReverbWebSocketService {
     required this.authToken,
   });
 
-  var webSocketKey = dotenv.env["WebSocketKey"];
+  var webSocketAppKey = dotenv.env["WebSocketAppKey"];
   void connect() {
     // Create WebSocket connection
-    var url = "${ApiUrl.webSocketBaseUrl}/$webSocketKey";
+    var url = "${ApiUrl.webSocketBaseUrl}/$webSocketAppKey";
     final wsUrl = Uri.parse(url);
-    //! Uri.parse('ws://api.essemobility.com/app/cygaoogiqefiuj5gb8t3');
 
     channel = WebSocketChannel.connect(wsUrl);
 

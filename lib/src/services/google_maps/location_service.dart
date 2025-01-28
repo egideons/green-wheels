@@ -66,6 +66,8 @@ void googlePlaceAutoComplete(
 ) async {
   var googlePlacesApiKey = dotenv.env['GooglePlacesAPIKey'];
 
+  log("Google Maps: $googlePlacesApiKey");
+
   Uri uri = Uri.https(
       "maps.googleapis.com",
       '/maps/api/place/autocomplete/json', // unencoded path
@@ -82,11 +84,11 @@ void googlePlaceAutoComplete(
   );
 
   if (result.predictions != null && result.predictions!.isNotEmpty) {
-    placePredictions.clear();
+    // placePredictions.clear();
     placePredictions.addAll(result.predictions!);
-    // log("Place predictions: ${placePredictions.map((e) => e.description).toList()}");
+    log("Place predictions: ${placePredictions.map((e) => e.description).toList()}");
   } else {
-    // log("Place predictions is Empty");
+    log("Place predictions is Empty");
   }
 }
 

@@ -100,6 +100,7 @@ defaultTextStyle({
   FontStyle? fontStyle,
   FontWeight? fontWeight,
   double? letterSpacing,
+  double? height,
 }) =>
     TextStyle(
       color: color ?? kTextBlackColor,
@@ -110,11 +111,12 @@ defaultTextStyle({
       decorationStyle: decorationStyle,
       decorationThickness: decorationThickness,
       debugLabel: debugLabel,
-      fontFamily: fontFamily ?? "Prototype",
+      // fontFamily: fontFamily ?? "",
       fontSize: fontSize ?? 14.0,
       fontStyle: fontStyle ?? FontStyle.normal,
       fontWeight: fontWeight ?? FontWeight.w600,
       letterSpacing: letterSpacing ?? .60,
+      height: height,
     );
 
 //!===== Calculate Readable Travel Time ===========!\\

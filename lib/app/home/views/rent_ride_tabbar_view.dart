@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:green_wheels/app/home/content/book_a_ride/rent_ride_pickup_location.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 import 'package:green_wheels/theme/colors.dart';
 
@@ -142,11 +141,12 @@ rentRideTabBarView(
                                 kHalfWidthSizedBox,
                                 Expanded(
                                   child: AndroidTextFormField(
-                                    hintText: "Enter your pickup location",
-                                    onChanged: controller
-                                        .rentRidePickupLocationOnChanged,
+                                    readOnly: true,
+                                    onTap: controller
+                                        .setRentRidePickupGoogleMapsLocation,
                                     controller:
                                         controller.rentRidePickupLocationEC,
+                                    hintText: "Enter your pickup location",
                                     textInputAction: TextInputAction.next,
                                     focusNode:
                                         controller.rentRidePickupLocationFN,
@@ -165,13 +165,6 @@ rentRideTabBarView(
                         ],
                       )
                     : const SizedBox(),
-                kSizedBox,
-                if (controller.isRentRidePickupLocationTextFieldActive.value)
-                  rentRidePickupLocationMapSuggestions(
-                    colorScheme,
-                    controller,
-                    media,
-                  ),
               ],
             ),
           ),

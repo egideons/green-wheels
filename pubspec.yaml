@@ -23,6 +23,7 @@ dependencies:
   loading_animation_widget:
   http:
   google_maps_flutter:
+  place_picker_google:
   geolocator:
   geocoding:
   firebase_core:
@@ -36,6 +37,7 @@ dependencies:
   flutter_dotenv:
   flutter_paystack_max:
   web_socket_channel:
+  google_fonts:
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 
 import '../../../../src/constants/consts.dart';
 import '../../../../src/utils/containers/text_form_field_container.dart';
@@ -20,27 +19,24 @@ scheduleTripRouteForm(
         formFieldContainer(
           colorScheme,
           media,
-          containerHeight: controller.pickupLocationEC.text.isNotEmpty
-              ? media.height * .09
-              : null,
+          containerHeight: media.height * .1,
           borderSide: BorderSide(
             width: 1,
             color: colorScheme.primary,
           ),
-          child: Center(
-            child: AndroidTextFormField(
-              controller: controller.pickupLocationEC,
-              textInputAction: TextInputAction.next,
-              focusNode: controller.pickupLocationFN,
-              textCapitalization: TextCapitalization.none,
-              hintText: "Enter pickup location",
-              minLines: 2,
-              maxLines: 10,
-              onChanged: controller.pickupLocationOnChanged,
-              validator: (value) {
-                return null;
-              },
-            ),
+          child: AndroidTextFormField(
+            onTap: controller.setPickupGoogleMapsLocation,
+            readOnly: true,
+            controller: controller.pickupLocationEC,
+            textInputAction: TextInputAction.next,
+            focusNode: controller.pickupLocationFN,
+            textCapitalization: TextCapitalization.none,
+            hintText: "Enter pickup location",
+            minLines: 2,
+            maxLines: 10,
+            validator: (value) {
+              return null;
+            },
           ),
         ),
         kHalfSizedBox,
@@ -73,37 +69,24 @@ scheduleTripRouteForm(
         formFieldContainer(
           colorScheme,
           media,
-          containerHeight: controller.destinationEC.text.isNotEmpty
-              ? media.height * .09
-              : null,
+          containerHeight: media.height * .1,
           borderSide: BorderSide(
             width: 1,
             color: colorScheme.primary,
           ),
-          child: Row(
-            children: [
-              Icon(
-                Iconsax.search_normal,
-                color: colorScheme.inversePrimary,
-              ),
-              kSmallWidthSizedBox,
-              Expanded(
-                child: AndroidTextFormField(
-                  controller: controller.destinationEC,
-                  focusNode: controller.destinationFN,
-                  textInputAction: TextInputAction.done,
-                  onTap: controller.destinationOnTap,
-                  textCapitalization: TextCapitalization.none,
-                  hintText: "Enter destination",
-                  minLines: 2,
-                  maxLines: 10,
-                  onChanged: controller.destinationOnChanged,
-                  validator: (value) {
-                    return null;
-                  },
-                ),
-              ),
-            ],
+          child: AndroidTextFormField(
+            readOnly: true,
+            onTap: controller.setDestinationGoogleMapsLocation,
+            controller: controller.destinationEC,
+            focusNode: controller.destinationFN,
+            textInputAction: TextInputAction.done,
+            textCapitalization: TextCapitalization.none,
+            hintText: "Enter destination",
+            minLines: 2,
+            maxLines: 10,
+            validator: (value) {
+              return null;
+            },
           ),
         ),
       ],

@@ -26,10 +26,10 @@ class PhoneLoginScaffold extends GetView<PhoneLoginController> {
                 padding: const EdgeInsets.all(20),
                 children: [
                   const SizedBox(height: kDefaultPadding * 4),
-                  const Text(
+                  Text(
                     "Enter Mobile Number",
                     textAlign: TextAlign.start,
-                    style: TextStyle(
+                    style: defaultTextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.w400,
                       color: kTextBlackColor,
