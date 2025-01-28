@@ -14,12 +14,12 @@ class MenuScreen extends StatelessWidget {
     //Initialize the controller
     Get.put(MenuScreenController());
 
-    if (Platform.isIOS) {
-      return GestureDetector(
-        onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
-        // child: const MenuScreenCupertinoScaffold(),
-      );
-    }
+    // if (Platform.isIOS) {
+    //   return GestureDetector(
+    //     onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
+    //     // child: const MenuScreenCupertinoScaffold(),
+    //   );
+    // }
     return GestureDetector(
       onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
       child: const MenuScreenScaffold(),
