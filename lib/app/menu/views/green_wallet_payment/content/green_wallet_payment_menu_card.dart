@@ -12,8 +12,9 @@ greenWalletPaymentMenuCard(
   String? label,
 }) {
   return Container(
-    height: media.height * .16,
-    width: media.width / 2.4,
+    // height: media.height * .16,
+    width: media.width / 2.36,
+    padding: const EdgeInsets.all(20),
     decoration: ShapeDecoration(
       color: colorScheme.surface,
       shape: RoundedRectangleBorder(
@@ -25,14 +26,13 @@ greenWalletPaymentMenuCard(
       ),
     ),
     child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text.rich(
-          textAlign: TextAlign.end,
+          textAlign: TextAlign.center,
           TextSpan(
             text: '$nairaSign ',
             style: defaultTextStyle(
-              color: kTextBlackColor,
+              color: colorScheme.primary,
               fontSize: 18,
               fontFamily: "",
               fontWeight: FontWeight.w600,
@@ -43,7 +43,7 @@ greenWalletPaymentMenuCard(
                     ? "******"
                     : "${convertToCurrency(amount!)}",
                 style: defaultTextStyle(
-                  color: kTextBlackColor,
+                  color: colorScheme.primary,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
@@ -54,10 +54,11 @@ greenWalletPaymentMenuCard(
         kSizedBox,
         Text(
           label ?? "",
+          textAlign: TextAlign.center,
           style: defaultTextStyle(
             color: kTextBlackColor,
             fontSize: 16,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],

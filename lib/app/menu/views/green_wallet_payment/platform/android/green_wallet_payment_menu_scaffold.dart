@@ -117,7 +117,7 @@ class GreenWalletPaymentMenuScaffold
                               ? "******"
                               : "${convertToCurrency("0")}",
                           style: defaultTextStyle(
-                            color: kTextBlackColor,
+                            color: colorScheme.primary,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
