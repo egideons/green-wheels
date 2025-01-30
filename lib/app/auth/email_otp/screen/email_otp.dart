@@ -17,12 +17,12 @@ class EmailOTP extends StatelessWidget {
     //Initialize otp controller
     Get.put(PhoneOTPController());
 
-    if (Platform.isIOS) {
-      return GestureDetector(
-        onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
-        // child: const EmailOTPCupertinoScaffold(),
-      );
-    }
+    // if (Platform.isIOS) {
+    //   return GestureDetector(
+    //     onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
+    //     // child: const EmailOTPCupertinoScaffold(),
+    //   );
+    // }
     return GestureDetector(
       onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
       child: EmailOTPScaffold(
