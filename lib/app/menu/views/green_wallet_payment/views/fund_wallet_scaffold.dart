@@ -21,9 +21,10 @@ class FundWalletMenuScaffold extends GetView<GreenWalletPaymentMenuController> {
     var colorScheme = Theme.of(context).colorScheme;
 
     Get.put(SuccessScreenController());
-
+    // bool isProccessing = true;
     return GestureDetector(
-      onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
+      // onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
+      // absorbing: false,
       child: Scaffold(
         backgroundColor: colorScheme.surface,
         appBar: myAppBar(colorScheme, media, title: "Fund Wallet"),
