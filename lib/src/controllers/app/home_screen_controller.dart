@@ -524,13 +524,8 @@ class HomeScreenController extends GetxController
         isBookingInstantRide.value = false;
         // showSearchingForDriverModalSheet();
       } else {
-        if (responseJson["data"]["deficit"].contains("deficit")) {
-          ApiProcessorController.errorSnack(
-            "${responseJson["message"]}\nThe required amount: ${responseJson["data"]["required_amount"]}\n Deficit: ${responseJson["data"]["deficit"]}",
-          );
-        }
+        ApiProcessorController.warningSnack("${responseJson["message"]}");
         log(responseJson.toString());
-        ApiProcessorController.errorSnack("${responseJson["message"]}");
       }
     } catch (e) {
       log(e.toString());
