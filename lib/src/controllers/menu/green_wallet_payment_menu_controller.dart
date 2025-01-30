@@ -240,6 +240,8 @@ class GreenWalletPaymentMenuController extends GetxController {
         log("Payment Service Response: ${response.toString()}");
 
         if (response.data.status == PaystackTransactionStatus.success) {
+          ApiProcessorController.successSnack("Please close the modal");
+
           var walletIsFunded = await fundWallet();
 
           if (walletIsFunded) {
