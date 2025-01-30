@@ -389,6 +389,7 @@ class HomeScreenController extends GetxController
   var bookDriverTimerFinished = false.obs;
   var bookDriverFound = false.obs;
   var driverHasArrived = false.obs;
+  var isBookingInstantRide = false.obs;
 
   //================ Functions =================\\
   getRideAmount({
@@ -473,6 +474,7 @@ class HomeScreenController extends GetxController
     var url = ApiUrl.baseUrl + ApiUrl.bookInstantRide;
 
     var userToken = prefs.getString("userToken") ?? "";
+    isBookingInstantRide.value = true;
 
     Map<String, dynamic> data = {
       "pickup_location": {
@@ -501,6 +503,7 @@ class HomeScreenController extends GetxController
         await HttpClientService.postRequest(url, userToken, data, headers);
 
     if (response == null) {
+      isBookingInstantRide.value = false;
       return;
     }
 
@@ -511,13 +514,14 @@ class HomeScreenController extends GetxController
 
       log("This is the responseJson: $responseJson\nResponse status code: ${response.statusCode}");
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         ApiProcessorController.successSnack("${responseJson["message"]}");
         // final webSocketService = ReverbWebSocketService(
         //   driverUUID: 'your-driver-uuid',
         //   authToken: userToken,
         // );
 
+        isBookingInstantRide.value = false;
         // showSearchingForDriverModalSheet();
       } else {
         if (responseJson["data"]["deficit"].contains("deficit")) {
@@ -531,6 +535,7 @@ class HomeScreenController extends GetxController
     } catch (e) {
       log(e.toString());
     }
+    isBookingInstantRide.value = false;
   }
 
   //!================== Goto Google Maps ========================\\
@@ -609,7 +614,14 @@ class HomeScreenController extends GetxController
 
   setDestinationGoogleMapsLocation() async {
     final result = await Get.to(
-      () => GoogleMaps(),
+      () => GoogleMaps(
+        latitude: destinationLat.isNotEmpty
+            ? double.tryParse(destinationLat)!
+            : userPosition.value!.latitude,
+        longitude: destinationLong.isNotEmpty
+            ? double.tryParse(destinationLong)!
+            : userPosition.value!.longitude,
+      ),
       routeName: '/google-maps',
       duration: const Duration(milliseconds: 300),
       fullscreenDialog: true,

@@ -30,6 +30,7 @@ bookRideSearchForDriverSection(
       kSizedBox,
       AndroidElevatedButton(
         title: "Search for Driver",
+        isLoading: controller.isBookingInstantRide.value,
         onPressed: controller.bookInstantRide,
       )
     ],
