@@ -4,21 +4,17 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_paystack_max/flutter_paystack_max.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/app/menu/views/green_wallet_payment/views/fund_wallet_scaffold.dart';
-import 'package:green_wheels/app/splash/success/screen/success_screen.dart';
-import 'package:green_wheels/src/constants/consts.dart';
 import 'package:green_wheels/src/constants/keys.dart';
-import 'package:green_wheels/src/controllers/auth/success_screen_controller.dart';
 import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.dart';
 import 'package:green_wheels/src/models/rider/rider_model.dart';
 import 'package:green_wheels/src/models/wallet/wallet_fund_response_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:green_wheels/src/services/client/http_client_service.dart';
-import 'package:green_wheels/theme/colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:pay_with_paystack/pay_with_paystack.dart';
 
 import '../../../main.dart';
 import '../others/api_processor_controller.dart';
@@ -180,6 +176,9 @@ class GreenWalletPaymentMenuController extends GetxController {
   }
 
   Future<void> fundWalletWithPayStack() async {
+    final context = Get.context!;
+
+    //Form Validation
     if (fundWalletFormkey.currentState!.validate()) {
       // fundWalletFormkey.currentState!.save();
       if (amountEC.text.isEmpty) {
@@ -189,151 +188,221 @@ class GreenWalletPaymentMenuController extends GetxController {
         ApiProcessorController.errorSnack("The amount is too small!");
         return;
       }
-      isFunding.value = true;
 
+      isFunding.value = true;
       try {
-        String reference =
-            "GreenWheels_${DateTime.now().microsecondsSinceEpoch}";
+        // String reference =
+        //     "GreenWheels_${DateTime.now().microsecondsSinceEpoch}";
 
         var payStackSecretKey = Keys.paystackTestSecretKey ?? "";
+        var email = riderModel.value.email;
+        final uniqueTransRef =
+            "GreenWheels_${PayWithPayStack().generateUuidV4()}";
 
         log("Email: ${riderModel.value.email} ");
         log("Paystack Secret Key: $payStackSecretKey ");
 
-        final request = PaystackTransactionRequest(
-          reference: reference,
-          secretKey: payStackSecretKey,
-          email: riderModel.value.email,
-          amount: double.tryParse(unformattedAmountText.value)! * 100,
-          currency: PaystackCurrency.ngn,
-          channel: [
-            PaystackPaymentChannel.mobileMoney,
-            PaystackPaymentChannel.card,
-            PaystackPaymentChannel.ussd,
-            PaystackPaymentChannel.bankTransfer,
-            PaystackPaymentChannel.bank,
-            PaystackPaymentChannel.qr,
-            PaystackPaymentChannel.eft,
-          ],
-        );
+        PayWithPayStack().now(
+            context: context,
+            secretKey: payStackSecretKey,
+            customerEmail: email,
+            reference: uniqueTransRef,
+            currency: "NG",
+            amount: double.tryParse(unformattedAmountText.value) ?? .0,
+            callbackUrl: "",
+            transactionCompleted: (paymentData) async {
+              log("Payment Data: $paymentData");
 
-        final initializedTransaction =
-            await PaymentService.initializeTransaction(request);
+              // var walletIsFunded = await fundWallet();
 
-        if (!initializedTransaction.status) {
-          ApiProcessorController.warningSnack(initializedTransaction.message);
-          isFunding.value = false;
-          return;
-        }
+              // if (walletIsFunded) {
+              //   isFunding.value = false;
 
-        await PaymentService.showPaymentModal(
-          Get.context!,
-          transaction: initializedTransaction,
-          callbackUrl: '',
-        );
-
-        final response = await PaymentService.verifyTransaction(
-          paystackSecretKey: payStackSecretKey,
-          initializedTransaction.data?.reference ?? request.reference,
-        );
-
-        log("Payment Service Response: ${response.toString()}");
-
-        if (response.data.status == PaystackTransactionStatus.success) {
-          ApiProcessorController.successSnack("Please close the modal");
-
-          var walletIsFunded = await fundWallet();
-
-          if (walletIsFunded) {
-            isFunding.value = false;
-            //           //Show toast to notify the user of the transaction status
-            // ApiProcessorController.successSnack("Transaction Successful");
-
-            Get.off(
-              () => SuccessScreen(
-                loadScreen:
-                    SuccessScreenController.instance.goToGreenWalletScreen,
-                title: "Wallet credited!",
-                subtitleWidget: Column(
-                  children: [
-                    Text(
-                      "Amount Paid",
-                      style: defaultTextStyle(
-                        color: kTextBlackColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text.rich(
-                      textAlign: TextAlign.end,
-                      TextSpan(
-                        text: '$nairaSign ',
-                        style: defaultTextStyle(
-                          color: kTextBlackColor,
-                          fontSize: 18,
-                          fontFamily: "",
-                          fontWeight: FontWeight.w600,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: intFormattedText(
-                                int.tryParse(unformattedAmountText.value) ?? 0),
-                            style: defaultTextStyle(
-                              color: kTextBlackColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              transition: Transition.rightToLeft,
-              routeName: "/success-screen",
-              curve: Curves.easeInOut,
-              fullscreenDialog: true,
-              popGesture: true,
-              preventDuplicates: true,
-            );
-          }
-        } else if (response.data.status == PaystackTransactionStatus.failed) {
-          ApiProcessorController.errorSnack(
-              "The transaction failed, please try again later"
-              // initializedTransaction.message,
+              //   Get.off(
+              //     () => SuccessScreen(
+              //       loadScreen:
+              //           SuccessScreenController.instance.goToGreenWalletScreen,
+              //       title: "Wallet credited!",
+              //       subtitleWidget: Column(
+              //         children: [
+              //           Text(
+              //             "Amount Paid",
+              //             style: defaultTextStyle(
+              //               color: kTextBlackColor,
+              //               fontSize: 18,
+              //               fontWeight: FontWeight.w600,
+              //             ),
+              //           ),
+              //           Text.rich(
+              //             textAlign: TextAlign.end,
+              //             TextSpan(
+              //               text: '$nairaSign ',
+              //               style: defaultTextStyle(
+              //                 color: kTextBlackColor,
+              //                 fontSize: 18,
+              //                 fontFamily: "",
+              //                 fontWeight: FontWeight.w600,
+              //               ),
+              //               children: [
+              //                 TextSpan(
+              //                   text: intFormattedText(
+              //                       int.tryParse(unformattedAmountText.value) ??
+              //                           0),
+              //                   style: defaultTextStyle(
+              //                     color: kTextBlackColor,
+              //                     fontSize: 18,
+              //                     fontWeight: FontWeight.w600,
+              //                   ),
+              //                 ),
+              //               ],
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //     transition: Transition.rightToLeft,
+              //     routeName: "/success-screen",
+              //     curve: Curves.easeInOut,
+              //     fullscreenDialog: true,
+              //     popGesture: true,
+              //     preventDuplicates: true,
+              //   );
+              // }
+            },
+            transactionNotCompleted: (reason) {
+              ApiProcessorController.errorSnack(
+                "Transaction not completed: $reason",
               );
+              log("==> Transaction failed reason $reason");
+            });
 
-          isFunding.value = false;
-        } else if (response.data.status ==
-            PaystackTransactionStatus.abandoned) {
-          ApiProcessorController.warningSnack(
-            // initializedTransaction.message,
-            "Transaction abandoned by the user",
-          );
+        // final request = PaystackTransactionRequest(
+        //   reference: reference,
+        //   secretKey: payStackSecretKey,
+        //   email: riderModel.value.email,
+        //   amount: double.tryParse(unformattedAmountText.value)! * 100,
+        //   currency: PaystackCurrency.ngn,
+        //   channel: [
+        //     PaystackPaymentChannel.mobileMoney,
+        //     PaystackPaymentChannel.card,
+        //     PaystackPaymentChannel.ussd,
+        //     PaystackPaymentChannel.bankTransfer,
+        //     PaystackPaymentChannel.bank,
+        //     PaystackPaymentChannel.qr,
+        //     PaystackPaymentChannel.eft,
+        //   ],
+        // );
 
-          isFunding.value = false;
-        } else if (response.data.status == PaystackTransactionStatus.reversed) {
-          ApiProcessorController.successSnack(
-            // initializedTransaction.message,
-            "Transaction will be reversed",
-          );
+        // final initializedTransaction =
+        //     await PaymentService.initializeTransaction(request);
 
-          isFunding.value = false;
-        }
+        // if (!initializedTransaction.status) {
+        //   ApiProcessorController.warningSnack(initializedTransaction.message);
+        //   isFunding.value = false;
+        //   return;
+        // }
 
-        isFunding.value = false;
+        // await PaymentService.showPaymentModal(
+        //   Get.context!,
+        //   transaction: initializedTransaction,
+        //   callbackUrl: '',
+        // );
+
+        // final response = await PaymentService.verifyTransaction(
+        //   paystackSecretKey: payStackSecretKey,
+        //   initializedTransaction.data?.reference ?? request.reference,
+        // );
+
+        // log("Payment Service Response: ${response.toString()}");
+
+        // if (response.data.status == PaystackTransactionStatus.success) {
+        //   ApiProcessorController.successSnack("Please close the modal");
+
+        //   var walletIsFunded = await fundWallet();
+
+        //   if (walletIsFunded) {
+        //     isFunding.value = false;
+        //     //           //Show toast to notify the user of the transaction status
+        //     // ApiProcessorController.successSnack("Transaction Successful");
+
+        //     Get.off(
+        //       () => SuccessScreen(
+        //         loadScreen:
+        //             SuccessScreenController.instance.goToGreenWalletScreen,
+        //         title: "Wallet credited!",
+        //         subtitleWidget: Column(
+        //           children: [
+        //             Text(
+        //               "Amount Paid",
+        //               style: defaultTextStyle(
+        //                 color: kTextBlackColor,
+        //                 fontSize: 18,
+        //                 fontWeight: FontWeight.w600,
+        //               ),
+        //             ),
+        //             Text.rich(
+        //               textAlign: TextAlign.end,
+        //               TextSpan(
+        //                 text: '$nairaSign ',
+        //                 style: defaultTextStyle(
+        //                   color: kTextBlackColor,
+        //                   fontSize: 18,
+        //                   fontFamily: "",
+        //                   fontWeight: FontWeight.w600,
+        //                 ),
+        //                 children: [
+        //                   TextSpan(
+        //                     text: intFormattedText(
+        //                         int.tryParse(unformattedAmountText.value) ?? 0),
+        //                     style: defaultTextStyle(
+        //                       color: kTextBlackColor,
+        //                       fontSize: 18,
+        //                       fontWeight: FontWeight.w600,
+        //                     ),
+        //                   ),
+        //                 ],
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //       transition: Transition.rightToLeft,
+        //       routeName: "/success-screen",
+        //       curve: Curves.easeInOut,
+        //       fullscreenDialog: true,
+        //       popGesture: true,
+        //       preventDuplicates: true,
+        //     );
+        //   }
+        // } else if (response.data.status == PaystackTransactionStatus.failed) {
+        //   ApiProcessorController.errorSnack(
+        //       "The transaction failed, please try again later"
+        //       // initializedTransaction.message,
+        //       );
+        // } else if (response.data.status ==
+        //     PaystackTransactionStatus.abandoned) {
+        //   ApiProcessorController.warningSnack(
+        //     // initializedTransaction.message,
+        //     "Transaction abandoned by the user",
+        //   );
+        // } else if (response.data.status == PaystackTransactionStatus.reversed) {
+        //   ApiProcessorController.successSnack(
+        //     // initializedTransaction.message,
+        //     "Transaction will be reversed",
+        //   );
+        // }
       } on TimeoutException {
         ApiProcessorController.errorSnack(
           "Internet connection timeout. Please try again",
         );
       } on SocketException {
         ApiProcessorController.errorSnack("Please connect to the internet");
-      } catch (e) {
+      } catch (e, stackTrace) {
         isFunding.value = false;
-        log(e.toString());
+        log(e.toString(), stackTrace: stackTrace, name: "Wallet Funding");
+      } finally {
+        isFunding.value = false;
       }
-      isFunding.value = false;
     }
   }
 

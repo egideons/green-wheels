@@ -13,14 +13,10 @@ class GoogleMaps extends GetView<GoogleMapsController> {
 
   @override
   Widget build(BuildContext context) {
-    // var colorScheme = Theme.of(context).colorScheme;
-    // var size = MediaQuery.sizeOf(context);
     return Scaffold(
       body: Obx(
         () {
           final userPosition = controller.userPosition.value;
-          // final locationPinIsVisible = controller.locationPinIsVisible.value;
-          // final pinnedLocation = controller.pinnedLocation.value;
           if (userPosition == null) {
             return const Center(
               child: CircularProgressIndicator.adaptive(),

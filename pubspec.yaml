@@ -35,9 +35,10 @@ dependencies:
   connectivity_plus:
   http_parser:
   flutter_dotenv:
-  flutter_paystack_max:
   web_socket_channel:
   google_fonts:
+  pay_with_paystack:
+  # flutter_paystack_max:
 
 dev_dependencies:
   flutter_test:
