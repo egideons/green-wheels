@@ -162,7 +162,7 @@ rentRideTabBarView(
           ),
         ),
         kHalfSizedBox,
-        if (controller.selectedVehicleName.value.isNotEmpty)
+        if (controller.confirmRentRideBookingButtonIsEnabled.value)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

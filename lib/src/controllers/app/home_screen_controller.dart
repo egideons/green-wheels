@@ -524,13 +524,8 @@ class HomeScreenController extends GetxController
         isBookingInstantRide.value = false;
         // showSearchingForDriverModalSheet();
       } else {
-        if (responseJson["data"]["deficit"].contains("deficit")) {
-          ApiProcessorController.errorSnack(
-            "${responseJson["message"]}\nThe required amount: ${responseJson["data"]["required_amount"]}\n Deficit: ${responseJson["data"]["deficit"]}",
-          );
-        }
+        ApiProcessorController.warningSnack("${responseJson["message"]}");
         log(responseJson.toString());
-        ApiProcessorController.errorSnack("${responseJson["message"]}");
       }
     } catch (e) {
       log(e.toString());
@@ -1154,13 +1149,13 @@ class HomeScreenController extends GetxController
   var rentRideFormKey = GlobalKey<FormState>();
   DateTime? lastSelectedRentRideDate;
   TimeOfDay? lastSelectedRentRidePickupTime;
-  var rentRideChargePerMinute = "0".obs;
+  var rentRideChargePerMinute = "200".obs;
   var selectedVehicleImage = "".obs;
   var selectedVehicleName = "".obs;
   var selectedVehiclePlateNumber = "".obs;
   var selectedVehicleNumOfStars = 0.obs;
-  String? rentRidePickupLat;
-  String? rentRidePickupLong;
+  String rentRidePickupLat = "";
+  String rentRidePickupLong = "";
   List<GooglePlaceAutoCompletePredictionModel> rentRidePickupPlacePredictions =
       [];
   var selectedDuration = Duration().obs;
@@ -1250,12 +1245,12 @@ class HomeScreenController extends GetxController
   setRentRidePickupGoogleMapsLocation() async {
     final result = await Get.to(
       () => GoogleMaps(
-        latitude: rentRidePickupLat!.isEmpty
-            ? null
-            : double.tryParse(rentRidePickupLat!)!,
-        longitude: rentRidePickupLong!.isEmpty
-            ? null
-            : double.tryParse(rentRidePickupLong!)!,
+        latitude: rentRidePickupLat.isNotEmpty
+            ? double.tryParse(rentRidePickupLat)!
+            : userPosition.value!.latitude,
+        longitude: rentRidePickupLong.isNotEmpty
+            ? double.tryParse(rentRidePickupLong)!
+            : userPosition.value!.longitude,
       ),
       routeName: '/google-maps',
       duration: const Duration(milliseconds: 300),
@@ -1283,8 +1278,8 @@ class HomeScreenController extends GetxController
         "This are the result details:\nAddress: ${rentRidePickupLocationEC.text}\nLatitude: $rentRidePickupLat\nLongitude: $rentRidePickupLong",
       );
       if (rentRidePickupLocationEC.text.isNotEmpty &&
-          rentRidePickupLat!.isNotEmpty &&
-          rentRidePickupLong!.isNotEmpty) {
+          rentRidePickupLat.isNotEmpty &&
+          rentRidePickupLong.isNotEmpty) {
         confirmRentRideBookingButtonIsEnabled.value = true;
       }
     }
@@ -1427,7 +1422,7 @@ class HomeScreenController extends GetxController
       else if (rentRidePickupLocationEC.text.isEmpty) {
         ApiProcessorController.errorSnack("Please select a pickup location");
         return;
-      } else if (rentRidePickupLat!.isEmpty || rentRidePickupLong!.isEmpty) {
+      } else if (rentRidePickupLat.isEmpty || rentRidePickupLong.isEmpty) {
         ApiProcessorController.errorSnack(
           "You must select a location from the options given",
         );
