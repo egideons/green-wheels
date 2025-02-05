@@ -302,6 +302,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.4"
+  flutter_paystack_max:
+    dependency: "direct main"
+    description:
+      name: flutter_paystack_max
+      sha256: "8fd2c9c9852c4a7d3ffe1094fdb9cae593df22b16a9af3502dadcb042e22223a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.5"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -760,14 +768,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
-  pay_with_paystack:
-    dependency: "direct main"
-    description:
-      name: pay_with_paystack
-      sha256: "373ac3812941a6528853ae47b2d0232d6b830f378e5c82dd61ce3961a67e224f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.13"
   petitparser:
     dependency: transitive
     description:

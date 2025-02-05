@@ -75,7 +75,9 @@ class FundWalletMenuScaffold extends GetView<GreenWalletPaymentMenuController> {
                               readOnly: controller.isLoading.value,
                               controller: controller.amountEC,
                               textInputAction: TextInputAction.done,
-                              onFieldSubmitted: controller.onFieldSubmitted,
+                              onFieldSubmitted: (value) {
+                                controller.onFieldSubmitted(value, context);
+                              },
                               focusNode: controller.amountFN,
                               textCapitalization: TextCapitalization.none,
                               keyboardType: TextInputType.number,
@@ -98,7 +100,9 @@ class FundWalletMenuScaffold extends GetView<GreenWalletPaymentMenuController> {
                   () => AndroidElevatedButton(
                     title: "Proceed",
                     isLoading: controller.isFunding.value,
-                    onPressed: controller.fundWalletWithPayStack,
+                    onPressed: () {
+                      controller.fundWalletWithPayStack(context);
+                    },
                   ),
                 ),
               ],

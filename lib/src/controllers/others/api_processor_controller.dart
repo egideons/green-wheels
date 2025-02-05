@@ -8,17 +8,58 @@ import 'package:green_wheels/src/constants/consts.dart';
 import '../../../theme/colors.dart';
 
 class ApiProcessorController extends GetxController {
-  static Future<dynamic> errorState(data) async {
-    try {
-      if (data.statusCode == 200) {
-        return data.body;
-      }
-      // errorSnack("Something went wrong");
-      return;
-    } catch (e) {
-      // errorSnack("Check your internet and try again");
-      return;
-    }
+  static void normalSnack(String? msg, {Duration? duration}) {
+    var colorScheme = Theme.of(Get.context!).colorScheme;
+    var media = MediaQuery.of(Get.context!).size;
+    Get.showSnackbar(
+      GetSnackBar(
+        messageText: Text(
+          msg ?? "",
+          overflow: TextOverflow.ellipsis,
+          maxLines: 10,
+          style: defaultTextStyle(
+            color: kTextBlackColor,
+            fontSize: 12.0,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        icon: const Icon(
+          Icons.info,
+          size: 16,
+          color: kInformationColor,
+        ),
+        shouldIconPulse: true,
+        isDismissible: true,
+        backgroundColor: colorScheme.surface,
+        barBlur: 2.0,
+        borderRadius: 10,
+        snackPosition: SnackPosition.TOP,
+        maxWidth: media.width - 40,
+        duration: duration ?? const Duration(seconds: 2),
+        boxShadows: [
+          BoxShadow(
+            color: colorScheme.inversePrimary.withValues(),
+            offset: const Offset(0, 4),
+            blurRadius: 10,
+            spreadRadius: 2,
+          ),
+        ],
+        // backgroundGradient: LinearGradient(
+        //   colors: [kSuccessColor, kSuccessColor.withValues(),],
+        // ),
+        // margin: const EdgeInsets.all(60),
+        // mainButton: IconButton(
+        //   onPressed: () {
+        //     Get.back();
+        //   },
+        //   color: kLightBackgroundColor,
+        //   icon: const Icon(
+        //     Icons.cancel,
+        //     size: 14,
+        //   ),
+        // ),
+      ),
+    );
   }
 
   static void successSnack(String? msg) {

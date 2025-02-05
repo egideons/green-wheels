@@ -37,8 +37,7 @@ dependencies:
   flutter_dotenv:
   web_socket_channel:
   google_fonts:
-  pay_with_paystack:
-  # flutter_paystack_max:
+  flutter_paystack_max:
 
 dev_dependencies:
   flutter_test:
