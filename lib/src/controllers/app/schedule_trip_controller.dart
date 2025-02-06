@@ -90,7 +90,7 @@ class ScheduleTripController extends GetxController {
       lastSelectedDate = selectedDate;
     }
 
-    log("This is the scheduled Datte: $scheduledPickupDate");
+    log("This is the scheduled Date: $scheduledPickupDate");
   }
 
   void selectTimeFunc() async {
@@ -163,10 +163,7 @@ class ScheduleTripController extends GetxController {
 
   setPickupGoogleMapsLocation() async {
     final result = await Get.to(
-      () => GoogleMaps(
-        latitude: pickupLat!.isEmpty ? null : double.tryParse(pickupLat!)!,
-        longitude: pickupLong!.isEmpty ? null : double.tryParse(pickupLong!)!,
-      ),
+      () => GoogleMaps(),
       routeName: '/google-maps',
       duration: const Duration(milliseconds: 300),
       fullscreenDialog: true,
@@ -203,13 +200,7 @@ class ScheduleTripController extends GetxController {
 
   setDestinationGoogleMapsLocation() async {
     final result = await Get.to(
-      () => GoogleMaps(
-        latitude:
-            destinationLat!.isEmpty ? null : double.tryParse(destinationLat!)!,
-        longitude: destinationLong!.isEmpty
-            ? null
-            : double.tryParse(destinationLong!)!,
-      ),
+      () => GoogleMaps(),
       routeName: '/google-maps',
       duration: const Duration(milliseconds: 300),
       fullscreenDialog: true,
@@ -296,11 +287,27 @@ class ScheduleTripController extends GetxController {
   confirmBooking() async {
     if (scheduleTripFormKey.currentState!.validate()) {
       scheduleTripFormKey.currentState!.save();
+      DateTime? selectedDate;
+      if (selectedDateEC.text.isNotEmpty) {
+        selectedDate = DateFormat("dd/MM/yyyy").parse(selectedDateEC.text);
+      }
+
+      DateTime today = DateTime.now();
+
       if (selectedDateEC.text.isEmpty) {
         ApiProcessorController.errorSnack("Please select a date");
         return;
+      } else if (selectedDate!.isBefore(today)) {
+        ApiProcessorController.errorSnack("Please select a future date");
+        return;
       } else if (selectedTimeEC.text.isEmpty) {
         ApiProcessorController.errorSnack("Please select a time");
+        return;
+      } else if (pickupLocationEC.text.isEmpty &&
+          destinationEC.text.isEmpty &&
+          pickupLat!.isEmpty &&
+          destinationLat!.isEmpty) {
+        ApiProcessorController.errorSnack("Please select a route");
         return;
       }
 
@@ -345,21 +352,21 @@ class ScheduleTripController extends GetxController {
         // dynamic responseJson;
 
         // responseJson = jsonDecode(response.body);
-        if (response.statusCode == 200) {
-          await Future.delayed(const Duration(milliseconds: 800));
-
+        if (response.statusCode == 201 || response.statusCode == 200) {
           await showSearchingForDriverModalSheet();
           isLoadingScheduleTripRequest.value = false;
         } else {
           ApiProcessorController.errorSnack(
-              "An error occured in scheduling your ride.\nPlease try again later");
+            "An error occured in scheduling your ride.\nPlease try again later",
+          );
           log("An error occured: ${response.body}");
           isLoadingScheduleTripRequest.value = false;
         }
-      } catch (e) {
-        log(e.toString());
+      } catch (e, stackTrace) {
+        log(e.toString(), stackTrace: stackTrace);
+      } finally {
+        isLoadingScheduleTripRequest.value = false;
       }
-      isLoadingScheduleTripRequest.value = false;
     }
   }
 

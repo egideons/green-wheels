@@ -1158,8 +1158,9 @@ class HomeScreenController extends GetxController
   String rentRidePickupLong = "";
   List<GooglePlaceAutoCompletePredictionModel> rentRidePickupPlacePredictions =
       [];
-  var selectedDuration = Duration().obs;
-  var formattedTime = ''.obs;
+
+  var rentRideFormattedTime = "".obs;
+  var rentRideformattedDate = "".obs;
 
   //================ Models =================\\
   var rentRideVehicleModel = VehicleModel.fromJson(null).obs;
@@ -1188,7 +1189,6 @@ class HomeScreenController extends GetxController
 
   void selectRentRideDate() async {
     var context = Get.context!;
-    var formattedDate = "".obs;
 
     final selectedDate = await showDatePicker(
       context: context,
@@ -1196,18 +1196,17 @@ class HomeScreenController extends GetxController
       firstDate: DateTime(1900),
       lastDate: DateTime(2030),
     );
-    if (selectedDate != null) {
-      rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
-      formattedDate.value = DateFormat("dd/MM/yyyy").format(selectedDate);
-      lastSelectedRentRideDate = selectedDate;
-    }
 
     if (selectedDate != null) {
       rentRideDateEC.text = DateFormat("dd/MM/yyyy").format(selectedDate);
       lastSelectedRentRideDate = selectedDate;
-      formattedDate.value = DateFormat("dd/MM/yyyy").format(selectedDate);
+      rentRideformattedDate.value =
+          DateFormat("yyyy-MM-dd").format(selectedDate);
     }
-    log("This is the scheduled Datte: ${rentRideDateEC.text}");
+    log(
+      "This is the scheduled Date: $rentRideformattedDate",
+      name: "Rent a ride Date Picker",
+    );
   }
 
   void selectRentRidePickupTime() async {
@@ -1224,14 +1223,22 @@ class HomeScreenController extends GetxController
 
     if (selectedTime != null) {
       final now = DateTime.now();
-      final formattedTime = DateFormat("hh:mm a").format(DateTime(
+      rentRideFormattedTime.value = DateFormat("HH:mm").format(DateTime(
         now.year,
         now.month,
         now.day,
         selectedTime.hour,
         selectedTime.minute,
       ));
-      rentRidePickupTimeEC.text = formattedTime;
+      final newFormattedTime = DateFormat("hh:mm a").format(DateTime(
+        now.year,
+        now.month,
+        now.day,
+        selectedTime.hour,
+        selectedTime.minute,
+      ));
+
+      rentRidePickupTimeEC.text = newFormattedTime;
       lastSelectedRentRidePickupTime = selectedTime;
       rentRidePickupLocationTextFieldIsVisible.value =
           rentRidePickupTimeEC.text.isNotEmpty;
@@ -1239,7 +1246,10 @@ class HomeScreenController extends GetxController
     }
 
     log("Pickup Location Text Field is visible: ${rentRidePickupLocationTextFieldIsVisible.value}");
-    log("This is the scheduled time: $lastSelectedRentRidePickupTime");
+    log(
+      "This is the scheduled time: ${rentRideFormattedTime.value}",
+      name: "Rent ride Time picker",
+    );
   }
 
   setRentRidePickupGoogleMapsLocation() async {
@@ -1438,52 +1448,68 @@ class HomeScreenController extends GetxController
   }
 
   Future<bool> rentRide() async {
-    var url = ApiUrl.baseUrl + ApiUrl.getAvailableVehicles;
+    var url = ApiUrl.baseUrl + ApiUrl.rentRide;
     var userToken = prefs.getString("userToken");
 
-    log("URL=> $url\nUSERTOKEN=>$userToken");
+    log(
+      "URL=> $url\nUSERTOKEN=>$userToken",
+      name: "Rent a ride URL and Token",
+      time: DateTime.now(),
+    );
 
     confirmRentRideBookingButtonIsLoading.value = true;
 
     var data = {
-      "pickup_location": {
-        "address": rentRidePickupLocationEC.text,
-        "lat": rentRidePickupLat,
-        "long": rentRidePickupLong,
-      },
-      "schedule_date": rentRideDateEC.text,
-      "schedule_pickup_time": rentRidePickupTimeEC.text,
+      "address": rentRidePickupLocationEC.text,
+      "lat": rentRidePickupLat,
+      "long": rentRidePickupLong,
+      "schedule_date": rentRideformattedDate.value,
+      "schedule_pickup_time": rentRideFormattedTime.value,
     };
 
-    log("Request body=> $data");
+    log(
+      "Request body=> $data",
+      name: "Rent a ride",
+    );
+
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $userToken"
+    };
 
     //HTTP Client Service
     http.Response? response =
-        await HttpClientService.postRequest(url, userToken, data);
+        await HttpClientService.postRequest(url, userToken, data, headers);
 
     if (response == null) {
+      confirmRentRideBookingButtonIsLoading.value = false;
       return false;
     }
 
     try {
-      if (response.statusCode == 200) {
-        // Convert to json
-        dynamic responseJson;
-
+      // Convert to json
+      dynamic responseJson;
+      if (response.statusCode == 200 || response.statusCode == 201) {
         responseJson = jsonDecode(response.body);
-        log("Response body=> $responseJson");
+        log("Response body=> $responseJson", name: "Rent a ride");
 
         confirmRentRideBookingButtonIsLoading.value = false;
         return true;
       } else {
-        ApiProcessorController.errorSnack(
-          "Booking failed, please try again later.\nWe're working to fix this issue.",
+        ApiProcessorController.errorSnack("Booking failed");
+        log(
+          "Response body=> $responseJson, Response Status code: ${response.statusCode}",
+          name: "Rent a ride",
         );
-        log("An error occured, Response Status code: ${response.statusCode}");
+
         // log("An error occured, Response body: ${response.body}");
       }
-    } catch (e) {
-      log("This is the error log: ${e.toString()}");
+    } catch (e, stackTrace) {
+      log(
+        e.toString(),
+        name: "Rent a Ride",
+        stackTrace: stackTrace,
+      );
       return false;
     }
     confirmRentRideBookingButtonIsLoading.value = false;

@@ -5,7 +5,6 @@ import 'package:green_wheels/src/utils/buttons/android/android_outlined_button.d
 import '../../../../src/constants/consts.dart';
 import '../../../../src/controllers/app/home_screen_controller.dart';
 import '../../../../src/utils/buttons/android/android_elevated_button.dart';
-import '../../../../src/utils/components/car_name_and_rating.dart';
 import '../../../../src/utils/components/default_info_container.dart';
 import '../../../../src/utils/components/time_and_date_section.dart';
 import '../../../../theme/colors.dart';
@@ -44,54 +43,54 @@ class RentRideBookingConfirmedModal extends GetView<HomeScreenController> {
               ),
             ),
             kSizedBox,
-            defaultInfoContainer(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Car information",
-                    style: defaultTextStyle(
-                      color: kTextBlackColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  carNameRating(
-                    colorScheme,
-                    vehicleImage: controller.selectedVehicleImage.value,
-                    // vehicleImage: controller.selectedVehicleImage.value,
-                    vehicleName: controller.selectedVehicleName.value,
-                    // numOfStars: controller.selectedVehicleNumOfStars.value,
-                    isUserVerified: true,
-                  ),
-                  kSizedBox,
-                  Row(
-                    children: [
-                      Text(
-                        "Plate number",
-                        style: defaultTextStyle(
-                          color: kTextBlackColor,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      kWidthSizedBox,
-                      Expanded(
-                        child: Text(
-                          controller.selectedVehiclePlateNumber.value,
-                          style: defaultTextStyle(
-                            color: kTextBlackColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            kSizedBox,
+            // defaultInfoContainer(
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: [
+            //       Text(
+            //         "Car information",
+            //         style: defaultTextStyle(
+            //           color: kTextBlackColor,
+            //           fontSize: 20,
+            //           fontWeight: FontWeight.w400,
+            //         ),
+            //       ),
+            //       carNameRating(
+            //         colorScheme,
+            //         vehicleImage: controller.selectedVehicleImage.value,
+            //         // vehicleImage: controller.selectedVehicleImage.value,
+            //         vehicleName: controller.selectedVehicleName.value,
+            //         // numOfStars: controller.selectedVehicleNumOfStars.value,
+            //         isUserVerified: true,
+            //       ),
+            //       kSizedBox,
+            //       Row(
+            //         children: [
+            //           Text(
+            //             "Plate number",
+            //             style: defaultTextStyle(
+            //               color: kTextBlackColor,
+            //               fontSize: 13,
+            //               fontWeight: FontWeight.w400,
+            //             ),
+            //           ),
+            //           kWidthSizedBox,
+            //           Expanded(
+            //             child: Text(
+            //               controller.selectedVehiclePlateNumber.value,
+            //               style: defaultTextStyle(
+            //                 color: kTextBlackColor,
+            //                 fontSize: 16,
+            //                 fontWeight: FontWeight.w400,
+            //               ),
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // kSizedBox,
             defaultInfoContainer(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

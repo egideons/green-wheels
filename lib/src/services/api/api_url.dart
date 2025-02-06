@@ -21,6 +21,7 @@ class ApiUrl {
   static const bookInstantRide = "/booking/instant";
   static const scheduleRide = "/booking/schedule";
   static const getAvailableVehicles = "/vehicles/available";
+  static const rentRide = "/booking/rent";
 
   //=============== Transaction ====================\\
   static const transactionCallBackUrl = "/transaction/callback";
