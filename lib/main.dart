@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -5,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:green_wheels/src/controllers/others/connectivity_status_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'firebase_options.dart';
+import 'src/controllers/others/connectivity_status_controller.dart';
 import 'src/controllers/others/loading_controller.dart';
 import 'src/controllers/others/theme_controller.dart';
 import 'src/routes/routes.dart';
@@ -29,42 +31,78 @@ void main() async {
   Get.put(LoadingController());
   Get.put(ConnectivityStatusController());
 
-  //This is to handle widget errors by showing a custom error widget screen
+  await dotenv.load(fileName: ".env");
+
   if (kReleaseMode) ErrorWidget.builder = (_) => const AppErrorWidget();
 
   FlutterError.onError = (details) {
     FlutterError.dumpErrorToConsole(details);
     if (!kReleaseMode) return;
   };
-  await dotenv.load(fileName: ".env");
 
   runApp(const MyApp());
 }
 
 late SharedPreferences prefs;
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        log("App resumed");
+        restoreAppState();
+        break;
+      case AppLifecycleState.inactive:
+        log("App inactive");
+        break;
+      case AppLifecycleState.paused:
+        log("App paused");
+        saveAppState();
+        break;
+      case AppLifecycleState.detached:
+        log("App detached");
+        break;
+      case AppLifecycleState.hidden:
+        log("App hidden");
+        break;
+    }
+  }
+
+  void saveAppState() async {
+    await prefs.setBool("appMinimized", true);
+    log("App state saved");
+  }
+
+  void restoreAppState() async {
+    bool? wasMinimized = prefs.getBool("appMinimized");
+    if (wasMinimized == true) {
+      log("Restoring app state...");
+      await prefs.setBool("appMinimized", false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    //iOS App
-    // if (Platform.isIOS) {
-    //   return GetCupertinoApp(
-    //     title: "Green Wheels",
-    //     color: kPrimaryColor,
-    //     navigatorKey: Get.key,
-    //     defaultTransition: Transition.native,
-    //     debugShowCheckedModeBanner: false,
-    //     locale: Get.deviceLocale,
-    //     initialRoute: Routes.startupSplashscreen,
-    //     getPages: Routes.getPages,
-    //     theme: Get.isDarkMode ? iOSDarkTheme : iOSLightTheme,
-    //   );
-    // }
-
-    //Android App
     return GetMaterialApp(
       title: "Green Wheels",
       color: kPrimaryColor,
@@ -76,7 +114,6 @@ class MyApp extends StatelessWidget {
       getPages: Routes.getPages,
       theme: androidLightTheme,
       darkTheme: androidDarkTheme,
-      // themeMode: ThemeController.instance.themeMode.value,
       themeMode: ThemeMode.light,
       scrollBehavior: ScrollConfiguration.of(context).copyWith(
         multitouchDragStrategy: MultitouchDragStrategy.sumAllPointers,

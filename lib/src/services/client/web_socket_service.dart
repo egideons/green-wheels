@@ -2,113 +2,116 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:green_wheels/src/controllers/app/home_screen_controller.dart';
+import 'package:green_wheels/src/models/ride/accepted_ride_request_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
-import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ReverbWebSocketService {
-  late WebSocketChannel channel;
-  final String driverUUID;
+  WebSocketChannel? channel;
+  final String riderUUID;
   final String authToken;
+  bool? hasNewRequest;
+  bool _isManuallyDisconnected = false;
 
   ReverbWebSocketService({
-    required this.driverUUID,
+    required this.riderUUID,
     required this.authToken,
   });
 
   var webSocketAppKey = dotenv.env["WebSocketAppKey"];
-  void connect() {
-    // Create WebSocket connection
-    var url = "${ApiUrl.webSocketBaseUrl}/$webSocketAppKey";
-    final wsUrl = Uri.parse(url);
 
-    channel = WebSocketChannel.connect(wsUrl);
+  Future<bool> connect() async {
+    try {
+      _isManuallyDisconnected = false;
+      var webSocketAppKey = dotenv.env["WebSocketAppKey"];
+      var url = "${ApiUrl.webSocketBaseUrl}/$webSocketAppKey";
+      final wsUrl = Uri.parse(url);
 
-    // Listen to incoming messages
-    channel.stream.listen(
-      (dynamic message) {
-        final decodedMessage = jsonDecode(message);
-        handleWebSocketMessage(decodedMessage);
-        log("Stream listening decoded message: $decodedMessage");
-      },
-      onError: (error) {
-        log('WebSocket Error: $error');
-        // Implement reconnection logic here
-      },
-      onDone: () {
-        log('WebSocket connection closed');
-        // Implement reconnection logic here
-      },
-    );
+      channel = WebSocketChannel.connect(wsUrl);
 
-    // Subscribe to channels after connection
-    subscribeToChannels();
-  }
+      // Listen to incoming messages with reconnection logic
+      channel!.stream.listen(
+        (dynamic message) {
+          final decodedMessage = jsonDecode(message);
+          handleWebSocketMessage(decodedMessage);
+          log("Stream listening decoded message: $decodedMessage");
+        },
+        onError: (error, stackTrace) {
+          log('WebSocket Error: $error', stackTrace: stackTrace);
+          log("WebSocket is manually disconnected: $_isManuallyDisconnected");
+          if (!_isManuallyDisconnected) {
+            reconnect(); // Only reconnect if it was an unintentional disconnect
+          }
+        },
+        onDone: () {
+          log('WebSocket connection closed');
+          log("WebSocket is manually disconnected: $_isManuallyDisconnected");
+          if (_isManuallyDisconnected != true) {
+            reconnect(); // Only reconnect if it was an unintentional disconnect
+          }
+        },
+      );
 
-  void subscribeToChannels() {
-    // Subscribe to driver's private channel
-    final driverSubscription = {
-      'event': 'pusher:subscribe',
-      'data': {'channel': 'private-driver.$driverUUID', 'auth': authToken}
-    };
-    channel.sink.add(jsonEncode(driverSubscription));
-
-    // Subscribe to general booking channel
-    final bookingSubscription = {
-      'event': 'pusher:subscribe',
-      'data': {'channel': 'private-booking.new', 'auth': authToken}
-    };
-    channel.sink.add(jsonEncode(bookingSubscription));
-  }
-
-  void handleWebSocketMessage(Map<String, dynamic> message) {
-    if (message['event'] == 'booking.update') {
-      final data = jsonDecode(message['data']);
-      switch (data['type']) {
-        case 'new_booking':
-          handleNewBooking(data['booking']);
-          break;
-        case 'booking_accepted':
-          handleBookingAccepted(data['booking']);
-          break;
-        case 'booking_cancelled':
-          handleBookingCancelled(data['booking']);
-          break;
-      }
+      //! WebSocket is connected - Subscribe to ride channel
+      subscribeToRideChannel();
+      return true;
+    } catch (e) {
+      log("WebSocket connection error: $e");
+      return false;
     }
   }
 
-  void handleNewBooking(Map<String, dynamic> bookingData) {
-    // Implement new booking handling logic
-    log('New booking received: $bookingData');
+  void subscribeToRideChannel() {
+    // Subscribe to available drivers
+    final availableDrivers = {
+      "event": "pusher:subscribe",
+      "data": {"channel": "rider.$riderUUID.bookings"}
+    };
+    channel?.sink.add(jsonEncode(availableDrivers));
+  }
+
+  void handleWebSocketMessage(Map<String, dynamic> message) {
+    try {
+      if (message['event'] == 'booking.event') {
+        final data = jsonDecode(message['data']);
+        log("Decoded booking event data: $data");
+
+        switch (data['type']) {
+          case 'booking_accepted':
+            handleBookingAccepted(data);
+            break;
+        }
+      }
+    } catch (e, stackTrace) {
+      log("Error parsing WebSocket message: $e", stackTrace: stackTrace);
+    }
   }
 
   void handleBookingAccepted(Map<String, dynamic> bookingData) {
     // Implement booking accepted logic
-    log('Booking accepted: $bookingData');
-  }
+    log('Booking accepted: $bookingData', name: "Booking Accepted information");
 
-  void handleBookingCancelled(Map<String, dynamic> bookingData) {
-    // Implement booking cancelled logic
-    log('Booking cancelled: $bookingData');
+    final acceptedRideRequest = AcceptedRideRequestModel.fromJson(bookingData);
+
+    //! Cache the request response in HomeScreenController
+    HomeScreenController.instance.updateRequestResponse(acceptedRideRequest);
   }
 
   void disconnect() {
-    channel.sink.close(status.goingAway);
+    _isManuallyDisconnected = true;
+    if (channel != null) {
+      channel!.sink.close();
+      log("WebSocket manually disconnected");
+    }
+  }
+
+  void reconnect() async {
+    if (_isManuallyDisconnected) {
+      return;
+    } // Skip reconnection if disconnected manually
+    log("Reconnecting in 5 seconds...");
+    await Future.delayed(const Duration(seconds: 5));
+    connect();
   }
 }
-
-// Usage example:git
-/*
-void main() {
-  final webSocketService = ReverbWebSocketService(
-    driverUUID: 'your-driver-uuid',
-    authToken: 'your-auth-token'
-  );
-  
-  webSocketService.connect();
-  
-  // Don't forget to disconnect when done
-  // webSocketService.disconnect();
-}
-*/

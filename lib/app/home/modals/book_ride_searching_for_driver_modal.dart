@@ -108,7 +108,7 @@ class BookRideSearchingForDriverModal extends GetView<HomeScreenController> {
                       )
                     : AndroidElevatedButton(
                         title: "Retry",
-                        onPressed: controller.instantRideAwaitDriverResponse,
+                        onPressed: controller.bookRideAwaitDriverResponse,
                       );
               },
             ),

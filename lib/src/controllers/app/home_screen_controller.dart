@@ -14,6 +14,7 @@ import 'package:green_wheels/app/home/content/rent_ride/choose_available_vehicle
 import 'package:green_wheels/app/home/modals/book_ride_cancel_ride_fee_modal.dart';
 import 'package:green_wheels/src/controllers/app/google_maps_controller.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
+import 'package:green_wheels/src/models/ride/accepted_ride_request_model.dart';
 import 'package:green_wheels/src/models/ride/available_vehicles_response_model.dart';
 import 'package:green_wheels/src/models/ride/instant_ride_amount_response_model.dart';
 import 'package:green_wheels/src/models/ride/rent_ride_vehicle_model.dart';
@@ -21,6 +22,7 @@ import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.d
 import 'package:green_wheels/src/models/rider/rider_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:green_wheels/src/services/client/http_client_service.dart';
+import 'package:green_wheels/src/services/client/web_socket_service.dart';
 import 'package:green_wheels/src/services/google_maps/autocomplete_prediction_model.dart';
 import 'package:green_wheels/src/services/google_maps/location_service.dart';
 import 'package:green_wheels/theme/colors.dart';
@@ -91,6 +93,7 @@ class HomeScreenController extends GetxController
   var getRiderProfileResponseModel =
       GetRiderProfileResponseModel.fromJson(null).obs;
   var riderModel = RiderModel.fromJson(null).obs;
+  var acceptedRideResponse = Rxn<AcceptedRideRequestModel>();
 
   late TabController tabBarController;
   var selectedTabBar = 0.obs;
@@ -233,9 +236,7 @@ class HomeScreenController extends GetxController
       // Location services are not enabled don't continue
       // accessing the position and request users of the
       // App to enable the location services.
-      ApiProcessorController.errorSnack(
-        "Please enable location services",
-      );
+      ApiProcessorController.errorSnack("Please enable location services");
       return Future.error('Location services are disabled.');
     }
 
@@ -392,147 +393,6 @@ class HomeScreenController extends GetxController
   var isBookingInstantRide = false.obs;
 
   //================ Functions =================\\
-  getRideAmount({
-    String? pickup,
-    String? pickupLat,
-    String? pickupLong,
-    String? destination,
-    String? destinationLat,
-    String? destinationLong,
-  }) async {
-    var url = ApiUrl.baseUrl + ApiUrl.rideAmount;
-
-    var userToken = prefs.getString("userToken");
-
-    var data = {
-      "type": "instant",
-      "pickup_location": {
-        "address": pickup,
-        "lat": pickupLat,
-        "long": pickupLong,
-      },
-      "destination": {
-        "address": destination,
-        "lat": destinationLat,
-        "long": destinationLong,
-      }
-    };
-
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $userToken"
-    };
-
-    //HTTP Client Service
-    http.Response? response =
-        // await HttpClientService.postRequest(url, userToken, data);
-        await HttpClientService.postRequest(url, userToken, data, headers);
-
-    log("Encoded Data: ${jsonEncode(data)}");
-
-    log("URL=> $url\nUSERTOKEN=>$userToken\nData=>$data");
-
-    if (response == null) {
-      return;
-    }
-
-    try {
-      dynamic responseJson;
-
-      responseJson = jsonDecode(response.body);
-
-      log("Response Json=> $responseJson");
-
-      if (response.statusCode == 200) {
-        instantRideAmountResponseModel.value =
-            InstantRideAmountResponseModel.fromJson(responseJson);
-        instantRideData.value = instantRideAmountResponseModel.value.data;
-        priceBreakdown.value =
-            instantRideAmountResponseModel.value.data.priceBreakdown;
-
-        instantRideAmount.value = instantRideData.value.amount;
-
-        calculateReadableTravelTime(
-          priceBreakdown.value.distanceInMeters,
-          totalInstantRideTime.value,
-        );
-
-        await Future.delayed(const Duration(milliseconds: 300));
-
-        // FocusScope.of(Get.context!).unfocus();
-        // FocusManager.instance.primaryFocus?.unfocus();
-      } else {
-        ApiProcessorController.errorSnack("An error occured");
-        log("An error occured, Response body: ${response.body}");
-      }
-    } catch (e) {
-      log("This is the error:$e");
-    }
-  }
-
-  bookInstantRide() async {
-    var url = ApiUrl.baseUrl + ApiUrl.bookInstantRide;
-
-    var userToken = prefs.getString("userToken") ?? "";
-    isBookingInstantRide.value = true;
-
-    Map<String, dynamic> data = {
-      "pickup_location": {
-        "address": pickupLocationEC.text,
-        "lat": pickupLat,
-        "long": pickupLong,
-      },
-      "destination": {
-        "address": destinationEC.text,
-        "lat": destinationLat,
-        "long": destinationLong,
-      },
-      "payment_type": "wallet",
-    };
-
-    log("URL=> $url\nUSERTOKEN=>$userToken\nData=>$data");
-
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $userToken"
-    };
-
-    //HTTP Client Service
-    http.Response? response =
-        // await HttpClientService.postRequest(url, userToken, data);
-        await HttpClientService.postRequest(url, userToken, data, headers);
-
-    if (response == null) {
-      isBookingInstantRide.value = false;
-      return;
-    }
-
-    try {
-      dynamic responseJson;
-
-      responseJson = jsonDecode(response.body);
-
-      log("This is the responseJson: $responseJson\nResponse status code: ${response.statusCode}");
-
-      if (response.statusCode == 201) {
-        ApiProcessorController.successSnack("${responseJson["message"]}");
-        // final webSocketService = ReverbWebSocketService(
-        //   driverUUID: 'your-driver-uuid',
-        //   authToken: userToken,
-        // );
-
-        isBookingInstantRide.value = false;
-        // showSearchingForDriverModalSheet();
-      } else {
-        ApiProcessorController.warningSnack("${responseJson["message"]}");
-        log(responseJson.toString());
-      }
-    } catch (e) {
-      log(e.toString());
-    }
-    isBookingInstantRide.value = false;
-  }
-
   //!================== Goto Google Maps ========================\\
 
   setPickupGoogleMapsLocation() async {
@@ -679,14 +539,164 @@ class HomeScreenController extends GetxController
     }
   }
 
-  //================ on Field Submitted =================\\
-  onFieldSubmitted(value) {
-    submitForm();
+//! Ride Amount
+  getRideAmount({
+    String? pickup,
+    String? pickupLat,
+    String? pickupLong,
+    String? destination,
+    String? destinationLat,
+    String? destinationLong,
+  }) async {
+    var url = ApiUrl.baseUrl + ApiUrl.rideAmount;
+
+    var userToken = prefs.getString("userToken");
+
+    var data = {
+      "type": "instant",
+      "pickup_location": {
+        "address": pickup,
+        "lat": pickupLat,
+        "long": pickupLong,
+      },
+      "destination": {
+        "address": destination,
+        "lat": destinationLat,
+        "long": destinationLong,
+      }
+    };
+
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $userToken"
+    };
+
+    //HTTP Client Service
+    http.Response? response =
+        // await HttpClientService.postRequest(url, userToken, data);
+        await HttpClientService.postRequest(url, userToken, data, headers);
+
+    log("Encoded Data: ${jsonEncode(data)}");
+
+    log("URL=> $url\nUSERTOKEN=>$userToken\nData=>$data");
+
+    if (response == null) {
+      return;
+    }
+
+    try {
+      dynamic responseJson;
+
+      responseJson = jsonDecode(response.body);
+
+      log("Response Json=> $responseJson");
+
+      if (response.statusCode == 200) {
+        instantRideAmountResponseModel.value =
+            InstantRideAmountResponseModel.fromJson(responseJson);
+        instantRideData.value = instantRideAmountResponseModel.value.data;
+        priceBreakdown.value =
+            instantRideAmountResponseModel.value.data.priceBreakdown;
+
+        instantRideAmount.value = instantRideData.value.amount;
+
+        calculateReadableTravelTime(
+          priceBreakdown.value.distanceInMeters,
+          totalInstantRideTime.value,
+        );
+
+        await Future.delayed(const Duration(milliseconds: 300));
+
+        // FocusScope.of(Get.context!).unfocus();
+        // FocusManager.instance.primaryFocus?.unfocus();
+      } else {
+        ApiProcessorController.errorSnack("An error occured");
+        log("An error occured, Response body: ${response.body}");
+      }
+    } catch (e) {
+      log("This is the error:$e");
+    }
   }
 
-//================ Submit Form =================\\
-  Future<void> submitForm() async {
-    // await Future.delayed(const Duration(seconds: 1));
+  //! WebSocket Service instance
+  ReverbWebSocketService? webSocketService;
+
+  Future<void> bookInstantRide() async {
+    var url = ApiUrl.baseUrl + ApiUrl.bookInstantRide;
+
+    var userToken = prefs.getString("userToken") ?? "";
+    isBookingInstantRide.value = true;
+
+    Map<String, dynamic> data = {
+      "pickup_location": {
+        "address": pickupLocationEC.text,
+        "lat": pickupLat,
+        "long": pickupLong,
+      },
+      "destination": {
+        "address": destinationEC.text,
+        "lat": destinationLat,
+        "long": destinationLong,
+      },
+      "payment_type": "wallet",
+    };
+
+    log("URL=> $url\nUSERTOKEN=>$userToken\nData=>$data");
+
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $userToken"
+    };
+
+    //HTTP Client Service
+    http.Response? response =
+        // await HttpClientService.postRequest(url, userToken, data);
+        await HttpClientService.postRequest(url, userToken, data, headers);
+
+    if (response == null) {
+      isBookingInstantRide.value = false;
+      return;
+    }
+
+    try {
+      dynamic responseJson;
+
+      responseJson = jsonDecode(response.body);
+
+      log("This is the responseJson: $responseJson\nResponse status code: ${response.statusCode}");
+
+      if (response.statusCode == 201) {
+        ApiProcessorController.successSnack("${responseJson["message"]}");
+        isBookingInstantRide.value = false;
+
+        webSocketService = ReverbWebSocketService(
+          riderUUID: riderModel.value.riderUuid,
+          authToken: userToken,
+        );
+
+        final websocketIsConnected = await webSocketService!.connect();
+        log("Websocket is connected: $websocketIsConnected");
+
+        if (websocketIsConnected) {
+          showSearchingForDriverModalSheet();
+        } else {
+          webSocketService?.disconnect();
+          webSocketService = null; // Cleanup
+        }
+      } else {
+        ApiProcessorController.warningSnack("${responseJson["message"]}");
+        log(responseJson.toString());
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    isBookingInstantRide.value = false;
+  }
+
+  //! Update ride request data when a new message is received
+  void updateRequestResponse(AcceptedRideRequestModel requestResponse) async {
+    acceptedRideResponse.value = requestResponse;
+    bookDriverFound.value = true;
   }
 
   //============== Progress Indicatior =================\\
@@ -699,7 +709,7 @@ class HomeScreenController extends GetxController
   }
 
 // Start the progress simulation with a Timer
-  void instantRideAwaitDriverResponse() {
+  void bookRideAwaitDriverResponse() {
     progress.value = 0.0;
     driverHasArrived.value = false;
 
@@ -910,7 +920,7 @@ class HomeScreenController extends GetxController
 
     await closePanel();
 
-    instantRideAwaitDriverResponse();
+    bookRideAwaitDriverResponse();
 
     await showModalBottomSheet(
       isScrollControlled: true,

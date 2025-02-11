@@ -5,11 +5,9 @@ import 'package:green_wheels/src/utils/buttons/android/android_outlined_button.d
 import 'package:green_wheels/src/utils/components/time_and_date_section.dart';
 
 import '../../../../src/constants/consts.dart';
-import '../../../../src/utils/components/chat_and_call_section.dart';
 import '../../../../src/utils/components/ride_address_section.dart';
 import '../../../../theme/colors.dart';
 import '../../../src/controllers/app/schedule_trip_controller.dart';
-import '../../../src/controllers/others/url_launcher_controller.dart';
 import '../../../src/utils/components/amount_charge_section.dart';
 import '../../../src/utils/components/default_info_container.dart';
 import '../../../src/utils/components/driver_avatar_name_and_rating.dart';
@@ -39,29 +37,38 @@ class ScheduleTripRideRequestAcceptedModal
         padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                    child: Text(
-                  "Request accepted!",
-                  style: defaultTextStyle(
-                    color: kTextBlackColor,
-                    fontSize: 25,
-                    fontWeight: FontWeight.w400,
-                  ),
-                )),
-                chatAndCallSection(
-                  colorScheme,
-                  chatFunc: () {
-                    UrlLaunchController.sendSms("+2347034922494");
-                  },
-                  callFunc: () {
-                    UrlLaunchController.makePhoneCall("+2347034922494");
-                  },
-                ),
-              ],
+            Text(
+              "Request accepted!",
+              textAlign: TextAlign.start,
+              style: defaultTextStyle(
+                color: kTextBlackColor,
+                fontSize: 25,
+                fontWeight: FontWeight.w400,
+              ),
             ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            // Expanded(
+            //     child: Text(
+            //   "Request accepted!",
+            //   style: defaultTextStyle(
+            //     color: kTextBlackColor,
+            //     fontSize: 25,
+            //     fontWeight: FontWeight.w400,
+            //   ),
+            // )),
+            // chatAndCallSection(
+            //   colorScheme,
+            //   chatFunc: () {
+            //     UrlLaunchController.sendSms("+2347034922494");
+            //   },
+            //   callFunc: () {
+            //     UrlLaunchController.makePhoneCall("+2347034922494");
+            //   },
+            // ),
+            //   ],
+            // ),
             kSizedBox,
             defaultInfoContainer(
               child: Column(

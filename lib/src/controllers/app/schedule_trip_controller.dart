@@ -43,7 +43,7 @@ class ScheduleTripController extends GetxController {
   String? destinationLong;
   DateTime? lastSelectedDate;
   TimeOfDay? lastSelectedTime;
-  Rx<double> rideAmount = 0.0.obs;
+  Rx<double> rideAmount = 200.0.obs;
 
   //================ Booleans =================\\
   var confirmBookingButtonIsEnabled = false.obs;
