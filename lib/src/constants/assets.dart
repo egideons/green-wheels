@@ -50,6 +50,7 @@ class Assets {
   static const personLocationPng = "assets/icons/png/person_location.png";
   static const locationPinPng = "assets/icons/png/location_pin.png";
   static const locationPin1Png = "assets/icons/png/location_pin_1.png";
+  static const vehiclePng = "assets/images/png/vehicle.png";
 
 //======== SVG =========\\
   static const onboarding1Svg = "assets/images/svg/onboarding_1.svg";

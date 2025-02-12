@@ -7,14 +7,22 @@ import '../../../theme/colors.dart';
 
 driverAvatarNameRating(
   ColorScheme colorScheme, {
+  String? driverImage,
   String? driverName,
   int? numOfStars,
-  bool? isUserVerified,
 }) {
   return Row(
     children: [
-      circleAvatarImage(colorScheme, height: 64),
-      kSmallWidthSizedBox,
+      driverImage == null || driverImage.isEmpty
+          ? SizedBox()
+          : circleAvatarImage(
+              colorScheme,
+              height: 64,
+              foregroundImage: NetworkImage(driverImage),
+            ),
+      driverImage == null || driverImage.isEmpty
+          ? SizedBox()
+          : kSmallWidthSizedBox,
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -27,7 +35,7 @@ driverAvatarNameRating(
             ),
           ),
           kSmallSizedBox,
-          starsWidget(colorScheme, numOfStars ?? 0, isUserVerified ?? false),
+          starsWidget(colorScheme, numOfStars ?? 0),
         ],
       ),
     ],

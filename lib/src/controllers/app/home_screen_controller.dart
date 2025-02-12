@@ -75,8 +75,11 @@ class HomeScreenController extends GetxController
   //================ Variables =================\\
   var infoMessage = "".obs;
   var pinnedLocation = "".obs;
-  var riderName = "".obs;
-  Uint8List? markerImage;
+  var driverName = "".obs;
+  var driverPhoneNumber = "".obs;
+  var driverRating = 0.obs;
+  var driverTotalRides = 0.obs;
+  var vehicleImage = Assets.vehiclePng;
   late LatLng draggedLatLng;
   var markers = <Marker>[].obs;
   var locationPinBottomPadding = 50.0.obs;
@@ -358,16 +361,18 @@ class HomeScreenController extends GetxController
   //!============ Book Instant Ride Section ==========================================================>
 
   //================ Variables =================\\
+  Timer? bookRideTimer;
   String pickupLat = "";
   String pickupLong = "";
+  String destinationLat = "";
+  String destinationLong = "";
   var pickupLocation = "".obs;
   var stopLocation1 = "".obs;
   var destinationLocation = "".obs;
-  Timer? bookRideTimer;
-  var progress = .0.obs;
-  var totalInstantRideTime = "".obs;
-  String destinationLat = "";
-  String destinationLong = "";
+  var estimatedInstantRideDistance = "".obs;
+  var paymentType = "Green Wallet".obs;
+  var progress = 0.0.obs;
+  var estimatedInstantRideTime = 0.obs;
   var instantRideAmount = 0.0.obs;
 
   //================ Controllers =================\\
@@ -589,7 +594,7 @@ class HomeScreenController extends GetxController
 
       responseJson = jsonDecode(response.body);
 
-      log("Response Json=> $responseJson");
+      log("$responseJson", name: "Get Ride Amount Response");
 
       if (response.statusCode == 200) {
         instantRideAmountResponseModel.value =
@@ -602,7 +607,7 @@ class HomeScreenController extends GetxController
 
         calculateReadableTravelTime(
           priceBreakdown.value.distanceInMeters,
-          totalInstantRideTime.value,
+          estimatedInstantRideTime.value,
         );
 
         await Future.delayed(const Duration(milliseconds: 300));
@@ -663,7 +668,8 @@ class HomeScreenController extends GetxController
 
       responseJson = jsonDecode(response.body);
 
-      log("This is the responseJson: $responseJson\nResponse status code: ${response.statusCode}");
+      log("This is the responseJson: $responseJson\nResponse status code: ${response.statusCode}",
+          name: "Book Instant Ride");
 
       if (response.statusCode == 201) {
         ApiProcessorController.successSnack("${responseJson["message"]}");
@@ -679,6 +685,7 @@ class HomeScreenController extends GetxController
 
         if (websocketIsConnected) {
           showSearchingForDriverModalSheet();
+          await bookRideAwaitDriverResponseTimer();
         } else {
           webSocketService?.disconnect();
           webSocketService = null; // Cleanup
@@ -693,10 +700,31 @@ class HomeScreenController extends GetxController
     isBookingInstantRide.value = false;
   }
 
+  Future<void> retryBookInstantRide() async {
+    Get.close(0);
+    bookDriverTimerFinished.value = false;
+    await bookInstantRide();
+  }
+
   //! Update ride request data when a new message is received
   void updateRequestResponse(AcceptedRideRequestModel requestResponse) async {
     acceptedRideResponse.value = requestResponse;
+
+    driverName.value =
+        "${acceptedRideResponse.value?.driver.firstName} ${acceptedRideResponse.value?.driver.lastName}";
+    driverPhoneNumber.value = "${acceptedRideResponse.value?.driver.phone}";
+    driverRating.value =
+        ((acceptedRideResponse.value?.driver.rating ?? 0.0).round()).toInt();
+    driverTotalRides.value = acceptedRideResponse.value?.driver.totalRides ?? 0;
+    estimatedInstantRideTime.value =
+        acceptedRideResponse.value?.data.estimatedTime ?? 0;
+    estimatedInstantRideDistance.value =
+        acceptedRideResponse.value?.data.distance ?? "";
+    paymentType.value = acceptedRideResponse.value?.data.paymentType ?? "";
+
+    bookDriverTimerFinished.value = true;
     bookDriverFound.value = true;
+    cancelProgress();
   }
 
   //============== Progress Indicatior =================\\
@@ -708,30 +736,22 @@ class HomeScreenController extends GetxController
     }
   }
 
-// Start the progress simulation with a Timer
-  void bookRideAwaitDriverResponse() {
+  Future<void> bookRideAwaitDriverResponseTimer() async {
     progress.value = 0.0;
-    driverHasArrived.value = false;
+    const totalDuration = 60; // Total time in seconds
+    final startTime = DateTime.now();
 
-    bookRideTimer = Timer.periodic(const Duration(seconds: 1), (bookRideTimer) {
-      if (progress.value < 0.9) {
-        updateProgress(progress.value + 0.1);
-      } else if (progress.value > 0.4 && progress.value < 0.5) {
-        updateProgress(progress.value);
+    bookRideTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final elapsedTime = DateTime.now().difference(startTime).inSeconds;
+      progress.value = (elapsedTime / totalDuration).clamp(0.0, 1.0);
+      progress.refresh(); // Ensure UI updates
+
+      if (elapsedTime >= totalDuration) {
+        progress.value = 1.0;
         bookDriverTimerFinished.value = true;
-        bookDriverFound.value = true;
-
-        log("Driver found: ${bookDriverFound.value}");
-        cancelProgress();
-      } else {
-        // Directly set progress to 1.0 on the last step
-        updateProgress(1.0);
-        bookDriverTimerFinished.value = true;
-        bookDriverFound.value = true;
-
         log("Timer finished: ${bookDriverTimerFinished.value}");
-        log("Driver found: ${bookDriverFound.value}");
         cancelProgress();
+        timer.cancel(); // Stop the timer when done
       }
     });
   }
@@ -920,8 +940,6 @@ class HomeScreenController extends GetxController
 
     await closePanel();
 
-    bookRideAwaitDriverResponse();
-
     await showModalBottomSheet(
       isScrollControlled: true,
       showDragHandle: true,
@@ -1006,9 +1024,9 @@ class HomeScreenController extends GetxController
       () => const RideScreen(),
       routeName: "/ride",
       arguments: {
-        "riderName": riderName.value,
+        "driverName": driverName.value,
         "rideAmount": instantRideData.value.amount,
-        "rideTime": totalInstantRideTime.value,
+        "rideTime": estimatedInstantRideTime.value,
         "pickupLocation": pickupLocationEC.text,
         "destination": destinationEC.text,
         "pickupLat": pickupLat,

@@ -63,7 +63,9 @@ class SchoolCommuteSearchDriverModal extends GetView<SchoolCommuteController> {
                     isEnabled: false,
                   ),
                   kSizedBox,
-                  paymentTypeSection(),
+                  paymentTypeSection(
+                    paymentType: controller.paymentType.value,
+                  ),
                 ],
               ),
             ),

@@ -119,6 +119,53 @@ defaultTextStyle({
       height: height,
     );
 
+String convertSecondsToAppropriateTime(int seconds) {
+  if (seconds >= 3600) {
+    // Calculate hours and remaining minutes
+    int hours = seconds ~/ 3600;
+    int remainingSeconds = seconds % 3600;
+    int minutes = remainingSeconds ~/ 60;
+
+    if (minutes > 0) {
+      return "$hours hrs $minutes mins";
+    } else {
+      return "$hours hrs";
+    }
+  } else if (seconds >= 60) {
+    // Calculate minutes and remaining seconds
+    int minutes = seconds ~/ 60;
+    int remainingSeconds = seconds % 60;
+
+    if (remainingSeconds > 0) {
+      return "$minutes mins $remainingSeconds secs";
+    } else {
+      return "$minutes mins";
+    }
+  } else {
+    // Keep in seconds if less than 60 seconds
+    return "$seconds secs";
+  }
+}
+
+String convertDistanceDetailed(double meters) {
+  const int metersInMile = 1609;
+  const int metersInKilometer = 1000;
+
+  int miles = meters ~/ metersInMile;
+  meters %= metersInMile; // Remaining meters after extracting miles
+
+  int kilometers = meters ~/ metersInKilometer;
+  meters %= metersInKilometer; // Remaining meters after extracting kilometers
+
+  List<String> result = [];
+
+  if (miles > 0) result.add('$miles mi');
+  if (kilometers > 0) result.add('$kilometers km');
+  if (meters > 0) result.add('${meters.toStringAsFixed(0)} m');
+
+  return result.join(' ');
+}
+
 //!===== Calculate Readable Travel Time ===========!\\
 String calculateReadableTravelTime(
     double distanceInMeters, totalInstantRideTime) {

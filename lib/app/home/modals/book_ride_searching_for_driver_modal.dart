@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
@@ -7,7 +8,6 @@ import 'package:green_wheels/theme/colors.dart';
 
 import '../../../../src/controllers/app/home_screen_controller.dart';
 import '../../../../src/utils/components/default_info_container.dart';
-import '../../../../src/utils/components/estimated_travel_time.dart';
 import '../../../src/constants/consts.dart';
 import '../../../src/utils/buttons/android/android_outlined_button.dart';
 
@@ -30,97 +30,118 @@ class BookRideSearchingForDriverModal extends GetView<HomeScreenController> {
           ),
         ),
       ),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            defaultInfoContainer(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  amountChargeSection(
-                    colorScheme,
-                    amount: controller.instantRideData.value.amount,
-                  ),
-                  kSizedBox,
-                  estimatedTravelTime(
-                    colorScheme,
-                    estimatedTime: controller.totalInstantRideTime.value,
-                  ),
-                  kSizedBox,
-                  paymentTypeSection(),
-                ],
-              ),
-            ),
-            kSizedBox,
-            Obx(() {
-              return Container(
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    side: const BorderSide(
-                      color: kFrameBackgroundColor,
+      child: Obx(() {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              defaultInfoContainer(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    amountChargeSection(
+                      colorScheme,
+                      amount: controller.instantRideData.value.amount,
                     ),
-                  ),
+                    kSizedBox,
+                    // estimatedTravelTime(
+                    //   colorScheme,
+                    //   estimatedTime: controller.totalInstantRideTime.value,
+                    // ),
+                    // kSizedBox,
+                    paymentTypeSection(
+                      paymentType: controller.paymentType.value,
+                    ),
+                  ],
                 ),
-                child: LinearProgressIndicator(
-                  value: controller.progress.value,
-                  minHeight: 10,
-                  borderRadius: BorderRadius.circular(8),
-                  backgroundColor: kFrameBackgroundColor,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    colorScheme.primary,
-                  ),
-                ),
-              );
-            }),
-            kHalfSizedBox,
-            Obx(() {
-              return controller.bookDriverFound.value
-                  ? Text(
-                      "Driver found!",
-                      textAlign: TextAlign.start,
-                      style: defaultTextStyle(
-                        color: kTextBlackColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                      ),
+              ),
+              kSizedBox,
+
+              // Obx(() {
+              //   return Container(
+              //     decoration: ShapeDecoration(
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(8),
+              //         side: const BorderSide(
+              //           color: kFrameBackgroundColor,
+              //         ),
+              //       ),
+              //     ),
+              //     child: LinearProgressIndicator(
+              //       value: controller.progress.value,
+              //       minHeight: 10,
+              //       borderRadius: BorderRadius.circular(8),
+              //       backgroundColor: kFrameBackgroundColor,
+              //       valueColor: AlwaysStoppedAnimation<Color>(
+              //         colorScheme.primary,
+              //       ),
+              //     ),
+              //   );
+              // }),
+              // kHalfSizedBox,
+              controller.bookDriverFound.value
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Driver found",
+                          textAlign: TextAlign.center,
+                          style: defaultTextStyle(
+                            color: kTextBlackColor,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        kSmallWidthSizedBox,
+                        Icon(Icons.check_circle, color: kSuccessColor)
+                      ],
                     )
-                  : Text(
-                      "Searching for a Driver",
-                      textAlign: TextAlign.start,
-                      style: defaultTextStyle(
-                        color: kTextBlackColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    );
-            }),
-            kSizedBox,
-            Obx(
-              () {
-                return controller.bookDriverTimerFinished.value &&
-                        controller.bookDriverFound.value
-                    ? AndroidElevatedButton(
-                        title: "Continue",
-                        onPressed: controller.showBookRideRequestAcceptedModal,
-                      )
-                    : AndroidElevatedButton(
-                        title: "Retry",
-                        onPressed: controller.bookRideAwaitDriverResponse,
-                      );
-              },
-            ),
-            kSizedBox,
-            AndroidOutlinedButton(
-              title: "Cancel request",
-              onPressed: controller.cancelBookRideDriverRequest,
-            ),
-            kSizedBox,
-          ],
-        ),
-      ),
+                  : controller.bookDriverTimerFinished.value
+                      ? SizedBox()
+                      : Text(
+                          "Searching for a Driver",
+                          textAlign: TextAlign.center,
+                          style: defaultTextStyle(
+                            color: kTextBlackColor,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+              kSmallSizedBox,
+              controller.bookDriverFound.value
+                  ? SizedBox()
+                  : controller.bookDriverTimerFinished.value
+                      ? SizedBox()
+                      : Center(
+                          child: CupertinoActivityIndicator(),
+                        ),
+              kSizedBox,
+              controller.bookDriverFound.value
+                  ? SizedBox()
+                  : controller.bookDriverTimerFinished.value
+                      ? AndroidElevatedButton(
+                          title: "Retry",
+                          onPressed: controller.retryBookInstantRide,
+                        )
+                      : SizedBox(),
+
+              controller.bookDriverFound.value
+                  ? AndroidElevatedButton(
+                      title: "Continue",
+                      onPressed: controller.showBookRideRequestAcceptedModal,
+                    )
+                  : SizedBox(),
+              kSizedBox,
+              AndroidOutlinedButton(
+                title: "Cancel request",
+                onPressed: controller.cancelBookRideDriverRequest,
+              ),
+              kSizedBox,
+            ],
+          ),
+        );
+      }),
     );
   }
 }

@@ -34,7 +34,8 @@ class RideController extends GetxController {
 
   //================ Variables =================\\
   var rideInfo = "Trip has started".obs;
-  var riderName = Get.arguments?["riderName"] ?? "";
+  var driverName = Get.arguments?["driverName"] ?? "";
+  var driverRating = Get.arguments?["driverRating"] ?? "";
   var rideAmount = Get.arguments?["rideAmount"] ?? 0.0;
   var rideTime = Get.arguments?["rideTime"] ?? "";
   var pickupLocation = Get.arguments?["pickupLocation"] ?? "";
@@ -43,6 +44,7 @@ class RideController extends GetxController {
   var pickupLong = Get.arguments?["pickupLong"] ?? "";
   var destinationLat = Get.arguments?["destinationLat"] ?? "";
   var destinationLong = Get.arguments?["destinationLong"] ?? "";
+  var paymentType = Get.arguments?["paymentType"] ?? "";
 
   Uint8List? markerImage;
   late LatLng draggedLatLng;

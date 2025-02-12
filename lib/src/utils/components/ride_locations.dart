@@ -14,7 +14,6 @@ rideLocations({
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 2),
         Text(
           pickup ?? "",
           softWrap: true,
@@ -26,25 +25,26 @@ rideLocations({
             fontWeight: FontWeight.w400,
           ),
         ),
-        stopLocationIsVisible == true
-            ? const SizedBox(height: 36)
-            : const SizedBox(),
-        stopLocationIsVisible == true
-            ? Text(
-                stopLocation ?? "",
-                softWrap: true,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: defaultTextStyle(
-                  color: kBlackColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                ),
-              )
-            : const SizedBox(),
-        stopLocationIsVisible == true
-            ? const SizedBox(height: 30)
-            : const SizedBox(height: 26),
+        // stopLocationIsVisible == true
+        //     ? const SizedBox(height: 36)
+        //     : const SizedBox(),
+        // stopLocationIsVisible == true
+        //     ? Text(
+        //         stopLocation ?? "",
+        //         softWrap: true,
+        //         maxLines: 2,
+        //         overflow: TextOverflow.ellipsis,
+        //         style: defaultTextStyle(
+        //           color: kBlackColor,
+        //           fontSize: 16,
+        //           fontWeight: FontWeight.w400,
+        //         ),
+        //       )
+        //     : const SizedBox(),
+        // stopLocationIsVisible == true
+        //     ? const SizedBox(height: 30)
+        //     :
+        const SizedBox(height: 10),
         Text(
           destination ?? "",
           softWrap: true,

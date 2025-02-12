@@ -66,7 +66,9 @@ class ScheduleTripSearchDriverModal extends GetView<ScheduleTripController> {
                     isEnabled: false,
                   ),
                   kSizedBox,
-                  paymentTypeSection(),
+                  paymentTypeSection(
+                    paymentType: controller.paymentType.value,
+                  ),
                 ],
               ),
             ),

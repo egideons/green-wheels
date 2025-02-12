@@ -86,7 +86,6 @@ class ScheduleTripRideRequestAcceptedModal
                     colorScheme,
                     driverName: "John Kennedy",
                     numOfStars: 4,
-                    isUserVerified: true,
                   ),
                   kSizedBox,
                   Row(

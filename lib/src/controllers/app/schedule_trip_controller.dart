@@ -44,6 +44,7 @@ class ScheduleTripController extends GetxController {
   DateTime? lastSelectedDate;
   TimeOfDay? lastSelectedTime;
   Rx<double> rideAmount = 200.0.obs;
+  var paymentType = "Green Wallet".obs;
 
   //================ Booleans =================\\
   var confirmBookingButtonIsEnabled = false.obs;

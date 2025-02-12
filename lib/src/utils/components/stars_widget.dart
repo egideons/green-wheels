@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../theme/colors.dart';
 
-starsWidget(ColorScheme colorScheme, int star, bool verified) {
+starsWidget(ColorScheme colorScheme, int star) {
   return Builder(
     builder: (context) {
       List<Widget> stars = [];

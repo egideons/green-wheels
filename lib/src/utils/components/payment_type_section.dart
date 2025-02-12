@@ -3,7 +3,7 @@ import 'package:green_wheels/theme/colors.dart';
 
 import '../../constants/consts.dart';
 
-paymentTypeSection() {
+paymentTypeSection({required String paymentType}) {
   return Row(
     mainAxisSize: MainAxisSize.max,
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -13,19 +13,19 @@ paymentTypeSection() {
           "Payment Type",
           style: defaultTextStyle(
             color: kTextBlackColor,
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
         ),
       ),
       Expanded(
         child: Text(
-          "Green Wallet",
+          paymentType.toUpperCase(),
           textAlign: TextAlign.end,
           style: defaultTextStyle(
-            color: kTextBlackColor,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
+            color: kPrimaryColor,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),

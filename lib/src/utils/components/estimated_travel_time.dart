@@ -10,11 +10,10 @@ estimatedTravelTime(ColorScheme colorScheme, {String? estimatedTime}) {
         "Estimated Travel time",
         style: defaultTextStyle(
           color: colorScheme.primary,
-          fontSize: 16,
+          fontSize: 14,
           fontWeight: FontWeight.w400,
         ),
       ),
-      kHalfWidthSizedBox,
       Expanded(
         child: Text(
           "~${estimatedTime ?? ""}",

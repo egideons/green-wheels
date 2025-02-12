@@ -25,7 +25,9 @@ bookRideSearchForDriverSection(
       kHalfSizedBox,
       defaultInfoContainer(
         padding: const EdgeInsets.all(10),
-        child: paymentTypeSection(),
+        child: paymentTypeSection(
+          paymentType: controller.paymentType.value,
+        ),
       ),
       kSizedBox,
       AndroidElevatedButton(

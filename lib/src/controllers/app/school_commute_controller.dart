@@ -29,6 +29,7 @@ class SchoolCommuteController extends GetxController {
   TimeOfDay? lastSelectedPickupTime;
   TimeOfDay? lastSelectedDropOffTime;
   Rx<double> rideAmount = 8000.0.obs;
+  var paymentType = "Green Wallet".obs;
 
   //================ Booleans =================\\
   var isPickupLocationTextFieldActive = false.obs;

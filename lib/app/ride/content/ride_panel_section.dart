@@ -62,9 +62,8 @@ ridePanelSection(
                         ),
                         driverAvatarNameRating(
                           colorScheme,
-                          driverName: controller.riderName,
-                          numOfStars: 4,
-                          isUserVerified: true,
+                          driverName: controller.driverName,
+                          numOfStars: controller.driverRating,
                         ),
                         kSizedBox,
                         Row(

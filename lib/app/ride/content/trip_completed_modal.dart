@@ -67,7 +67,6 @@ class TripCompletedModal extends GetView<RideController> {
                     colorScheme,
                     driverName: "John Kennedy",
                     numOfStars: 4,
-                    isUserVerified: true,
                   ),
                   kSizedBox,
                   Row(
@@ -143,7 +142,9 @@ class TripCompletedModal extends GetView<RideController> {
                     estimatedTime: controller.rideTime,
                   ),
                   kSizedBox,
-                  paymentTypeSection(),
+                  paymentTypeSection(
+                    paymentType: controller.paymentType.value,
+                  ),
                 ],
               ),
             ),
