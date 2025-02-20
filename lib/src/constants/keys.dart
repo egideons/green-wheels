@@ -8,4 +8,9 @@ class Keys {
       dotenv.env["PayStackTestPublicKey"] ?? "";
   static String? paystackTestSecretKey =
       dotenv.env["PayStackTestSecretKey"] ?? "";
+
+  static String? webSocketAppKey = dotenv.env["WebSocketAppKey"] ?? "";
+
+  static String? googleMapsApiKey = dotenv.env["GoogleMapsAPIKey"] ?? "";
+  static String? googlePlacesApiKey = dotenv.env["GooglePlacesAPIKey"] ?? "";
 }

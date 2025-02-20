@@ -1,19 +1,19 @@
 import 'dart:convert' as convert;
 import 'dart:developer';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:green_wheels/src/constants/keys.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:green_wheels/src/services/google_maps/autocomplete_prediction_model.dart';
 import 'package:green_wheels/src/services/google_maps/places_auto_complete_model.dart';
 import 'package:http/http.dart' as http;
 
-class LocationService {
-  var googlePlacesApiKey = dotenv.env['GooglePlacesAPIKey'];
+var googlePlacesApiKey = Keys.googleMapsApiKey;
 
+class LocationService {
   Future<String> getPlaceId(String query) async {
     final String url =
         "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=$query&inputtype=textquery&key=$googlePlacesApiKey";
@@ -64,9 +64,7 @@ void googlePlaceAutoComplete(
   String query,
   List<GooglePlaceAutoCompletePredictionModel> placePredictions,
 ) async {
-  var googlePlacesApiKey = dotenv.env['GooglePlacesAPIKey'];
-
-  log("Google Maps: $googlePlacesApiKey");
+  log("$googlePlacesApiKey", name: "Google AutoComplete Places Api Key");
 
   Uri uri = Uri.https(
       "maps.googleapis.com",
@@ -99,60 +97,6 @@ Future<List> parseLatLng(String newLocation) async {
   return [latitude.toString(), longitude.toString()];
 }
 
-// void getPolyPoints({
-//   double? destinationLat,
-//   double? destinationLong,
-//   double? pickupLat,
-//   double? pickupLong,
-//   List<LatLng>? polylineCoordinates,
-// }) async {
-//   var googlePlacesAPIKey = dotenv.env['GooglePlacesAPIKey'];
-
-//   List<LatLng> polylineCoordinatesTemp = [];
-
-//   // log("Destination Lat: $destinationLat, Destination Long: $destinationLong, Pickup Lat: $pickupLat, Pickup Long: $pickupLong, Polyline Coordinates: $polylineCoordinates");
-
-//   PolylinePoints polylinePoints = PolylinePoints();
-//   PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-//     googleApiKey: googlePlacesAPIKey,
-//     // googleApiKey: "AIzaSyABRQIbm3Dl4x8TKq_6Ht3PaNllH_8yuwo",
-//     request: PolylineRequest(
-//       origin: PointLatLng(pickupLat!, pickupLong!),
-//       destination: PointLatLng(destinationLat!, destinationLong!),
-//       mode: TravelMode.driving,
-
-//       // wayPoints: [PolylineWayPoint(location: "Sabo, Yaba Lagos Nigeria")],
-//     ),
-//   );
-
-//   if (result.points.isNotEmpty) {
-//     for (var point in result.points) {
-//       polylineCoordinatesTemp.add(LatLng(point.latitude, point.longitude));
-//     }
-//   }
-
-//   result = await polylinePoints.getRouteBetweenCoordinates(
-//     googleApiKey: googlePlacesAPIKey,
-//     // googleApiKey: "AIzaSyABRQIbm3Dl4x8TKq_6Ht3PaNllH_8yuwo",
-//     request: PolylineRequest(
-//       origin: PointLatLng(pickupLat, pickupLong),
-//       destination: PointLatLng(destinationLat, destinationLong),
-//       mode: TravelMode.driving,
-//       // wayPoints: [PolylineWayPoint(location: "Sabo, Yaba Lagos Nigeria")],
-//     ),
-//   );
-
-//   if (result.points.isNotEmpty) {
-//     for (var point in result.points) {
-//       polylineCoordinatesTemp.add(LatLng(point.latitude, point.longitude));
-//     }
-
-//     polylineCoordinates = polylineCoordinatesTemp;
-
-//     // await Future.delayed(const Duration(seconds: 1));
-//     // log("Polyline Coordinates: $polylineCoordinates, Polyline Coordinates 0: $polylineCoordinatesTemp");
-//   }
-
 void getPolyPoints({
   double? destinationLat,
   double? destinationLong,
@@ -161,13 +105,13 @@ void getPolyPoints({
   RxList<LatLng>? polylineCoordinates,
   var alternatives = false,
 }) async {
-  var googlePlacesAPIKey = dotenv.env['GooglePlacesAPIKey'];
+  var googlePlacesApiKey = Keys.googleMapsApiKey;
 
   List<LatLng> polylineCoordinatesTemp = [];
 
   PolylinePoints polylinePoints = PolylinePoints();
   PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-    googleApiKey: googlePlacesAPIKey,
+    googleApiKey: googlePlacesApiKey,
     request: PolylineRequest(
       origin: PointLatLng(pickupLat!, pickupLong!),
       destination: PointLatLng(destinationLat!, destinationLong!),

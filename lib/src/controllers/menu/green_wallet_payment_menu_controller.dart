@@ -196,9 +196,9 @@ class GreenWalletPaymentMenuController extends GetxController {
         String reference =
             "GreenWheels_${DateTime.now().microsecondsSinceEpoch}";
 
-        var paystackPublicKey = Keys.paystackTestPublicKey ?? "";
+        var paystackPublicKey = Keys.paystackPublicKey ?? "";
 
-        var payStackSecretKey = Keys.paystackTestSecretKey ?? "";
+        var payStackSecretKey = Keys.paystackSecretKey ?? "";
         var email = riderModel.value.email;
 
         log("Email: $email ");

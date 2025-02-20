@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:green_wheels/src/constants/keys.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:place_picker_google/place_picker_google.dart';
 
@@ -27,7 +27,7 @@ class GoogleMapsController extends GetxController {
   String? pickedUpLat;
   String? pickedUpLong;
   var pinnedLocation = "".obs;
-  var googlePlacesApiKey = dotenv.env['GooglePlacesAPIKey'];
+  var googlePlacesApiKey = Keys.googlePlacesApiKey;
 
   //!================ Controllers =================\\
   final Completer<GoogleMapController> _googleMapController = Completer();

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:green_wheels/src/constants/keys.dart';
 import 'package:green_wheels/src/controllers/app/home_screen_controller.dart';
 import 'package:green_wheels/src/models/ride/accepted_ride_request_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
@@ -19,7 +20,7 @@ class ReverbWebSocketService {
     required this.authToken,
   });
 
-  var webSocketAppKey = dotenv.env["WebSocketAppKey"];
+  var webSocketAppKey = Keys.webSocketAppKey;
 
   Future<bool> connect() async {
     try {
