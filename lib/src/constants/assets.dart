@@ -39,6 +39,7 @@ class Assets {
       "assets/icons/svg/speedometer_outline.svg";
   static const accelerometerOutlineSvg =
       "assets/icons/svg/accelerometer_outline.svg";
+  static const emptyBoxSvg = "assets/icons/svg/empty-box-icon.svg";
 
 //=================== Images ===================\\
 

@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:green_wheels/app/onboarding/content/page_text_content.dart';
 import 'package:green_wheels/src/constants/consts.dart';
 import 'package:green_wheels/src/utils/components/my_app_bar.dart';
-import 'package:green_wheels/theme/colors.dart';
 
 import '../../../../src/controllers/others/onboarding_controller.dart';
 import '../../content/bottom_buttons.dart';
@@ -18,7 +17,7 @@ class OnboardingScaffold extends GetView<OnboardingController> {
     var media = MediaQuery.of(context).size;
     var colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: kWhiteColor,
+      // backgroundColor: kWhiteColor,
       appBar: myAppBar(
         colorScheme,
         media,

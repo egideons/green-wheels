@@ -23,8 +23,7 @@ class FundWalletMenuScaffold extends GetView<GreenWalletPaymentMenuController> {
     Get.put(SuccessScreenController());
     // bool isProccessing = true;
     return GestureDetector(
-      // onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
-      // absorbing: false,
+      onTap: (() => FocusManager.instance.primaryFocus?.unfocus()),
       child: Scaffold(
         backgroundColor: colorScheme.surface,
         appBar: myAppBar(colorScheme, media, title: "Fund Wallet"),

@@ -182,7 +182,6 @@ class GreenWalletPaymentMenuController extends GetxController {
   Future<void> fundWalletWithPayStack(BuildContext context) async {
     //Form Validation
     if (fundWalletFormkey.currentState!.validate()) {
-      // fundWalletFormkey.currentState!.save();
       if (amountEC.text.isEmpty) {
         ApiProcessorController.errorSnack("Please enter an amount");
         return;
@@ -192,60 +191,60 @@ class GreenWalletPaymentMenuController extends GetxController {
       }
 
       isFunding.value = true;
+      String reference = "GreenWheels_${DateTime.now().microsecondsSinceEpoch}";
+
+      var paystackTestSecretKey = Keys.paystackTestSecretKey ?? "";
+      var paystackSecretKey = Keys.paystackSecretKey ?? "";
+      var email = riderModel.value.email;
+
+      log("Email: $email ");
+
+      log("Paystack Secret Key: $paystackSecretKey ");
+
+      final request = PaystackTransactionRequest(
+        reference: reference,
+        secretKey: paystackSecretKey,
+        // secretKey: paystackTestSecretKey,
+        email: riderModel.value.email,
+        amount: double.tryParse(unformattedAmountText.value)! * 100,
+        currency: PaystackCurrency.ngn,
+        channel: [
+          PaystackPaymentChannel.mobileMoney,
+          PaystackPaymentChannel.card,
+          PaystackPaymentChannel.ussd,
+          PaystackPaymentChannel.bankTransfer,
+          PaystackPaymentChannel.bank,
+          PaystackPaymentChannel.qr,
+          PaystackPaymentChannel.eft,
+        ],
+      );
+
+      final initializedTransaction =
+          await PaymentService.initializeTransaction(request);
+
+      if (!initializedTransaction.status) {
+        ApiProcessorController.warningSnack(initializedTransaction.message);
+        isFunding.value = false;
+        return;
+      }
+      ApiProcessorController.normalSnack(
+        "Please make sure to close the page after the transaction.",
+        duration: Duration(seconds: 4),
+      );
+
+      await PaymentService.showPaymentModal(
+        context,
+        transaction: initializedTransaction,
+        callbackUrl: '',
+        onClosing: () {
+          Get.close(0);
+        },
+      );
+
       try {
-        String reference =
-            "GreenWheels_${DateTime.now().microsecondsSinceEpoch}";
-
-        var paystackPublicKey = Keys.paystackPublicKey ?? "";
-
-        var payStackSecretKey = Keys.paystackSecretKey ?? "";
-        var email = riderModel.value.email;
-
-        log("Email: $email ");
-        log("Paystack Secret Key: $paystackPublicKey ");
-        log("Paystack Secret Key: $payStackSecretKey ");
-
-        final request = PaystackTransactionRequest(
-          reference: reference,
-          secretKey: payStackSecretKey,
-          email: riderModel.value.email,
-          amount: double.tryParse(unformattedAmountText.value)! * 100,
-          currency: PaystackCurrency.ngn,
-          channel: [
-            PaystackPaymentChannel.mobileMoney,
-            PaystackPaymentChannel.card,
-            PaystackPaymentChannel.ussd,
-            PaystackPaymentChannel.bankTransfer,
-            PaystackPaymentChannel.bank,
-            PaystackPaymentChannel.qr,
-            PaystackPaymentChannel.eft,
-          ],
-        );
-
-        final initializedTransaction =
-            await PaymentService.initializeTransaction(request);
-
-        if (!initializedTransaction.status) {
-          ApiProcessorController.warningSnack(initializedTransaction.message);
-          isFunding.value = false;
-          return;
-        }
-        ApiProcessorController.normalSnack(
-          "Please make sure to close the page after the transaction.",
-          duration: Duration(seconds: 3),
-        );
-
-        await PaymentService.showPaymentModal(
-          context,
-          transaction: initializedTransaction,
-          callbackUrl: '',
-          onClosing: () {
-            Navigator.pop(context);
-          },
-        );
-
         final response = await PaymentService.verifyTransaction(
-          paystackSecretKey: payStackSecretKey,
+          paystackSecretKey: paystackSecretKey,
+          // paystackSecretKey: paystackTestSecretKey,
           initializedTransaction.data?.reference ?? request.reference,
         );
 
@@ -256,8 +255,8 @@ class GreenWalletPaymentMenuController extends GetxController {
 
           if (walletIsFunded) {
             isFunding.value = false;
-            //           //Show toast to notify the user of the transaction status
-            // ApiProcessorController.successSnack("Transaction Successful");
+            //Show toast to notify the user of the transaction status
+            ApiProcessorController.successSnack("Transaction Successful");
 
             Get.off(
               () => SuccessScreen(
