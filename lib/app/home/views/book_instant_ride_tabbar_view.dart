@@ -25,10 +25,11 @@ bookInstantRideTabBarView(
                   colorScheme,
                   controller,
                 ),
+                SizedBox(height: media.height * .4),
               ];
             }
             return <Widget>[
-              SizedBox(height: media.height * .6),
+              SizedBox(height: media.height * .4),
             ];
           }(),
         );

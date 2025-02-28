@@ -11,7 +11,7 @@ import 'package:green_wheels/src/services/google_maps/autocomplete_prediction_mo
 import 'package:green_wheels/src/services/google_maps/places_auto_complete_model.dart';
 import 'package:http/http.dart' as http;
 
-var googlePlacesApiKey = Keys.googleMapsApiKey;
+var googlePlacesApiKey = Keys.googlePlacesApiKey;
 
 class LocationService {
   Future<String> getPlaceId(String query) async {
@@ -105,9 +105,9 @@ void getPolyPoints({
   RxList<LatLng>? polylineCoordinates,
   var alternatives = false,
 }) async {
-  var googlePlacesApiKey = Keys.googleMapsApiKey;
-
   List<LatLng> polylineCoordinatesTemp = [];
+
+  log(googlePlacesApiKey.toString(), name: "Google Places API Key");
 
   PolylinePoints polylinePoints = PolylinePoints();
   PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(

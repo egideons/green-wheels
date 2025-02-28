@@ -23,7 +23,7 @@ class RideScreenScaffold extends GetView<RideController> {
         builder: (controller) {
           return SafeArea(
             child: SlidingUpPanel(
-              controller: controller.panelController,
+              controller: controller.homePanelController,
               maxHeight: media.height * .52,
               backdropTapClosesPanel: true,
               minHeight: media.height * .26,

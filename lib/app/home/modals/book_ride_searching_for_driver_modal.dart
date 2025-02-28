@@ -129,7 +129,7 @@ class BookRideSearchingForDriverModal extends GetView<HomeScreenController> {
               controller.bookDriverFound.value
                   ? AndroidElevatedButton(
                       title: "Continue",
-                      onPressed: controller.showBookRideRequestAcceptedModal,
+                      onPressed: controller.showBookRideRequestAcceptedPanel,
                     )
                   : SizedBox(),
               kSizedBox,

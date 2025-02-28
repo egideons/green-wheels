@@ -71,7 +71,7 @@ class RideController extends GetxController {
   //================ Controllers =================\\
   final Completer<GoogleMapController> _googleMapController = Completer();
   GoogleMapController? newGoogleMapController;
-  var panelController = PanelController();
+  var homePanelController = PanelController();
 
   static const CameraPosition kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),

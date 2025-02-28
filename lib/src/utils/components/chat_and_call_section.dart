@@ -7,11 +7,14 @@ chatAndCallSection(
   ColorScheme colorScheme, {
   void Function()? chatFunc,
   void Function()? callFunc,
+  String? chatToolTip,
+  String? callToolTip,
 }) {
   return Row(
     children: [
       IconButton(
         onPressed: chatFunc ?? () {},
+        tooltip: chatToolTip,
         style: IconButton.styleFrom(
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.secondary,
@@ -25,6 +28,7 @@ chatAndCallSection(
       kSmallWidthSizedBox,
       IconButton(
         onPressed: callFunc ?? () {},
+        tooltip: callToolTip,
         style: IconButton.styleFrom(
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.secondary,

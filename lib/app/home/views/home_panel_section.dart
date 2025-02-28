@@ -112,26 +112,28 @@ homePanelSection(
                       ),
                     ),
                     kSizedBox,
-                    Obx(() {
-                      switch (controller.selectedTabBar.value) {
-                        case 0:
-                          return bookInstantRideTabBarView(
-                            media,
-                            colorScheme,
-                            controller,
-                          );
-                        case 1:
-                          return scheduleTripTabBarView(controller);
-                        case 2:
-                          return rentRideTabBarView(
-                            media,
-                            colorScheme,
-                            controller,
-                          );
-                        default:
-                          return Container(); // Handle unexpected values
-                      }
-                    }),
+                    Obx(
+                      () {
+                        switch (controller.selectedTabBar.value) {
+                          case 0:
+                            return bookInstantRideTabBarView(
+                              media,
+                              colorScheme,
+                              controller,
+                            );
+                          case 1:
+                            return scheduleTripTabBarView(controller);
+                          case 2:
+                            return rentRideTabBarView(
+                              media,
+                              colorScheme,
+                              controller,
+                            );
+                          default:
+                            return Container(); // Handle unexpected values
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),

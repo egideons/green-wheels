@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/app/home/modals/book_ride_request_accepted_panel.dart';
 import 'package:green_wheels/theme/colors.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -20,14 +21,13 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
       key: controller.scaffoldKey,
       extendBody: true,
       appBar: AppBar(toolbarHeight: 0),
-      body: GetBuilder<HomeScreenController>(
-        init: HomeScreenController(),
-        builder: (controller) {
+      body: Obx(
+        () {
           return SafeArea(
             child: Stack(
               children: [
                 SlidingUpPanel(
-                  controller: controller.panelController,
+                  controller: controller.homePanelController,
                   maxHeight: size.height * .8,
                   backdropTapClosesPanel: true,
                   minHeight: size.height * .2,
@@ -41,15 +41,6 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
                     topRight: Radius.circular(32),
                   ),
                   body: homeGoogleMap(controller, colorScheme),
-                  // panelBuilder: (sc) {
-                  //   return homePanelSection(
-                  //     colorScheme,
-                  //     size,
-                  //     context,
-                  //     // sc,
-                  //   );
-                  // },
-
                   panel: homePanelSection(
                     colorScheme,
                     size,
@@ -57,6 +48,23 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
                     controller,
                   ),
                 ),
+                if (controller.ridePanelIsVisible.value)
+                  SlidingUpPanel(
+                    controller: controller.ridePanelController,
+                    maxHeight: size.height * .8,
+                    backdropTapClosesPanel: true,
+                    minHeight: size.height * .2,
+                    backdropEnabled: true,
+                    defaultPanelState: PanelState.CLOSED,
+                    panelSnapping: false,
+                    backdropColor: kTransparentColor,
+                    backdropOpacity: 0,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(32),
+                      topRight: Radius.circular(32),
+                    ),
+                    panel: BookRideRequestAcceptedPanel(),
+                  ),
                 Positioned(
                   top: 15,
                   left: 15,

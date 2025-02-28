@@ -8,14 +8,12 @@ paymentTypeSection({required String paymentType}) {
     mainAxisSize: MainAxisSize.max,
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      Expanded(
-        child: Text(
-          "Payment Type",
-          style: defaultTextStyle(
-            color: kTextBlackColor,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
+      Text(
+        "Payment Type",
+        style: defaultTextStyle(
+          color: kTextBlackColor,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
         ),
       ),
       Expanded(

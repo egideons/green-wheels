@@ -5,6 +5,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:green_wheels/src/constants/keys.dart';
 import 'package:green_wheels/src/controllers/app/home_screen_controller.dart';
 import 'package:green_wheels/src/models/ride/accepted_ride_request_model.dart';
+import 'package:green_wheels/src/models/ride/driver_arrived_response_model.dart';
+import 'package:green_wheels/src/models/ride/driver_location_updates_response_model.dart';
+import 'package:green_wheels/src/models/ride/ride_started_response_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -54,8 +57,9 @@ class ReverbWebSocketService {
         },
       );
 
-      //! WebSocket is connected - Subscribe to ride channel
-      subscribeToRideChannel();
+      //! WebSocket is connected - Subscribe to Channels
+      subscribeToRideRequestChannel();
+      subscribeToDriversLocationUpdateChannel();
       return true;
     } catch (e) {
       log("WebSocket connection error: $e");
@@ -63,13 +67,22 @@ class ReverbWebSocketService {
     }
   }
 
-  void subscribeToRideChannel() {
+  void subscribeToRideRequestChannel() {
     // Subscribe to available drivers
     final availableDrivers = {
       "event": "pusher:subscribe",
       "data": {"channel": "rider.$riderUUID.bookings"}
     };
     channel?.sink.add(jsonEncode(availableDrivers));
+  }
+
+  void subscribeToDriversLocationUpdateChannel() {
+    // Subscribe to drivers location
+    final driversLocationUpdate = {
+      "event": "pusher:subscribe",
+      "data": {"channel": "rider.$riderUUID.location"}
+    };
+    channel?.sink.add(jsonEncode(driversLocationUpdate));
   }
 
   void handleWebSocketMessage(Map<String, dynamic> message) {
@@ -82,6 +95,15 @@ class ReverbWebSocketService {
           case 'booking_accepted':
             handleBookingAccepted(data);
             break;
+          case 'driver_location_update':
+            driverLocationUpdate(data);
+            break;
+          case 'driver_arrived':
+            driverArrived(data);
+            break;
+          case 'ride_started':
+            rideStarted(data);
+            break;
         }
       }
     } catch (e, stackTrace) {
@@ -91,12 +113,46 @@ class ReverbWebSocketService {
 
   void handleBookingAccepted(Map<String, dynamic> bookingData) {
     // Implement booking accepted logic
-    log('Booking accepted: $bookingData', name: "Booking Accepted information");
+    log('$bookingData', name: "Booking Accepted information");
 
     final acceptedRideRequest = AcceptedRideRequestModel.fromJson(bookingData);
 
     //! Cache the request response in HomeScreenController
     HomeScreenController.instance.updateRequestResponse(acceptedRideRequest);
+  }
+
+  void driverLocationUpdate(Map<String, dynamic> driverLocationData) {
+    // Implement driver location updates logic
+    log('$driverLocationData', name: "Driver Location Updates information");
+
+    final driverLocationUpdate =
+        DriverLocationUpdateResponseModel.fromJson(driverLocationData);
+
+    //! Cache the location data in HomeScreenController
+    HomeScreenController.instance
+        .updateDriverLocationResponse(driverLocationUpdate);
+  }
+
+  void driverArrived(Map<String, dynamic> driverArrivedData) {
+    // Implement driver arrived  logic
+    log('$driverArrivedData', name: "Driver Arrived information");
+
+    final driverArrivedModel =
+        DriverArrivedResponseModel.fromJson(driverArrivedData);
+
+    //! Cache the location data in HomeScreenController
+    HomeScreenController.instance
+        .updateDriverArrivedResponse(driverArrivedModel);
+  }
+
+  void rideStarted(Map<String, dynamic> rideStarted) {
+    // Implement driver location updates logic
+    log('$rideStarted', name: "Driver Location Updates information");
+
+    final rideStartedResponse = RideStartedResponseModel.fromJson(rideStarted);
+
+    //! Cache the location data in HomeScreenController
+    HomeScreenController.instance.rideStartedResponse(rideStartedResponse);
   }
 
   void disconnect() {

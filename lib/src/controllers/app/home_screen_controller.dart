@@ -16,8 +16,11 @@ import 'package:green_wheels/src/controllers/app/google_maps_controller.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:green_wheels/src/models/ride/accepted_ride_request_model.dart';
 import 'package:green_wheels/src/models/ride/available_vehicles_response_model.dart';
+import 'package:green_wheels/src/models/ride/driver_arrived_response_model.dart';
+import 'package:green_wheels/src/models/ride/driver_location_updates_response_model.dart';
 import 'package:green_wheels/src/models/ride/instant_ride_amount_response_model.dart';
 import 'package:green_wheels/src/models/ride/rent_ride_vehicle_model.dart';
+import 'package:green_wheels/src/models/ride/ride_started_response_model.dart';
 import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.dart';
 import 'package:green_wheels/src/models/rider/rider_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
@@ -37,7 +40,6 @@ import '../../../app/home/content/rent_ride/rent_ride_booking_confirmed_modal.da
 import '../../../app/home/content/schedule_a_trip/schedule_trip_intro_dialog.dart';
 import '../../../app/home/content/school_commute/school_commute_intro_dialog.dart';
 import '../../../app/home/modals/book_ride_cancel_request_modal.dart';
-import '../../../app/home/modals/book_ride_request_accepted_modal.dart';
 import '../../../app/home/modals/book_ride_searching_for_driver_modal.dart';
 import '../../../app/menu/screen/menu_screen.dart';
 import '../../../app/ride/screen/ride_screen.dart';
@@ -89,14 +91,17 @@ class HomeScreenController extends GetxController
   ];
   List<String>? markerTitle;
   List<String>? markerSnippet;
-  final List<String> customMarkers = <String>[Assets.personLocationPng];
+  List<String> customMarkers = <String>[Assets.personLocationPng];
   RxList<LatLng> polylineCoordinates = <LatLng>[].obs;
 
   //================ Models =================\\
   var getRiderProfileResponseModel =
       GetRiderProfileResponseModel.fromJson(null).obs;
   var riderModel = RiderModel.fromJson(null).obs;
-  var acceptedRideResponse = Rxn<AcceptedRideRequestModel>();
+  var acceptedRideResponse = AcceptedRideRequestModel.fromJson(null).obs;
+  var driverLocationUpdatesResponse =
+      DriverLocationUpdateResponseModel.fromJson(null).obs;
+  var driverArrivedResponse = DriverArrivedResponseModel.fromJson(null).obs;
 
   late TabController tabBarController;
   var selectedTabBar = 0.obs;
@@ -116,15 +121,16 @@ class HomeScreenController extends GetxController
   final Completer<GoogleMapController> _googleMapController = Completer();
   GoogleMapController? newGoogleMapController;
 
-  var panelController = PanelController();
+  var homePanelController = PanelController();
+  var ridePanelController = PanelController();
 
 //================ Panel Functions =================\\
-  togglePanel() => panelController.isPanelOpen
-      ? panelController.close()
-      : panelController.open();
+  togglePanel() => homePanelController.isPanelOpen
+      ? homePanelController.close()
+      : homePanelController.open();
 
-  openPanel() => panelController.open();
-  closePanel() => panelController.close();
+  openHomePanel() => homePanelController.open();
+  closeHomePanel() => homePanelController.close();
 
 //=================================== Ride tabs ==========================================\\
   List<Map<String, dynamic>> tabData(ColorScheme colorScheme) => [
@@ -148,7 +154,7 @@ class HomeScreenController extends GetxController
 //================ Select Tab =================//
   void clickOnTabBarOption(int index) {
     selectedTabBar.value = index;
-    if (panelController.isPanelClosed) openPanel();
+    if (homePanelController.isPanelClosed) openHomePanel();
   }
 
   //=============================== Open Drawer =====================================\\
@@ -448,6 +454,56 @@ class HomeScreenController extends GetxController
 
         await Future.delayed(const Duration(seconds: 1));
         routeIsVisible.value = false;
+        Position userLocation = await Geolocator.getCurrentPosition(
+          locationSettings:
+              const LocationSettings(accuracy: LocationAccuracy.high),
+        );
+
+        List<LatLng> latLng = <LatLng>[
+          LatLng(userLocation.latitude, userLocation.longitude),
+          LatLng(
+            double.tryParse(destinationLat) ?? .0,
+            double.tryParse(destinationLong) ?? .0,
+          ),
+        ];
+
+        // Reset lists before inserting new values
+        markerId.clear();
+        customMarkers = <String>[Assets.locationPin1Png];
+        markerTitle = <String>["Destination"];
+        markerSnippet = <String>[destinationEC.text];
+
+        // Insert new elements
+        customMarkers.insert(0, Assets.personLocationPng);
+        markerId.add(const MarkerId("0"));
+        markerId.add(const MarkerId("1"));
+        markerTitle?.insert(0, "Me");
+        markerSnippet?.insert(0, pickupLocationEC.text);
+
+        log(
+          "Custom Markers: $customMarkers, Marker IDs: $markerId, Marker Snippets: $markerSnippet",
+          name: "Markers",
+        );
+
+        markers.clear();
+
+        for (int i = 0; i < customMarkers.length; i++) {
+          final Uint8List markerIcon =
+              await getBytesFromAssets(customMarkers[i], 100);
+
+          markers.add(
+            Marker(
+              markerId: markerId[i],
+              icon: BitmapDescriptor.bytes(markerIcon, height: 40),
+              position: latLng[i],
+              infoWindow: InfoWindow(
+                title: markerTitle![i],
+                snippet: markerSnippet![i],
+              ),
+            ),
+          );
+        }
+
         getPolyPoints(
           destinationLat: double.tryParse(destinationLat)!,
           destinationLong: double.tryParse(destinationLong)!,
@@ -456,10 +512,13 @@ class HomeScreenController extends GetxController
           polylineCoordinates: polylineCoordinates,
         );
 
-        LatLng latLngPosition = LatLng(double.tryParse(destinationLat)!,
-            double.tryParse(destinationLong)!);
+        LatLng destinationLatLngPostion = LatLng(
+          double.tryParse(destinationLat)!,
+          double.tryParse(destinationLong)!,
+        );
 
-        cameraPosition = CameraPosition(target: latLngPosition, zoom: 16);
+        cameraPosition =
+            CameraPosition(target: destinationLatLngPostion, zoom: 16);
 
         newGoogleMapController?.animateCamera(
           CameraUpdate.newCameraPosition(cameraPosition!),
@@ -522,6 +581,56 @@ class HomeScreenController extends GetxController
         );
         await Future.delayed(const Duration(seconds: 1));
         routeIsVisible.value = false;
+        Position userLocation = await Geolocator.getCurrentPosition(
+          locationSettings:
+              const LocationSettings(accuracy: LocationAccuracy.high),
+        );
+
+        List<LatLng> latLng = <LatLng>[
+          LatLng(userLocation.latitude, userLocation.longitude),
+          LatLng(
+            double.tryParse(destinationLat) ?? .0,
+            double.tryParse(destinationLong) ?? .0,
+          ),
+        ];
+
+        // Reset lists before inserting new values
+        markerId.clear();
+        customMarkers = <String>[Assets.locationPin1Png];
+        markerTitle = <String>["Destination"];
+        markerSnippet = <String>[destinationEC.text];
+
+        // Insert new elements
+        customMarkers.insert(0, Assets.personLocationPng);
+        markerId.add(const MarkerId("0"));
+        markerId.add(const MarkerId("1"));
+        markerTitle?.insert(0, "Me");
+        markerSnippet?.insert(0, pickupLocationEC.text);
+
+        log(
+          "Custom Markers: $customMarkers, Marker IDs: $markerId, Marker Snippets: $markerSnippet",
+          name: "Markers",
+        );
+
+        markers.clear();
+
+        for (int i = 0; i < customMarkers.length; i++) {
+          final Uint8List markerIcon =
+              await getBytesFromAssets(customMarkers[i], 100);
+
+          markers.add(
+            Marker(
+              markerId: markerId[i],
+              icon: BitmapDescriptor.bytes(markerIcon, height: 40),
+              position: latLng[i],
+              infoWindow: InfoWindow(
+                title: markerTitle![i],
+                snippet: markerSnippet![i],
+              ),
+            ),
+          );
+        }
+
         getPolyPoints(
           destinationLat: double.tryParse(destinationLat)!,
           destinationLong: double.tryParse(destinationLong)!,
@@ -711,20 +820,119 @@ class HomeScreenController extends GetxController
     acceptedRideResponse.value = requestResponse;
 
     driverName.value =
-        "${acceptedRideResponse.value?.driver.firstName} ${acceptedRideResponse.value?.driver.lastName}";
-    driverPhoneNumber.value = "${acceptedRideResponse.value?.driver.phone}";
+        "${acceptedRideResponse.value.driver.firstName} ${acceptedRideResponse.value.driver.lastName}";
+    driverPhoneNumber.value = acceptedRideResponse.value.driver.phone;
     driverRating.value =
-        ((acceptedRideResponse.value?.driver.rating ?? 0.0).round()).toInt();
-    driverTotalRides.value = acceptedRideResponse.value?.driver.totalRides ?? 0;
+        ((acceptedRideResponse.value.driver.rating).round()).toInt();
+    driverTotalRides.value = acceptedRideResponse.value.driver.totalRides;
     estimatedInstantRideTime.value =
-        acceptedRideResponse.value?.data.estimatedTime ?? 0;
+        acceptedRideResponse.value.data.estimatedTime;
     estimatedInstantRideDistance.value =
-        acceptedRideResponse.value?.data.distance ?? "";
-    paymentType.value = acceptedRideResponse.value?.data.paymentType ?? "";
+        acceptedRideResponse.value.data.distance;
+    paymentType.value = acceptedRideResponse.value.data.paymentType;
 
     bookDriverTimerFinished.value = true;
     bookDriverFound.value = true;
+
+    await Future.delayed(const Duration(seconds: 2), () {
+      showBookRideRequestAcceptedPanel();
+    });
     cancelProgress();
+  }
+
+  //! Update Driver Location
+  void updateDriverLocationResponse(
+      DriverLocationUpdateResponseModel response) async {
+    driverLocationUpdatesResponse.value = response;
+
+    LatLng driverLatLng = LatLng(
+      response.driverLocation.lat,
+      response.driverLocation.long,
+    );
+
+    // Create a unique marker for the driver
+    final Uint8List markerIcon =
+        await getBytesFromAssets(Assets.vehiclePng, 100);
+    final Marker driverMarker = Marker(
+      markerId: const MarkerId("driver"),
+      icon: BitmapDescriptor.bytes(markerIcon, height: 40),
+      position: driverLatLng,
+      infoWindow: const InfoWindow(title: "Driver"),
+    );
+
+    // Remove existing driver marker before adding a new one
+    markers.removeWhere((marker) => marker.markerId.value == "driver");
+
+    // Ensure only 3 markers exist by adding the updated driver marker
+    markers.add(driverMarker);
+
+    log(
+      "Markers Updated: ${markers.length}",
+      name: "Markers",
+    );
+
+    routeIsVisible.value = true;
+    update();
+  }
+
+  void updateDriverArrivedResponse(DriverArrivedResponseModel response) async {
+    driverArrivedResponse.value = response;
+
+    LatLng driverLatLng = LatLng(
+      driverLocationUpdatesResponse.value.driverLocation.lat,
+      driverLocationUpdatesResponse.value.driverLocation.long,
+    );
+
+    // Create a unique marker for the driver
+    final Uint8List markerIcon =
+        await getBytesFromAssets(Assets.vehiclePng, 100);
+    final Marker driverMarker = Marker(
+      markerId: const MarkerId("driver"),
+      icon: BitmapDescriptor.bytes(markerIcon, height: 40),
+      position: driverLatLng,
+      infoWindow: const InfoWindow(title: "Driver"),
+    );
+
+    // Remove existing driver marker before adding a new one
+    markers.removeWhere((marker) => marker.markerId.value == "driver");
+
+    // Ensure only 3 markers exist by adding the updated driver marker
+    markers.add(driverMarker);
+
+    log(
+      "Markers Updated: ${markers.length}",
+      name: "Markers",
+    );
+
+    driverHasArrived.value = true;
+
+    routeIsVisible.value = true;
+    update();
+  }
+
+  void rideStartedResponse(RideStartedResponseModel response) async {
+    Get.close(0);
+    await Future.delayed(const Duration(milliseconds: 1000));
+    Get.to(
+      () => const RideScreen(),
+      routeName: "/ride",
+      arguments: {
+        "driverName": driverName.value,
+        "rideAmount": instantRideData.value.amount,
+        "rideTime": estimatedInstantRideTime.value,
+        "pickupLocation": pickupLocationEC.text,
+        "destination": destinationEC.text,
+        "pickupLat": pickupLat,
+        "pickupLong": pickupLong,
+        "destinationLat": destinationLat,
+        "destinationLong": destinationLong,
+      },
+      curve: Curves.easeInOut,
+      fullscreenDialog: true,
+      popGesture: true,
+      preventDuplicates: false,
+      transition: Get.defaultTransition,
+    );
   }
 
   //============== Progress Indicatior =================\\
@@ -938,7 +1146,7 @@ class HomeScreenController extends GetxController
 
     bookDriverFound.value = false;
 
-    await closePanel();
+    await closeHomePanel();
 
     await showModalBottomSheet(
       isScrollControlled: true,
@@ -961,36 +1169,14 @@ class HomeScreenController extends GetxController
     );
   }
 
-  void showBookRideRequestAcceptedModal() async {
+  var ridePanelIsVisible = false.obs;
+  void showBookRideRequestAcceptedPanel() async {
     Get.close(0);
-    final media = MediaQuery.of(Get.context!).size;
 
-    await showModalBottomSheet(
-      isScrollControlled: true,
-      showDragHandle: false,
-      enableDrag: false,
-      context: Get.context!,
-      useSafeArea: true,
-      isDismissible: false,
-      constraints:
-          BoxConstraints(maxHeight: media.height, minWidth: media.width),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
-        ),
-      ),
-      builder: (context) {
-        return const BookRideRequestAcceptedModal();
-      },
-    );
-  }
+    ridePanelIsVisible.value = true;
 
-  runDriverHasArrived() async {
-    driverHasArrived.value = true;
-    await Future.delayed(const Duration(seconds: 3));
-
-    await startTrip();
+    await Future.delayed(const Duration(milliseconds: 500));
+    ridePanelController.open();
   }
 
   showCancellationFeeModal() async {
@@ -1017,31 +1203,6 @@ class HomeScreenController extends GetxController
     );
   }
 
-  startTrip() async {
-    Get.close(0);
-    await Future.delayed(const Duration(milliseconds: 1000));
-    Get.to(
-      () => const RideScreen(),
-      routeName: "/ride",
-      arguments: {
-        "driverName": driverName.value,
-        "rideAmount": instantRideData.value.amount,
-        "rideTime": estimatedInstantRideTime.value,
-        "pickupLocation": pickupLocationEC.text,
-        "destination": destinationEC.text,
-        "pickupLat": pickupLat,
-        "pickupLong": pickupLong,
-        "destinationLat": destinationLat,
-        "destinationLong": destinationLong,
-      },
-      curve: Curves.easeInOut,
-      fullscreenDialog: true,
-      popGesture: true,
-      preventDuplicates: false,
-      transition: Get.defaultTransition,
-    );
-  }
-
   //!==== Schedule Trip =========================================================================>
 
   scheduleATrip() async {
@@ -1049,11 +1210,11 @@ class HomeScreenController extends GetxController
         prefs.getBool("viewedScheduleTripIntro") ?? false;
     if (hasViewedScheduleTripIntro) {
       // User has viewed intro already, navigate to the schedule trip screen
-      await closePanel();
+      await closeHomePanel();
       goToScheduleTripScreen();
       log("User has viewed");
     } else {
-      closePanel();
+      closeHomePanel();
       showScheduleTripIntroDialog();
       log("User has not viewed");
     }
@@ -1114,11 +1275,11 @@ class HomeScreenController extends GetxController
     //     prefs.getBool("viewedSchoolCommuteIntro") ?? false;
     // if (hasViewedScheduleTripIntro) {
     //   // User has viewed intro already, navigate to the schedule trip screen
-    //   await closePanel();
+    //   await closeHomePanel();
     //   goToSchoolCommuteScreen();
     //   log("User has viewed");
     // } else {
-    //   closePanel();
+    //   closeHomePanel();
     //   showSchoolCommuteIntroDialog();
     //   log("User has not viewed");
     // }
