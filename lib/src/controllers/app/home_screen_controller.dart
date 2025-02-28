@@ -42,7 +42,6 @@ import '../../../app/home/content/school_commute/school_commute_intro_dialog.dar
 import '../../../app/home/modals/book_ride_cancel_request_modal.dart';
 import '../../../app/home/modals/book_ride_searching_for_driver_modal.dart';
 import '../../../app/menu/screen/menu_screen.dart';
-import '../../../app/ride/screen/ride_screen.dart';
 import '../../../app/schedule_trip/screen/schedule_trip_screen.dart';
 import '../../../app/school_commute/screen/school_commute_screen.dart';
 import '../../../app/splash/loading/screen/loading_screen.dart';
@@ -834,7 +833,7 @@ class HomeScreenController extends GetxController
     bookDriverTimerFinished.value = true;
     bookDriverFound.value = true;
 
-    await Future.delayed(const Duration(seconds: 2), () {
+    await Future.delayed(const Duration(milliseconds: 800), () {
       showBookRideRequestAcceptedPanel();
     });
     cancelProgress();
@@ -872,6 +871,11 @@ class HomeScreenController extends GetxController
     );
 
     routeIsVisible.value = true;
+    if (driverLocationUpdatesResponse.value.hasArrived) {
+      driverHasArrived.value = true;
+    } else {
+      driverHasArrived.value = false;
+    }
     update();
   }
 
@@ -910,30 +914,18 @@ class HomeScreenController extends GetxController
     update();
   }
 
+  var rideStarted = false.obs;
+  var rideInfoMessage = "".obs;
   void rideStartedResponse(RideStartedResponseModel response) async {
-    Get.close(0);
-    await Future.delayed(const Duration(milliseconds: 1000));
-    Get.to(
-      () => const RideScreen(),
-      routeName: "/ride",
-      arguments: {
-        "driverName": driverName.value,
-        "rideAmount": instantRideData.value.amount,
-        "rideTime": estimatedInstantRideTime.value,
-        "pickupLocation": pickupLocationEC.text,
-        "destination": destinationEC.text,
-        "pickupLat": pickupLat,
-        "pickupLong": pickupLong,
-        "destinationLat": destinationLat,
-        "destinationLong": destinationLong,
-      },
-      curve: Curves.easeInOut,
-      fullscreenDialog: true,
-      popGesture: true,
-      preventDuplicates: false,
-      transition: Get.defaultTransition,
-    );
+    rideStarted.value = true;
+    rideInfoMessage.value = "Ride has started";
+
+    await Future.delayed(const Duration(minutes: 1));
+
+    rideInfoMessage.value = "Ride is ongoing";
   }
+
+  void endRide() async {}
 
   //============== Progress Indicatior =================\\
   // Method to update the progress

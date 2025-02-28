@@ -35,9 +35,9 @@ class RideController extends GetxController {
   //================ Variables =================\\
   var rideInfo = "Trip has started".obs;
   var driverName = Get.arguments?["driverName"] ?? "";
-  var driverRating = Get.arguments?["driverRating"] ?? "";
+  var driverRating = Get.arguments?["driverRating"] ?? 0;
   var rideAmount = Get.arguments?["rideAmount"] ?? 0.0;
-  var rideTime = Get.arguments?["rideTime"] ?? "";
+  var rideTime = Get.arguments?["rideTime"] ?? 0;
   var pickupLocation = Get.arguments?["pickupLocation"] ?? "";
   var destination = Get.arguments?["destination"] ?? "";
   var pickupLat = Get.arguments?["pickupLat"] ?? "";
@@ -55,10 +55,16 @@ class RideController extends GetxController {
 
   final List<MarkerId> markerId = <MarkerId>[
     const MarkerId("0"),
+    const MarkerId("1"),
+    const MarkerId("2"),
   ];
-  List<String>? markerTitle;
+  List<String> markerTitle = ["Me", "Driver", "Destination"];
   List<String>? markerSnippet;
-  final List<String> customMarkers = <String>[Assets.personLocationPng];
+  final List<String> customMarkers = <String>[
+    Assets.personLocationPng,
+    Assets.vehiclePng,
+    Assets.locationPin1Png,
+  ];
   RxList<LatLng> polylineCoordinates = <LatLng>[].obs;
 
   //================ Boolean =================\\
@@ -81,12 +87,7 @@ class RideController extends GetxController {
   //======================================== Init Function =========================================//
   initFunctions() async {
     rideInfo.value = "Trip has started";
-    await Future.delayed(const Duration(seconds: 6));
-    rideInfo.value = "Trip is ongoing";
-    await Future.delayed(const Duration(seconds: 6));
-    rideInfo.value = "Trip is completed";
-    rideComplete.value = true;
-    showTripCompletedModal();
+    markerSnippet = ["My Location", "Driver's Location", destination];
   }
 
   var routeIsVisible = false.obs;
@@ -140,7 +141,10 @@ class RideController extends GetxController {
 
     List<LatLng> latLng = <LatLng>[
       LatLng(userLocation.latitude, userLocation.longitude),
+      LatLng(userLocation.latitude, userLocation.longitude),
+      LatLng(destinationLat, destinationLong),
     ];
+
     for (int i = 0; i < customMarkers.length; i++) {
       final Uint8List markerIcon =
           await getBytesFromAssets(customMarkers[i], 100);
@@ -151,8 +155,8 @@ class RideController extends GetxController {
           icon: BitmapDescriptor.bytes(markerIcon, height: 40),
           position: latLng[i],
           infoWindow: InfoWindow(
-            title: markerTitle![i],
-            snippet: markerSnippet![i],
+            title: markerTitle[i],
+            snippet: markerSnippet?[i],
           ),
         ),
       );

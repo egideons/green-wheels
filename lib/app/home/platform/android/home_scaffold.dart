@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:green_wheels/app/home/modals/book_ride_request_accepted_panel.dart';
+import 'package:green_wheels/app/home/views/ride_panel.dart';
 import 'package:green_wheels/theme/colors.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -63,7 +63,7 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
                       topLeft: Radius.circular(32),
                       topRight: Radius.circular(32),
                     ),
-                    panel: BookRideRequestAcceptedPanel(),
+                    panel: RidePanel(),
                   ),
                 Positioned(
                   top: 15,
