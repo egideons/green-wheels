@@ -117,11 +117,14 @@ class BookRideSearchingForDriverModal extends GetView<HomeScreenController> {
                           child: CupertinoActivityIndicator(),
                         ),
               kSizedBox,
-              if (controller.bookDriverTimerFinished.value)
-                AndroidElevatedButton(
-                  title: "Retry",
-                  onPressed: controller.retryBookInstantRide,
-                ),
+              controller.bookDriverFound.value
+                  ? SizedBox()
+                  : controller.bookDriverTimerFinished.value
+                      ? AndroidElevatedButton(
+                          title: "Retry",
+                          onPressed: controller.retryBookInstantRide,
+                        )
+                      : SizedBox(),
 
               kSizedBox,
               AndroidOutlinedButton(

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/assets.dart';
+import 'package:green_wheels/src/controllers/app/home_screen_controller.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 
 import '../../../src/constants/consts.dart';
-import '../../../src/controllers/app/ride_controller.dart';
 import '../../../theme/colors.dart';
 
-class TripPaymentSuccessfulModal extends GetView<RideController> {
+class TripPaymentSuccessfulModal extends GetView<HomeScreenController> {
   const TripPaymentSuccessfulModal({super.key});
 
   @override

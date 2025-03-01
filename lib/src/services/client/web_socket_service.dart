@@ -7,6 +7,7 @@ import 'package:green_wheels/src/controllers/app/home_screen_controller.dart';
 import 'package:green_wheels/src/models/ride/accepted_ride_request_model.dart';
 import 'package:green_wheels/src/models/ride/driver_arrived_response_model.dart';
 import 'package:green_wheels/src/models/ride/driver_location_updates_response_model.dart';
+import 'package:green_wheels/src/models/ride/ride_completed_response_model.dart';
 import 'package:green_wheels/src/models/ride/ride_started_response_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -104,6 +105,9 @@ class ReverbWebSocketService {
           case 'ride_started':
             rideStarted(data);
             break;
+          case 'booking_completed':
+            rideCompleted(data);
+            break;
         }
       }
     } catch (e, stackTrace) {
@@ -146,13 +150,24 @@ class ReverbWebSocketService {
   }
 
   void rideStarted(Map<String, dynamic> rideStarted) {
-    // Implement driver location updates logic
-    log('$rideStarted', name: "Driver Location Updates information");
+    // Implement ride started logic
+    log('$rideStarted', name: "Ride Started information");
 
     final rideStartedResponse = RideStartedResponseModel.fromJson(rideStarted);
 
-    //! Cache the location data in HomeScreenController
+    //! Cache the ride Started in HomeScreenController
     HomeScreenController.instance.rideStartedResponse(rideStartedResponse);
+  }
+
+  void rideCompleted(Map<String, dynamic> rideCompleted) {
+    // Implement ride completed logic
+    log('$rideCompleted', name: "Ride Completed information");
+
+    final rideCompletedResponse =
+        RideCompletedResponseModel.fromJson(rideCompleted);
+
+    // //! Cache the ride Completed in HomeScreenController
+    HomeScreenController.instance.rideCompletedResponse(rideCompletedResponse);
   }
 
   void disconnect() {
@@ -167,8 +182,8 @@ class ReverbWebSocketService {
     if (_isManuallyDisconnected) {
       return;
     } // Skip reconnection if disconnected manually
-    log("Reconnecting in 5 seconds...");
-    await Future.delayed(const Duration(seconds: 5));
+    log("Reconnecting in 500 milliseconds...");
+    await Future.delayed(const Duration(milliseconds: 500));
     connect();
   }
 }

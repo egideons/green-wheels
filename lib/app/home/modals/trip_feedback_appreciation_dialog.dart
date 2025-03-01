@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/constants/assets.dart';
+import 'package:green_wheels/src/controllers/app/home_screen_controller.dart';
 import 'package:green_wheels/theme/colors.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../../src/constants/consts.dart';
-import '../../../src/controllers/app/ride_controller.dart';
 
-class TripFeedbackAppreciationDialog extends GetView<RideController> {
+class TripFeedbackAppreciationDialog extends GetView<HomeScreenController> {
   const TripFeedbackAppreciationDialog({super.key});
 
   @override

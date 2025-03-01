@@ -12,6 +12,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_wheels/app/google_maps/google_maps.dart';
 import 'package:green_wheels/app/home/content/rent_ride/choose_available_vehicle_scaffold.dart';
 import 'package:green_wheels/app/home/modals/book_ride_cancel_ride_fee_modal.dart';
+import 'package:green_wheels/app/home/modals/trip_feedback_appreciation_dialog.dart';
+import 'package:green_wheels/app/home/modals/trip_feedback_modal.dart';
+import 'package:green_wheels/app/home/modals/trip_payment_successful_modal.dart';
 import 'package:green_wheels/src/controllers/app/google_maps_controller.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:green_wheels/src/models/ride/accepted_ride_request_model.dart';
@@ -20,6 +23,7 @@ import 'package:green_wheels/src/models/ride/driver_arrived_response_model.dart'
 import 'package:green_wheels/src/models/ride/driver_location_updates_response_model.dart';
 import 'package:green_wheels/src/models/ride/instant_ride_amount_response_model.dart';
 import 'package:green_wheels/src/models/ride/rent_ride_vehicle_model.dart';
+import 'package:green_wheels/src/models/ride/ride_completed_response_model.dart';
 import 'package:green_wheels/src/models/ride/ride_started_response_model.dart';
 import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.dart';
 import 'package:green_wheels/src/models/rider/rider_model.dart';
@@ -28,6 +32,7 @@ import 'package:green_wheels/src/services/client/http_client_service.dart';
 import 'package:green_wheels/src/services/client/web_socket_service.dart';
 import 'package:green_wheels/src/services/google_maps/autocomplete_prediction_model.dart';
 import 'package:green_wheels/src/services/google_maps/location_service.dart';
+import 'package:green_wheels/src/utils/components/animated_dialog.dart';
 import 'package:green_wheels/theme/colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
@@ -101,6 +106,9 @@ class HomeScreenController extends GetxController
   var driverLocationUpdatesResponse =
       DriverLocationUpdateResponseModel.fromJson(null).obs;
   var driverArrivedResponse = DriverArrivedResponseModel.fromJson(null).obs;
+  var rideStartedResponseModel = RideStartedResponseModel.fromJson(null).obs;
+  var rideCompletedResponseModel =
+      RideCompletedResponseModel.fromJson(null).obs;
 
   late TabController tabBarController;
   var selectedTabBar = 0.obs;
@@ -917,23 +925,23 @@ class HomeScreenController extends GetxController
   var rideStarted = false.obs;
   var rideInfoMessage = "".obs;
   void rideStartedResponse(RideStartedResponseModel response) async {
+    rideStartedResponseModel.value = response;
     rideStarted.value = true;
-    rideInfoMessage.value = "Ride has started";
+    rideInfoMessage.value = "Your Ride has started";
 
-    await Future.delayed(const Duration(minutes: 1));
+    await Future.delayed(const Duration(seconds: 30));
 
     rideInfoMessage.value = "Ride is ongoing";
+    update();
   }
 
-  void endRide() async {}
+  var rideCompleted = false.obs;
+  void rideCompletedResponse(RideCompletedResponseModel response) async {
+    rideCompletedResponseModel.value = response;
+    rideCompleted.value = true;
+    rideInfoMessage.value = "Your Ride has been completed";
 
-  //============== Progress Indicatior =================\\
-  // Method to update the progress
-  void updateProgress(double value) {
-    if (value >= 0.0 && value <= 1.0) {
-      progress.value = value;
-      log("Progress: ${progress.value}");
-    }
+    update();
   }
 
   Future<void> bookRideAwaitDriverResponseTimer() async {
@@ -1192,6 +1200,131 @@ class HomeScreenController extends GetxController
       builder: (context) {
         return const BookRideCancelRideFeeModal();
       },
+    );
+  }
+
+  //=============== Payment Section ================\\
+  showPaymentSuccessfulModal() async {
+    Get.close(0);
+    final media = MediaQuery.of(Get.context!).size;
+    // hasPaid.value = true;
+
+    showModalBottomSheet(
+      isScrollControlled: true,
+      enableDrag: false,
+      isDismissible: false,
+      context: Get.context!,
+      barrierColor: kTransparentColor,
+      useSafeArea: true,
+      constraints: BoxConstraints(
+        maxHeight: media.height,
+        minWidth: media.width,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(50),
+          topRight: Radius.circular(50),
+        ),
+      ),
+      builder: (context) {
+        return const TripPaymentSuccessfulModal();
+      },
+    );
+  }
+
+  //===================================== Feedback Section ======================================\\
+  var rating = 0.0.obs;
+
+//====================== BOOL VALUES =======================\\
+  var hasRated = false.obs;
+  var submittingRequest = false.obs;
+  var feedbackTextFieldIsActive = false.obs;
+
+//========================== KEYS ===========================\\
+  final formKey = GlobalKey<FormState>();
+
+//======================= CONTROLLERS ========================\\
+  final ratingPageController = PageController();
+  final feedbackMessageEC = TextEditingController();
+
+//====================== FOCUS NODES ==========================\\
+  final feedbackMessageFN = FocusNode();
+
+  giveFeedback() async {
+    var context = Get.context!;
+    hasRated.value = false;
+    rating.value = 0.0;
+    feedbackMessageEC.text.isEmpty ? null : feedbackMessageEC.clear();
+
+    // Get.close(0);
+    final media = MediaQuery.of(context).size;
+
+    showModalBottomSheet(
+      isScrollControlled: true,
+      enableDrag: false,
+      isDismissible: false,
+      showDragHandle: true,
+      context: context,
+      barrierColor: kTransparentColor,
+      useSafeArea: true,
+      constraints:
+          BoxConstraints(maxHeight: media.height, minWidth: media.width),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(50),
+          topRight: Radius.circular(50),
+        ),
+      ),
+      builder: (context) {
+        return const TripFeedbackModal();
+      },
+    );
+  }
+
+  rateRide(Size media, int index) {
+    rating.value = index + 1;
+    hasRated.value = true;
+  }
+
+  activateFeedbackTextField() {
+    feedbackTextFieldIsActive.value = true;
+  }
+
+  deactivateFeedbackTextField(event) {
+    feedbackTextFieldIsActive.value = false;
+  }
+
+  Future<void> submitFeedback() async {
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+      // if (feedbackMessageEC.text.isEmpty) {
+      //   ApiProcessorController.errorSnack("Field cannot be empty");
+      //   return;
+      // }
+      submittingRequest.value = true;
+      rideStarted.value = false;
+      ridePanelIsVisible.value = false;
+      ridePanelController.close();
+      await Future.delayed(const Duration(seconds: 3));
+      submittingRequest.value = false;
+      showTripFeedbackAppreciationDialog();
+    }
+  }
+
+  showTripFeedbackAppreciationDialog() {
+    var context = Get.context!;
+    Get.close(0);
+    showAnimatedDialog(
+      context: context,
+      child: Dialog(
+        insetAnimationCurve: Curves.easeIn,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(kDefaultPadding),
+        ),
+        alignment: Alignment.center,
+        elevation: 50,
+        child: const TripFeedbackAppreciationDialog(),
+      ),
     );
   }
 

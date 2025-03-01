@@ -11,7 +11,8 @@ class RideStartedResponseModel {
     required this.channel,
   });
 
-  factory RideStartedResponseModel.fromJson(Map<String, dynamic> json) {
+  factory RideStartedResponseModel.fromJson(Map<String, dynamic>? json) {
+    json ??= {};
     return RideStartedResponseModel(
       event: json['event'] ?? '',
       data: RideStartedData.fromJson(json['data'] ?? {}),
@@ -38,7 +39,9 @@ class RideStartedData {
     required this.data,
   });
 
-  factory RideStartedData.fromJson(Map<String, dynamic> json) {
+  factory RideStartedData.fromJson(Map<String, dynamic>? json) {
+    json ??= {};
+
     return RideStartedData(
       bookingId: json['booking_id'] ?? 0,
       type: json['type'] ?? '',
@@ -55,7 +58,9 @@ class BookingInfo {
 
   BookingInfo({required this.bookingType});
 
-  factory BookingInfo.fromJson(Map<String, dynamic> json) {
+  factory BookingInfo.fromJson(Map<String, dynamic>? json) {
+    json ??= {};
+
     return BookingInfo(
       bookingType: json['booking_type'] ?? '',
     );
@@ -87,7 +92,9 @@ class RideDetails {
     this.scheduleType,
   });
 
-  factory RideDetails.fromJson(Map<String, dynamic> json) {
+  factory RideDetails.fromJson(Map<String, dynamic>? json) {
+    json ??= {};
+
     return RideDetails(
       pickupLocation: Location.fromJson(json['pickup_location'] ?? {}),
       destination: Location.fromJson(json['destination'] ?? {}),
@@ -114,7 +121,9 @@ class Location {
     required this.long,
   });
 
-  factory Location.fromJson(Map<String, dynamic> json) {
+  factory Location.fromJson(Map<String, dynamic>? json) {
+    json ??= {};
+
     return Location(
       address: json['address'] ?? '',
       lat: double.tryParse(json['lat']?.toString() ?? '0.0') ?? 0.0,

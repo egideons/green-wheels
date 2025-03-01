@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/src/controllers/others/url_launcher_controller.dart';
+import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_outlined_button.dart';
 import 'package:green_wheels/src/utils/components/chat_and_call_section.dart';
 import 'package:green_wheels/src/utils/components/drag_handle.dart';
@@ -37,7 +38,7 @@ class RidePanel extends GetView<HomeScreenController> {
         if (controller.rideStarted.value) {
           return rideSection(media, colorScheme);
         } else {
-          return rideRequestSection(media, colorScheme);
+          return rideRequestPanel(media, colorScheme);
         }
       }),
     );
@@ -158,7 +159,14 @@ class RidePanel extends GetView<HomeScreenController> {
                     ],
                   ),
                 ),
-                kSizedBox,
+                if (controller.rideCompleted.value) ...[
+                  kSizedBox,
+                  AndroidElevatedButton(
+                    title: "Rate Ride",
+                    onPressed: controller.giveFeedback,
+                  ),
+                ],
+                SizedBox(height: media.height * .2),
               ],
             ),
           ),
@@ -167,7 +175,7 @@ class RidePanel extends GetView<HomeScreenController> {
     );
   }
 
-  rideRequestSection(Size media, ColorScheme colorScheme) {
+  rideRequestPanel(Size media, ColorScheme colorScheme) {
     return Column(
       children: [
         Container(
@@ -222,18 +230,6 @@ class RidePanel extends GetView<HomeScreenController> {
                 fontWeight: FontWeight.w400,
               ),
             ),
-            // if (!controller.driverHasArrived.value)
-            //   Text(
-            //     "~ ${controller.driverLocationUpdatesResponse.} ",
-            //     overflow: TextOverflow.ellipsis,
-            //     maxLines: 4,
-            //     textAlign: TextAlign.center,
-            //     style: defaultTextStyle(
-            //       color: colorScheme.primary,
-            //       fontSize: 14,
-            //       fontWeight: FontWeight.w400,
-            //     ),
-            //   ),
           ],
         ),
         kSizedBox,

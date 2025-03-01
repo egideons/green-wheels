@@ -29,7 +29,9 @@ bookRideForm(
             child: Center(
               child: AndroidTextFormField(
                 readOnly: true,
-                onTap: controller.setPickupGoogleMapsLocation,
+                onTap: userPosition == null
+                    ? null
+                    : controller.setPickupGoogleMapsLocation,
                 controller: controller.pickupLocationEC,
                 textInputAction: TextInputAction.next,
                 focusNode: controller.pickupLocationFN,
@@ -91,7 +93,9 @@ bookRideForm(
                 Expanded(
                   child: AndroidTextFormField(
                     readOnly: true,
-                    onTap: controller.setDestinationGoogleMapsLocation,
+                    onTap: userPosition == null
+                        ? null
+                        : controller.setDestinationGoogleMapsLocation,
                     controller: controller.destinationEC,
                     focusNode: controller.destinationFN,
                     textInputAction: TextInputAction.done,

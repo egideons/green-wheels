@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/src/controllers/app/home_screen_controller.dart';
 import 'package:green_wheels/src/utils/buttons/android/android_elevated_button.dart';
 import 'package:green_wheels/src/utils/containers/text_form_field_container.dart';
 import 'package:green_wheels/src/utils/textformfields/android/android_textformfield.dart';
 import 'package:green_wheels/theme/colors.dart';
 
 import '../../../src/constants/consts.dart';
-import '../../../src/controllers/app/ride_controller.dart';
 
-class TripFeedbackModal extends GetView<RideController> {
+class TripFeedbackModal extends GetView<HomeScreenController> {
   const TripFeedbackModal({super.key});
 
   @override

@@ -23,7 +23,6 @@ import '../../app/menu/views/ride_history/screen/ride_history_menu_screen.dart';
 import '../../app/menu/views/scheduled_trips_menu/screen/scheduled_trips_menu_screen.dart';
 import '../../app/menu/views/scheduled_trips_menu/views/school_commutes_menu/screen/school_commutes_menu_screen.dart';
 import '../../app/onboarding/screen/onboarding_screen.dart';
-import '../../app/ride/screen/ride_screen.dart';
 import '../../app/schedule_trip/screen/schedule_trip_screen.dart';
 import '../../app/school_commute/screen/school_commute_screen.dart';
 import '../../app/splash/loading/screen/loading_screen.dart';
@@ -64,7 +63,6 @@ class Routes {
 
   //Home Section
   static const homeScreen = "/home";
-  static const rideScreen = "/ride";
   static const scheduleTripScreen = "/schedule-trip";
   static const scheduleTripSelectRoute = "/schedule-trip-select-route";
   static const schoolCommuteScreen = "/school-commute";
@@ -114,7 +112,7 @@ class Routes {
         binding: BindingsBuilder(() => Get.lazyPut<GoogleMapsController>(
               () => GoogleMapsController(),
             ))),
-    GetPage(name: rideScreen, page: () => const RideScreen()),
+
     GetPage(
       name: scheduleTripScreen,
       page: () => const ScheduleTripScreen(),
