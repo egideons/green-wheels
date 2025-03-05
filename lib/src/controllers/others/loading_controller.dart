@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/main.dart';
 
 import '../../../app/auth/email_login/screen/email_login_screen.dart';
 import '../../../app/home/screen/home_screen.dart';
@@ -34,6 +35,8 @@ class LoadingController extends GetxController {
 //============= Logout =============\\
   logout() async {
     isLoading.value = true;
+
+    prefs.remove("userToken");
 
     await Future.delayed(const Duration(seconds: 2));
 

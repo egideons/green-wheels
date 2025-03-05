@@ -14,7 +14,6 @@ import 'package:green_wheels/app/home/content/rent_ride/choose_available_vehicle
 import 'package:green_wheels/app/home/modals/book_ride_cancel_ride_fee_modal.dart';
 import 'package:green_wheels/app/home/modals/trip_feedback_appreciation_dialog.dart';
 import 'package:green_wheels/app/home/modals/trip_feedback_modal.dart';
-import 'package:green_wheels/app/home/modals/trip_payment_successful_modal.dart';
 import 'package:green_wheels/src/controllers/app/google_maps_controller.dart';
 import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:green_wheels/src/models/ride/accepted_ride_request_model.dart';
@@ -292,7 +291,7 @@ class HomeScreenController extends GetxController
 
     LatLng latLngPosition =
         LatLng(userLocation.latitude, userLocation.longitude);
-    cameraPosition = CameraPosition(target: latLngPosition, zoom: 18);
+    cameraPosition = CameraPosition(target: latLngPosition, zoom: 12);
 
     newGoogleMapController?.animateCamera(
       CameraUpdate.newCameraPosition(cameraPosition!),
@@ -887,6 +886,7 @@ class HomeScreenController extends GetxController
     update();
   }
 
+  //! Update Driver Arrived Response
   void updateDriverArrivedResponse(DriverArrivedResponseModel response) async {
     driverArrivedResponse.value = response;
 
@@ -924,6 +924,7 @@ class HomeScreenController extends GetxController
 
   var rideStarted = false.obs;
   var rideInfoMessage = "".obs;
+
   void rideStartedResponse(RideStartedResponseModel response) async {
     rideStartedResponseModel.value = response;
     rideStarted.value = true;
@@ -941,6 +942,9 @@ class HomeScreenController extends GetxController
     rideCompleted.value = true;
     rideInfoMessage.value = "Your Ride has been completed";
 
+    ApiProcessorController.normalSnack(
+      "Ride Charge has been deducted from your wallet",
+    );
     update();
   }
 
@@ -1199,35 +1203,6 @@ class HomeScreenController extends GetxController
       ),
       builder: (context) {
         return const BookRideCancelRideFeeModal();
-      },
-    );
-  }
-
-  //=============== Payment Section ================\\
-  showPaymentSuccessfulModal() async {
-    Get.close(0);
-    final media = MediaQuery.of(Get.context!).size;
-    // hasPaid.value = true;
-
-    showModalBottomSheet(
-      isScrollControlled: true,
-      enableDrag: false,
-      isDismissible: false,
-      context: Get.context!,
-      barrierColor: kTransparentColor,
-      useSafeArea: true,
-      constraints: BoxConstraints(
-        maxHeight: media.height,
-        minWidth: media.width,
-      ),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(50),
-          topRight: Radius.circular(50),
-        ),
-      ),
-      builder: (context) {
-        return const TripPaymentSuccessfulModal();
       },
     );
   }

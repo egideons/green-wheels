@@ -27,8 +27,8 @@ bookARideFormView(
         Text(
           "Where to?",
           style: defaultTextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
+            fontSize: 16,
+            fontWeight: FontWeight.w800,
             color: colorScheme.primary,
           ),
         ),

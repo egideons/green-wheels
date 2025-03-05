@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:green_wheels/src/controllers/others/api_processor_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,6 +30,8 @@ class HttpClientService {
             },
       );
       // log("This is the http client service response body: ${response.statusCode}");
+    } on SocketException {
+      ApiProcessorController.errorSnack("Please connect to the internet");
     } catch (e) {
       response = null;
       log(e.toString());
@@ -74,6 +77,8 @@ class HttpClientService {
 
         // log(response.body);
       }
+    } on SocketException {
+      ApiProcessorController.errorSnack("Please connect to the internet");
     } catch (e) {
       response = null;
       log(e.toString());
@@ -104,6 +109,8 @@ class HttpClientService {
           )
           .timeout(const Duration(seconds: 20));
       log("This is the http client service response body: ${response.body}");
+    } on SocketException {
+      ApiProcessorController.errorSnack("Please connect to the internet");
     } catch (e) {
       response = null;
       log(e.toString());
@@ -134,6 +141,8 @@ class HttpClientService {
           )
           .timeout(const Duration(seconds: 20));
       // log("This is the http client service response body: ${response.body}");
+    } on SocketException {
+      ApiProcessorController.errorSnack("Please connect to the internet");
     } catch (e) {
       response = null;
       log(e.toString());
@@ -166,6 +175,8 @@ class HttpClientService {
       response = await request.send().timeout(const Duration(seconds: 20));
 
       log("Response status code: ${response.statusCode}");
+    } on SocketException {
+      ApiProcessorController.errorSnack("Please connect to the internet");
     } catch (e) {
       // response = null;
       log("Error uploading profile image: $e");

@@ -118,9 +118,9 @@ class AndroidTextFormField extends StatelessWidget {
       obscuringCharacter: obscuringCharacter ?? "•",
       keyboardAppearance: Get.isDarkMode ? Brightness.dark : Brightness.light,
       style: defaultTextStyle(
-        fontSize: 16.0,
+        fontSize: 12.0,
         color: kTextBlackColor,
-        fontWeight: FontWeight.normal,
+        fontWeight: FontWeight.bold,
       ),
       decoration: InputDecoration(
         helperText: helperText,
@@ -143,14 +143,14 @@ class AndroidTextFormField extends StatelessWidget {
         fillColor: colorScheme.surface,
         focusColor: const Color(0xFFF6F6F7),
         labelStyle: defaultTextStyle(
-          fontSize: 16.0,
+          fontSize: 12.0,
           color: colorScheme.inversePrimary,
-          fontWeight: FontWeight.normal,
+          fontWeight: FontWeight.bold,
         ),
         hintStyle: defaultTextStyle(
-          fontSize: 16.0,
+          fontSize: 12.0,
           color: colorScheme.inversePrimary,
-          fontWeight: FontWeight.normal,
+          fontWeight: FontWeight.bold,
         ),
         // errorStyle: const TextStyle(color: Colors.red),
         border: inputBorder ?? InputBorder.none,

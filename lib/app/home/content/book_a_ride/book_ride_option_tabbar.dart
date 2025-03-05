@@ -48,8 +48,8 @@ rideOptionTabBar(HomeScreenController controller, ColorScheme colorScheme) {
               Text(
                 tab['label']!,
                 style: defaultTextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
                   color: controller.selectedTabBar.value == index
                       ? colorScheme.surface
                       : tab['color'],
