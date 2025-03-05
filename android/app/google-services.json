@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "83227363936",
-    "project_id": "green-wheels-00",
-    "storage_bucket": "green-wheels-00.firebasestorage.app"
+    "project_number": "529873619769",
+    "project_id": "green-wheels-app",
+    "storage_bucket": "green-wheels-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:83227363936:android:1ed26065f16604ba915105",
+        "mobilesdk_app_id": "1:529873619769:android:5cacab0dc5bccf8845f6e8",
         "android_client_info": {
           "package_name": "com.android.greenwheels"
         }
@@ -15,7 +15,26 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC64QT_XHVrCFfgiDZiJkbV6sZJi1oQd0M"
+          "current_key": "AIzaSyBMDX9zpbGTrlwosXgMkWvuCjanVPnN6n8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:529873619769:android:6bd20a508c4f330e45f6e8",
+        "android_client_info": {
+          "package_name": "com.esse.lkko"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMDX9zpbGTrlwosXgMkWvuCjanVPnN6n8"
         }
       ],
       "services": {

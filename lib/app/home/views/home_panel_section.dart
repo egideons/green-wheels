@@ -55,7 +55,7 @@ homePanelSection(
                           style: TextStyle(
                             color: colorScheme.surface,
                             fontWeight: FontWeight.w400,
-                            fontSize: 16,
+                            fontSize: 12,
                           ),
                         ),
                       ),

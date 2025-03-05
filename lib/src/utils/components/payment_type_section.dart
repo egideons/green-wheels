@@ -22,7 +22,7 @@ paymentTypeSection({required String paymentType}) {
           textAlign: TextAlign.end,
           style: defaultTextStyle(
             color: kPrimaryColor,
-            fontSize: 18,
+            fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
         ),

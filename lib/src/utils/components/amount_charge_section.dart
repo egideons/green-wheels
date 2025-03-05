@@ -19,19 +19,19 @@ amountChargeSection(
         "Amount Charge",
         style: defaultTextStyle(
           color: kTextBlackColor,
-          fontSize: fontSize ?? 20,
+          fontSize: fontSize ?? 14,
           fontWeight: FontWeight.w500,
         ),
       ),
-      isSpaceBetween == true ? const SizedBox() : kHalfWidthSizedBox,
+      // isSpaceBetween == true ? const SizedBox() : kHalfWidthSizedBox,
       Expanded(
         child: Text.rich(
-          textAlign: isSpaceBetween == true ? TextAlign.end : TextAlign.start,
+          textAlign: TextAlign.end,
           TextSpan(
             text: "$nairaSign ",
             style: defaultTextStyle(
               color: kTextBlackColor,
-              fontSize: fontSize ?? 20,
+              fontSize: fontSize ?? 14,
               fontFamily: "",
               fontWeight: FontWeight.w500,
             ),
@@ -40,7 +40,7 @@ amountChargeSection(
                 text: doubleFormattedTextWithDecimal(amount ?? 0.0),
                 style: defaultTextStyle(
                   color: kTextBlackColor,
-                  fontSize: fontSize ?? 20,
+                  fontSize: fontSize ?? 14,
                   fontWeight: FontWeight.w500,
                 ),
               ),

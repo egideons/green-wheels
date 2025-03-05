@@ -524,7 +524,7 @@ class HomeScreenController extends GetxController
         );
 
         cameraPosition =
-            CameraPosition(target: destinationLatLngPostion, zoom: 16);
+            CameraPosition(target: destinationLatLngPostion, zoom: 18);
 
         newGoogleMapController?.animateCamera(
           CameraUpdate.newCameraPosition(cameraPosition!),
@@ -647,7 +647,7 @@ class HomeScreenController extends GetxController
         LatLng latLngPosition = LatLng(double.tryParse(destinationLat)!,
             double.tryParse(destinationLong)!);
 
-        cameraPosition = CameraPosition(target: latLngPosition, zoom: 16);
+        cameraPosition = CameraPosition(target: latLngPosition, zoom: 18);
 
         newGoogleMapController?.animateCamera(
           CameraUpdate.newCameraPosition(cameraPosition!),

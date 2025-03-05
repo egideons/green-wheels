@@ -50,19 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC64QT_XHVrCFfgiDZiJkbV6sZJi1oQd0M',
-    appId: '1:83227363936:android:1ed26065f16604ba915105',
-    messagingSenderId: '83227363936',
-    projectId: 'green-wheels-00',
-    storageBucket: 'green-wheels-00.firebasestorage.app',
+    apiKey: 'AIzaSyBMDX9zpbGTrlwosXgMkWvuCjanVPnN6n8',
+    appId: '1:529873619769:android:5cacab0dc5bccf8845f6e8',
+    messagingSenderId: '529873619769',
+    projectId: 'green-wheels-app',
+    storageBucket: 'green-wheels-app.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBgBwY2GnEUiM8lVKXCa4GryiEgLjiY3mE',
-    appId: '1:83227363936:ios:4773dde17ee1b343915105',
-    messagingSenderId: '83227363936',
-    projectId: 'green-wheels-00',
-    storageBucket: 'green-wheels-00.firebasestorage.app',
+    apiKey: 'AIzaSyB5OCOadOhyldyM3TxaxqvgqGwGzzYHHK0',
+    appId: '1:529873619769:ios:1101c2803a41ae5045f6e8',
+    messagingSenderId: '529873619769',
+    projectId: 'green-wheels-app',
+    storageBucket: 'green-wheels-app.firebasestorage.app',
     iosBundleId: 'com.example.greenWheels',
   );
+
 }

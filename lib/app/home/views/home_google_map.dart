@@ -58,7 +58,7 @@ homeGoogleMap(HomeScreenController controller, ColorScheme colorScheme) {
                       userPosition.latitude,
                       userPosition.longitude,
                     ),
-                    zoom: 12,
+                    zoom: 18,
                     tilt: 40,
                   ),
                 ),
