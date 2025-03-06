@@ -233,7 +233,6 @@ class HomeScreenController extends GetxController
       markerTitle = <String>["Me"];
       markerSnippet = <String>["My Location"];
       await loadMapData();
-      startRiderLocationUpdates();
 
       log("User Position: ${userPosition.value}");
       log("User pickupLocation: ${pickupLocationEC.text}");
@@ -278,8 +277,9 @@ class HomeScreenController extends GetxController
         'Location permissions are permanently denied, we cannot request permissions.',
       );
     }
+    await startRiderLocationUpdates();
     await getAndGoToUserCurrentLocation();
-    await loadCustomMarkers();
+    // await loadCustomMarkers();
   }
 
   Future<Position> getAndGoToUserCurrentLocation() async {
@@ -338,32 +338,32 @@ class HomeScreenController extends GetxController
 
   //====================================== Get Location Markers =========================================\\
 
-  Future<void> loadCustomMarkers() async {
-    Position userLocation = await Geolocator.getCurrentPosition(
-      locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
-    );
-    userPosition.value = userLocation;
+  // Future<void> loadCustomMarkers() async {
+  //   Position userLocation = await Geolocator.getCurrentPosition(
+  //     locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
+  //   );
+  //   userPosition.value = userLocation;
 
-    List<LatLng> latLng = <LatLng>[
-      LatLng(userLocation.latitude, userLocation.longitude),
-    ];
-    for (int i = 0; i < customMarkers.length; i++) {
-      final Uint8List markerIcon =
-          await getBytesFromAssets(customMarkers[i], 100);
+  //   List<LatLng> latLng = <LatLng>[
+  //     LatLng(userLocation.latitude, userLocation.longitude),
+  //   ];
+  //   for (int i = 0; i < customMarkers.length; i++) {
+  //     final Uint8List markerIcon =
+  //         await getBytesFromAssets(customMarkers[i], 100);
 
-      markers.add(
-        Marker(
-          markerId: markerId[i],
-          icon: BitmapDescriptor.bytes(markerIcon, height: 40),
-          position: latLng[i],
-          infoWindow: InfoWindow(
-            title: markerTitle![i],
-            snippet: markerSnippet![i],
-          ),
-        ),
-      );
-    }
-  }
+  //     markers.add(
+  //       Marker(
+  //         markerId: markerId[i],
+  //         icon: BitmapDescriptor.bytes(markerIcon, height: 40),
+  //         position: latLng[i],
+  //         infoWindow: InfoWindow(
+  //           title: markerTitle![i],
+  //           snippet: markerSnippet![i],
+  //         ),
+  //       ),
+  //     );
+  //   }
+  // }
 
   void onMapCreated(GoogleMapController controller) {
     _googleMapController.complete(controller);
@@ -372,11 +372,11 @@ class HomeScreenController extends GetxController
 
   Timer? _riderLocationUpdateTimer;
 
-  void startRiderLocationUpdates() {
+  Future<void> startRiderLocationUpdates() async {
     _riderLocationUpdateTimer?.cancel(); // Ensure any existing timer is stopped
     _riderLocationUpdateTimer =
-        Timer.periodic(const Duration(seconds: 10), (timer) {
-      updateRiderLocationAndMarker();
+        Timer.periodic(const Duration(seconds: 10), (timer) async {
+      await updateRiderLocationAndMarker();
     });
   }
 
@@ -411,12 +411,14 @@ class HomeScreenController extends GetxController
     );
 
     // Remove existing driver marker before adding a new one
-    markers.removeWhere((marker) => marker.markerId.value == "RiderID");
+    if (markerId.isNotEmpty) {
+      markers.removeWhere((marker) => marker.markerId.value == "RiderID");
+    }
 
     // Ensure only 3 markers exist by adding the updated driver marker
     markers.add(riderMarker);
 
-    cameraPosition = CameraPosition(target: latLngPosition, zoom: 18);
+    cameraPosition = CameraPosition(target: latLngPosition, zoom: 16);
 
     // newGoogleMapController?.animateCamera(
     //   CameraUpdate.newCameraPosition(cameraPosition!),
@@ -518,13 +520,13 @@ class HomeScreenController extends GetxController
 
         await Future.delayed(const Duration(seconds: 1));
         routeIsVisible.value = false;
-        Position userLocation = await Geolocator.getCurrentPosition(
-          locationSettings:
-              const LocationSettings(accuracy: LocationAccuracy.high),
-        );
+        // Position userLocation = await Geolocator.getCurrentPosition(
+        //   locationSettings:
+        //       const LocationSettings(accuracy: LocationAccuracy.high),
+        // );
 
         List<LatLng> latLng = <LatLng>[
-          LatLng(userLocation.latitude, userLocation.longitude),
+          LatLng(double.tryParse(pickupLat)!, double.tryParse(pickupLong)!),
           LatLng(
             double.tryParse(destinationLat) ?? .0,
             double.tryParse(destinationLong) ?? .0,
@@ -538,10 +540,10 @@ class HomeScreenController extends GetxController
         markerSnippet = <String>[destinationEC.text];
 
         // Insert new elements
-        customMarkers.insert(0, Assets.personLocationPng);
+        customMarkers.insert(0, Assets.locationPinPng);
         markerId.add(const MarkerId("DestinationID"));
         markerId.add(const MarkerId("PickupLocationID"));
-        markerTitle?.insert(0, "Me");
+        markerTitle?.insert(0, "Pickup Location");
         markerSnippet?.insert(0, pickupLocationEC.text);
 
         log(
@@ -576,21 +578,53 @@ class HomeScreenController extends GetxController
           polylineCoordinates: polylineCoordinates,
         );
 
-        LatLng destinationLatLngPostion = LatLng(
-          double.tryParse(destinationLat)!,
-          double.tryParse(destinationLong)!,
+        LatLng pickupLatLngPostion = LatLng(
+          double.tryParse(pickupLat)!,
+          double.tryParse(pickupLong)!,
         );
 
-        cameraPosition =
-            CameraPosition(target: destinationLatLngPostion, zoom: 18);
+        cameraPosition = CameraPosition(target: pickupLatLngPostion, zoom: 16);
 
         newGoogleMapController?.animateCamera(
           CameraUpdate.newCameraPosition(cameraPosition!),
         );
-
         await Future.delayed(const Duration(seconds: 1));
         routeIsVisible.value = true;
         update();
+      } else {
+        LatLng pickupLatLngPostion = LatLng(
+          double.tryParse(pickupLat)!,
+          double.tryParse(pickupLong)!,
+        );
+        // Create a unique marker for the driver
+        final Uint8List markerIcon =
+            await getBytesFromAssets(Assets.locationPinPng, 100);
+        final Marker pickupMarker = Marker(
+          markerId: const MarkerId("PickupLocationID"),
+          icon: BitmapDescriptor.bytes(markerIcon, height: 40),
+          position: pickupLatLngPostion,
+          infoWindow: InfoWindow(
+            title: "Pickup Location",
+            snippet: pickupLocationEC.text,
+          ),
+        );
+
+        // Remove existing driver marker before adding a new one
+        if (markerId.isNotEmpty) {
+          markers.removeWhere(
+            (marker) => marker.markerId.value == "PickupLocationID",
+          );
+        }
+
+        // Ensure only 3 markers exist by adding the updated driver marker
+        markers.add(pickupMarker);
+
+        routeIsVisible.value = false;
+        cameraPosition = CameraPosition(target: pickupLatLngPostion, zoom: 16);
+
+        newGoogleMapController?.animateCamera(
+          CameraUpdate.newCameraPosition(cameraPosition!),
+        );
       }
     }
   }
@@ -645,13 +679,16 @@ class HomeScreenController extends GetxController
         );
         await Future.delayed(const Duration(seconds: 1));
         routeIsVisible.value = false;
-        Position userLocation = await Geolocator.getCurrentPosition(
-          locationSettings:
-              const LocationSettings(accuracy: LocationAccuracy.high),
-        );
+        // Position userLocation = await Geolocator.getCurrentPosition(
+        //   locationSettings:
+        //       const LocationSettings(accuracy: LocationAccuracy.high),
+        // );
 
         List<LatLng> latLng = <LatLng>[
-          LatLng(userLocation.latitude, userLocation.longitude),
+          LatLng(
+            double.tryParse(pickupLat)!,
+            double.tryParse(pickupLong)!,
+          ),
           LatLng(
             double.tryParse(destinationLat) ?? .0,
             double.tryParse(destinationLong) ?? .0,
@@ -665,10 +702,10 @@ class HomeScreenController extends GetxController
         markerSnippet = <String>[destinationEC.text];
 
         // Insert new elements
-        customMarkers.insert(0, Assets.personLocationPng);
+        customMarkers.insert(0, Assets.locationPinPng);
         markerId.add(const MarkerId("DestinationID"));
         markerId.add(const MarkerId("PickupLocationID"));
-        markerTitle?.insert(0, "Me");
+        markerTitle?.insert(0, "Pickup Location");
         markerSnippet?.insert(0, pickupLocationEC.text);
 
         log(
@@ -702,10 +739,13 @@ class HomeScreenController extends GetxController
           pickupLong: double.tryParse(pickupLong)!,
           polylineCoordinates: polylineCoordinates,
         );
-        LatLng latLngPosition = LatLng(double.tryParse(destinationLat)!,
-            double.tryParse(destinationLong)!);
+        LatLng destinationLatLngPosition = LatLng(
+          double.tryParse(destinationLat)!,
+          double.tryParse(destinationLong)!,
+        );
 
-        cameraPosition = CameraPosition(target: latLngPosition, zoom: 18);
+        cameraPosition =
+            CameraPosition(target: destinationLatLngPosition, zoom: 16);
 
         newGoogleMapController?.animateCamera(
           CameraUpdate.newCameraPosition(cameraPosition!),
@@ -713,6 +753,41 @@ class HomeScreenController extends GetxController
         await Future.delayed(const Duration(seconds: 1));
         routeIsVisible.value = true;
         update();
+      } else {
+        LatLng destinationLatLngPostion = LatLng(
+          double.tryParse(pickupLat)!,
+          double.tryParse(pickupLong)!,
+        );
+        // Create a unique marker for the driver
+        final Uint8List markerIcon =
+            await getBytesFromAssets(Assets.locationPin1Png, 100);
+        final Marker destinationMarker = Marker(
+          markerId: const MarkerId("DestinationID"),
+          icon: BitmapDescriptor.bytes(markerIcon, height: 40),
+          position: destinationLatLngPostion,
+          infoWindow: InfoWindow(
+            title: "Destination",
+            snippet: destinationEC.text,
+          ),
+        );
+
+        // Remove existing driver marker before adding a new one
+        if (markerId.isNotEmpty) {
+          markers.removeWhere(
+            (marker) => marker.markerId.value == "DestinationID",
+          );
+        }
+
+        // Ensure only 3 markers exist by adding the updated driver marker
+        markers.add(destinationMarker);
+
+        routeIsVisible.value = false;
+        cameraPosition =
+            CameraPosition(target: destinationLatLngPostion, zoom: 16);
+
+        newGoogleMapController?.animateCamera(
+          CameraUpdate.newCameraPosition(cameraPosition!),
+        );
       }
     }
   }
