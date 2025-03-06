@@ -16,6 +16,7 @@ class GoogleMapsController extends GetxController {
   @override
   void onInit() {
     loadMapData();
+    log("$googlePlacesApiKey", name: "GooglePlacesAPIKey");
 
     super.onInit();
   }

@@ -90,7 +90,7 @@ class HomeScreenController extends GetxController
   var locationPinBottomPadding = 50.0.obs;
 
   final List<MarkerId> markerId = <MarkerId>[
-    const MarkerId("0"),
+    const MarkerId("RiderID"),
   ];
   List<String>? markerTitle;
   List<String>? markerSnippet;
@@ -233,6 +233,7 @@ class HomeScreenController extends GetxController
       markerTitle = <String>["Me"];
       markerSnippet = <String>["My Location"];
       await loadMapData();
+      startRiderLocationUpdates();
 
       log("User Position: ${userPosition.value}");
       log("User pickupLocation: ${pickupLocationEC.text}");
@@ -278,7 +279,6 @@ class HomeScreenController extends GetxController
       );
     }
     await getAndGoToUserCurrentLocation();
-
     await loadCustomMarkers();
   }
 
@@ -368,6 +368,64 @@ class HomeScreenController extends GetxController
   void onMapCreated(GoogleMapController controller) {
     _googleMapController.complete(controller);
     newGoogleMapController = controller;
+  }
+
+  Timer? _riderLocationUpdateTimer;
+
+  void startRiderLocationUpdates() {
+    _riderLocationUpdateTimer?.cancel(); // Ensure any existing timer is stopped
+    _riderLocationUpdateTimer =
+        Timer.periodic(const Duration(seconds: 10), (timer) {
+      updateRiderLocationAndMarker();
+    });
+  }
+
+  void stopRiderLocationUpdates() {
+    _riderLocationUpdateTimer?.cancel();
+    _riderLocationUpdateTimer = null;
+  }
+
+  void restartRiderLocationUpdates() {
+    stopRiderLocationUpdates();
+    startRiderLocationUpdates();
+  }
+
+  Future<void> updateRiderLocationAndMarker() async {
+    Position riderLocation = await Geolocator.getCurrentPosition(
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+    );
+
+    LatLng latLngPosition = LatLng(
+      riderLocation.latitude,
+      riderLocation.longitude,
+    );
+
+    // Create a unique marker for the driver
+    final Uint8List markerIcon =
+        await getBytesFromAssets(Assets.personLocationPng, 100);
+    final Marker riderMarker = Marker(
+      markerId: const MarkerId("RiderID"),
+      icon: BitmapDescriptor.bytes(markerIcon, height: 40),
+      position: latLngPosition,
+      infoWindow: const InfoWindow(title: "Me", snippet: "My Location"),
+    );
+
+    // Remove existing driver marker before adding a new one
+    markers.removeWhere((marker) => marker.markerId.value == "RiderID");
+
+    // Ensure only 3 markers exist by adding the updated driver marker
+    markers.add(riderMarker);
+
+    cameraPosition = CameraPosition(target: latLngPosition, zoom: 18);
+
+    // newGoogleMapController?.animateCamera(
+    //   CameraUpdate.newCameraPosition(cameraPosition!),
+    // );
+
+    log(
+      "Markers Updated: ${markers.length}",
+      name: "Markers",
+    );
   }
 
   //!============ Book Instant Ride Section ==========================================================>
@@ -481,8 +539,8 @@ class HomeScreenController extends GetxController
 
         // Insert new elements
         customMarkers.insert(0, Assets.personLocationPng);
-        markerId.add(const MarkerId("0"));
-        markerId.add(const MarkerId("1"));
+        markerId.add(const MarkerId("DestinationID"));
+        markerId.add(const MarkerId("PickupLocationID"));
         markerTitle?.insert(0, "Me");
         markerSnippet?.insert(0, pickupLocationEC.text);
 
@@ -608,8 +666,8 @@ class HomeScreenController extends GetxController
 
         // Insert new elements
         customMarkers.insert(0, Assets.personLocationPng);
-        markerId.add(const MarkerId("0"));
-        markerId.add(const MarkerId("1"));
+        markerId.add(const MarkerId("DestinationID"));
+        markerId.add(const MarkerId("PickupLocationID"));
         markerTitle?.insert(0, "Me");
         markerSnippet?.insert(0, pickupLocationEC.text);
 
@@ -860,14 +918,14 @@ class HomeScreenController extends GetxController
     final Uint8List markerIcon =
         await getBytesFromAssets(Assets.vehiclePng, 100);
     final Marker driverMarker = Marker(
-      markerId: const MarkerId("driver"),
+      markerId: const MarkerId("DriverID"),
       icon: BitmapDescriptor.bytes(markerIcon, height: 40),
       position: driverLatLng,
       infoWindow: const InfoWindow(title: "Driver"),
     );
 
     // Remove existing driver marker before adding a new one
-    markers.removeWhere((marker) => marker.markerId.value == "driver");
+    markers.removeWhere((marker) => marker.markerId.value == "DriverID");
 
     // Ensure only 3 markers exist by adding the updated driver marker
     markers.add(driverMarker);
@@ -899,14 +957,14 @@ class HomeScreenController extends GetxController
     final Uint8List markerIcon =
         await getBytesFromAssets(Assets.vehiclePng, 100);
     final Marker driverMarker = Marker(
-      markerId: const MarkerId("driver"),
+      markerId: const MarkerId("DriverID"),
       icon: BitmapDescriptor.bytes(markerIcon, height: 40),
       position: driverLatLng,
       infoWindow: const InfoWindow(title: "Driver"),
     );
 
     // Remove existing driver marker before adding a new one
-    markers.removeWhere((marker) => marker.markerId.value == "driver");
+    markers.removeWhere((marker) => marker.markerId.value == "DriverID");
 
     // Ensure only 3 markers exist by adding the updated driver marker
     markers.add(driverMarker);
@@ -1131,6 +1189,7 @@ class HomeScreenController extends GetxController
 
   goToHomeScreen() async {
     webSocketService?.disconnect();
+    stopRiderLocationUpdates();
     await Get.offAll(
       () => LoadingScreen(
         loadData: LoadingController.instance.loadHomeScreen,
