@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class RideCompletedResponseModel {
   final String event;
   final RideCompletedData data;
@@ -25,13 +23,13 @@ class RideCompletedResponseModel {
     );
   }
 
-  static Map<String, dynamic> _decodeData(String data) {
-    try {
-      return data.isNotEmpty ? jsonDecode(data) : {};
-    } catch (e) {
-      return {};
-    }
-  }
+  // static Map<String, dynamic> _decodeData(String data) {
+  //   try {
+  //     return data.isNotEmpty ? jsonDecode(data) : {};
+  //   } catch (e) {
+  //     return {};
+  //   }
+  // }
 }
 
 class RideCompletedData {

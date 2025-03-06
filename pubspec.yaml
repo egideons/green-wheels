@@ -27,6 +27,7 @@ dependencies:
   geolocator:
   geocoding:
   firebase_core:
+  firebase_messaging:
   flutter_polyline_points:
   url_launcher:
   sliding_up_panel: ^2.0.0+1
@@ -38,6 +39,7 @@ dependencies:
   web_socket_channel:
   google_fonts:
   flutter_paystack_max:
+  flutter_local_notifications:
 
 dev_dependencies:
   flutter_test:

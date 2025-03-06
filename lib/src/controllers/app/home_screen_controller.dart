@@ -1130,6 +1130,7 @@ class HomeScreenController extends GetxController
   }
 
   goToHomeScreen() async {
+    webSocketService?.disconnect();
     await Get.offAll(
       () => LoadingScreen(
         loadData: LoadingController.instance.loadHomeScreen,
