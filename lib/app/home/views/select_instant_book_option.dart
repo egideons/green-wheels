@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:green_wheels/src/constants/consts.dart';
 import 'package:green_wheels/src/controllers/app/home_screen_controller.dart';
