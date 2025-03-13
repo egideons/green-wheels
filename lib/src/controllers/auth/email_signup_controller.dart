@@ -85,15 +85,14 @@ class EmailSignupController extends GetxController {
 
       if (response == null) {
         isLoading.value = false;
-        update();
+
         return;
       }
+      // Convert to json
+      dynamic responseJson;
+
+      responseJson = jsonDecode(response.body);
       try {
-        // Convert to json
-        dynamic responseJson;
-
-        responseJson = jsonDecode(response.body);
-
         log("This is the response body ====> ${response.body}");
 
         if (response.statusCode == 200) {
@@ -131,12 +130,12 @@ class EmailSignupController extends GetxController {
           log(responseJson);
         }
       } catch (e) {
-        log(e.toString());
-      }
+        ApiProcessorController.warningSnack(responseJson["message"]);
 
-      await Future.delayed(const Duration(seconds: 3));
+        log(e.toString());
+      } finally {
+        isLoading.value = false;
+      }
     }
-    isLoading.value = false;
-    update();
   }
 }

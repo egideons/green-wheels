@@ -51,16 +51,14 @@ class ScheduleTripScaffold extends GetView<ScheduleTripController> {
             ),
           ),
           kBigSizedBox,
-          Obx(
-            () {
-              return AndroidElevatedButton(
-                title: "Confirm Booking",
-                disable: controller.confirmBookingButtonIsEnabled.isFalse,
-                onPressed: controller.confirmBooking,
-                isLoading: controller.isLoadingScheduleTripRequest.value,
-              );
-            },
-          ),
+          Obx(() {
+            return AndroidElevatedButton(
+              title: "Confirm Booking",
+              disable: controller.confirmBookingButtonIsEnabled.isFalse,
+              isLoading: controller.isLoadingScheduleTripRequest.value,
+              onPressed: controller.scheduleTrip,
+            );
+          }),
         ],
       ),
     );

@@ -221,7 +221,7 @@ class HomeScreenController extends GetxController
     }
   }
 
-  initFunctions() async {
+  Future<void> initFunctions() async {
     infoMessage.value =
         "Please note that every vehicle has a security camera for safety reasons.";
     await Future.delayed(const Duration(seconds: 5));
@@ -446,6 +446,8 @@ class HomeScreenController extends GetxController
   var progress = 0.0.obs;
   var estimatedInstantRideTime = 0.obs;
   var instantRideAmount = 0.0.obs;
+  var sharedRideIsSelected = false.obs;
+  var selectInstantBookOptionPageController = PageController();
 
   //================ Controllers =================\\
   var pickupLocationEC = TextEditingController();
@@ -469,7 +471,34 @@ class HomeScreenController extends GetxController
   var driverHasArrived = false.obs;
   var isBookingInstantRide = false.obs;
 
-  //================ Functions =================\\
+  goToPersonalRide() async {
+    sharedRideIsSelected.value = false;
+    await Future.delayed(const Duration(milliseconds: 300));
+    selectInstantBookOptionPageController.animateToPage(
+      1,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
+  }
+
+  goToSharedRide() async {
+    sharedRideIsSelected.value = true;
+    await Future.delayed(const Duration(milliseconds: 300));
+    selectInstantBookOptionPageController.animateToPage(
+      1,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
+  }
+
+  goBackToSelectInstantBookOption() async {
+    selectInstantBookOptionPageController.animateToPage(
+      0,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
+  }
+
   //!================== Goto Google Maps ========================\\
 
   setPickupGoogleMapsLocation() async {
@@ -1437,6 +1466,8 @@ class HomeScreenController extends GetxController
       ),
     );
   }
+
+  //!==== Shared Ride ==============================================================>
 
   //!==== Schedule Trip =========================================================================>
 

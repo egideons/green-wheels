@@ -1,11 +1,15 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/app/home/views/book_instant_ride_tabbar_view.dart';
+import 'package:green_wheels/app/home/views/select_instant_book_option.dart';
+import 'package:green_wheels/theme/colors.dart';
 
 import '../../../src/constants/consts.dart';
 import '../../../src/controllers/app/home_screen_controller.dart';
 import '../../../src/utils/components/drag_handle.dart';
 import '../content/book_a_ride/book_ride_option_tabbar.dart';
-import 'book_instant_ride_tabbar_view.dart';
 import 'rent_ride_tabbar_view.dart';
 import 'schedule_trip_tabbar_view.dart';
 
@@ -116,11 +120,60 @@ homePanelSection(
                       () {
                         switch (controller.selectedTabBar.value) {
                           case 0:
-                            return bookInstantRideTabBarView(
-                              media,
-                              colorScheme,
-                              controller,
+                            return SizedBox(
+                              height: media.height * .4,
+                              child: PageView(
+                                controller: controller
+                                    .selectInstantBookOptionPageController,
+                                physics: NeverScrollableScrollPhysics(),
+                                scrollDirection: Axis.horizontal,
+                                children: [
+                                  selectInstantBookOption(media, controller),
+                                  Container(
+                                    child: () {
+                                      if (controller
+                                          .sharedRideIsSelected.value) {
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Center(
+                                              child: Text(
+                                                "Page Two",
+                                                style: defaultTextStyle(
+                                                  color: kPrimaryColor,
+                                                ),
+                                              ),
+                                            ),
+                                            kSizedBox,
+                                            TextButton(
+                                              onPressed: controller
+                                                  .goBackToSelectInstantBookOption,
+                                              child: Text(
+                                                "Go Back",
+                                                textAlign: TextAlign.center,
+                                                style: defaultTextStyle(
+                                                  color: kPrimaryColor,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w800,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      } else {
+                                        return bookInstantRideTabBarView(
+                                          media,
+                                          colorScheme,
+                                          controller,
+                                        );
+                                      }
+                                    }(),
+                                  ),
+                                ],
+                              ),
                             );
+
                           case 1:
                             return scheduleTripTabBarView(controller);
                           case 2:

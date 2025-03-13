@@ -52,7 +52,6 @@ class EmailLoginController extends GetxController {
       }
 
       isLoading.value = true;
-      update();
 
       var url = ApiUrl.baseUrl + ApiUrl.login;
 
@@ -70,12 +69,12 @@ class EmailLoginController extends GetxController {
         return;
       }
 
+      // Convert to json
+      dynamic responseJson;
+
+      responseJson = jsonDecode(response.body);
+
       try {
-        // Convert to json
-        dynamic responseJson;
-
-        responseJson = jsonDecode(response.body);
-
         log("This is the response body ====> ${response.body}");
 
         //Map the response json to the model provided
@@ -105,13 +104,12 @@ class EmailLoginController extends GetxController {
           ApiProcessorController.warningSnack(responseJson["message"]);
         }
       } catch (e) {
+        ApiProcessorController.warningSnack(responseJson["message"]);
         log(e.toString());
+      } finally {
+        isLoading.value = false;
       }
-
-      await Future.delayed(const Duration(seconds: 3));
     }
-    isLoading.value = false;
-    update();
   }
 
   @override

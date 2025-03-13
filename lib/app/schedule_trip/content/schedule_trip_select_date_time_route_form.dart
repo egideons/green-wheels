@@ -11,93 +11,90 @@ scheduleTripSelectDateTimeRouteForm(
   ScheduleTripController controller, {
   bool? isEnabled,
 }) {
-  return Form(
-    key: controller.scheduleTripFormKey,
-    child: Column(
-      children: [
-        Row(
-          // crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SvgPicture.asset(Assets.calendarOutlineIconSvg),
-            kHalfWidthSizedBox,
-            Expanded(
-              child: AndroidTextFormField(
-                onTap: controller.selectDateFunc,
-                readOnly: true,
-                enabled: isEnabled ?? true,
-                hintText: "Select Date",
-                controller: controller.selectedDateEC,
-                textInputAction: TextInputAction.next,
-                focusNode: controller.selectedDateFN,
-                textCapitalization: TextCapitalization.none,
-                filled: true,
-                inputBorder: defaultTextFieldBorderStyle,
-                focusedBorder: defaultTextFieldBorderStyle,
-                enabledBorder: defaultTextFieldBorderStyle,
-                validator: (value) {
-                  return null;
-                },
-              ),
+  return Column(
+    children: [
+      Row(
+        // crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SvgPicture.asset(Assets.calendarOutlineIconSvg),
+          kHalfWidthSizedBox,
+          Expanded(
+            child: AndroidTextFormField(
+              onTap: controller.selectDateFunc,
+              readOnly: true,
+              enabled: isEnabled ?? true,
+              hintText: "Select Date",
+              controller: controller.selectedDateEC,
+              textInputAction: TextInputAction.next,
+              focusNode: controller.selectedDateFN,
+              textCapitalization: TextCapitalization.none,
+              filled: true,
+              inputBorder: defaultTextFieldBorderStyle,
+              focusedBorder: defaultTextFieldBorderStyle,
+              enabledBorder: defaultTextFieldBorderStyle,
+              validator: (value) {
+                return null;
+              },
             ),
-          ],
-        ),
-        kSizedBox,
-        Row(
-          // crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SvgPicture.asset(Assets.clockIconSvg),
-            kHalfWidthSizedBox,
-            Expanded(
-              child: AndroidTextFormField(
-                hintText: "Select Time",
-                onTap: controller.selectTimeFunc,
-                readOnly: true,
-                enabled: isEnabled ?? true,
-                controller: controller.selectedTimeEC,
-                textInputAction: TextInputAction.next,
-                focusNode: controller.selectedTimeFN,
-                textCapitalization: TextCapitalization.none,
-                filled: true,
-                inputBorder: defaultTextFieldBorderStyle,
-                focusedBorder: defaultTextFieldBorderStyle,
-                enabledBorder: defaultTextFieldBorderStyle,
-                validator: (value) {
-                  return null;
-                },
-              ),
+          ),
+        ],
+      ),
+      kSizedBox,
+      Row(
+        // crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SvgPicture.asset(Assets.clockIconSvg),
+          kHalfWidthSizedBox,
+          Expanded(
+            child: AndroidTextFormField(
+              hintText: "Select Time",
+              onTap: controller.selectTimeFunc,
+              readOnly: true,
+              enabled: isEnabled ?? true,
+              controller: controller.selectedTimeEC,
+              textInputAction: TextInputAction.next,
+              focusNode: controller.selectedTimeFN,
+              textCapitalization: TextCapitalization.none,
+              filled: true,
+              inputBorder: defaultTextFieldBorderStyle,
+              focusedBorder: defaultTextFieldBorderStyle,
+              enabledBorder: defaultTextFieldBorderStyle,
+              validator: (value) {
+                return null;
+              },
             ),
-          ],
-        ),
-        kSizedBox,
-        Row(
-          // crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SvgPicture.asset(Assets.routeIconSvg),
-            kHalfWidthSizedBox,
-            Expanded(
-              child: AndroidTextFormField(
-                hintText: "Select Route",
-                readOnly: true,
-                enabled: isEnabled ?? true,
-                onTap: controller.goToScheduleTripSelectRoute,
-                controller: controller.selectedRouteEC,
-                textInputAction: TextInputAction.next,
-                focusNode: controller.selectedRouteFN,
-                textCapitalization: TextCapitalization.none,
-                filled: true,
-                minLines: 1,
-                maxLines: 20,
-                inputBorder: defaultTextFieldBorderStyle,
-                focusedBorder: defaultTextFieldBorderStyle,
-                enabledBorder: defaultTextFieldBorderStyle,
-                validator: (value) {
-                  return null;
-                },
-              ),
+          ),
+        ],
+      ),
+      kSizedBox,
+      Row(
+        // crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SvgPicture.asset(Assets.routeIconSvg),
+          kHalfWidthSizedBox,
+          Expanded(
+            child: AndroidTextFormField(
+              hintText: "Select Route",
+              readOnly: true,
+              enabled: isEnabled ?? true,
+              onTap: controller.goToScheduleTripSelectRoute,
+              controller: controller.selectedRouteEC,
+              textInputAction: TextInputAction.next,
+              focusNode: controller.selectedRouteFN,
+              textCapitalization: TextCapitalization.none,
+              filled: true,
+              minLines: 1,
+              maxLines: 20,
+              inputBorder: defaultTextFieldBorderStyle,
+              focusedBorder: defaultTextFieldBorderStyle,
+              enabledBorder: defaultTextFieldBorderStyle,
+              validator: (value) {
+                return null;
+              },
             ),
-          ],
-        ),
-      ],
-    ),
+          ),
+        ],
+      ),
+    ],
   );
 }

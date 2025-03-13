@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:green_wheels/theme/colors.dart';
 
 import '../../../src/constants/consts.dart';
 import '../../../src/controllers/app/home_screen_controller.dart';
@@ -12,28 +13,61 @@ bookInstantRideTabBarView(
   HomeScreenController controller,
 ) {
   return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.center,
     children: [
       bookARideFormView(media, colorScheme, controller),
       kSizedBox,
       Obx(() {
-        return Column(
-          children: () {
-            if (controller.instantRideAmount.value.isGreaterThan(0)) {
-              return <Widget>[
-                bookRideSearchForDriverSection(
-                  colorScheme,
-                  controller,
-                ),
-                SizedBox(height: media.height * .4),
-              ];
-            }
-            return <Widget>[
-              SizedBox(height: media.height * .4),
-            ];
-          }(),
-        );
+        if (controller.instantRideAmount.value.isGreaterThan(0)) {
+          return bookRideSearchForDriverSection(
+            colorScheme,
+            controller,
+          );
+        } else {
+          return TextButton(
+            onPressed: controller.goBackToSelectInstantBookOption,
+            child: Text(
+              "Go Back",
+              textAlign: TextAlign.center,
+              style: defaultTextStyle(
+                color: kPrimaryColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          );
+        }
       }),
+      // Obx(() {
+      //   return Column(
+      //     crossAxisAlignment: CrossAxisAlignment.center,
+      //     children: () {
+      //       if (controller.instantRideAmount.value.isGreaterThan(0)) {
+      //         return <Widget>[
+      //           bookRideSearchForDriverSection(
+      //             colorScheme,
+      //             controller,
+      //           ),
+      //         ];
+      //       }
+      //       return <Widget>[
+      //         kSizedBox,
+      //         TextButton(
+      //           onPressed: controller.goBackToSelectInstantBookOption,
+      //           child: Text(
+      //             "Go Back",
+      //             textAlign: TextAlign.center,
+      //             style: defaultTextStyle(
+      //               color: kPrimaryColor,
+      //               fontSize: 14,
+      //               fontWeight: FontWeight.w800,
+      //             ),
+      //           ),
+      //         ),
+      //       ];
+      //     }(),
+      //   );
+      // }),
     ],
   );
 }
