@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/app/home/views/book_instant_ride_tabbar_view.dart';
+import 'package:green_wheels/app/home/views/book_shared_ride_tabbar_view.dart';
 import 'package:green_wheels/app/home/views/select_instant_book_option.dart';
-import 'package:green_wheels/theme/colors.dart';
 
 import '../../../src/constants/consts.dart';
 import '../../../src/controllers/app/home_screen_controller.dart';
@@ -121,7 +121,7 @@ homePanelSection(
                         switch (controller.selectedTabBar.value) {
                           case 0:
                             return SizedBox(
-                              height: media.height * .4,
+                              height: media.height * .8,
                               child: PageView(
                                 controller: controller
                                     .selectInstantBookOptionPageController,
@@ -133,33 +133,10 @@ homePanelSection(
                                     child: () {
                                       if (controller
                                           .sharedRideIsSelected.value) {
-                                        return Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Center(
-                                              child: Text(
-                                                "Page Two",
-                                                style: defaultTextStyle(
-                                                  color: kPrimaryColor,
-                                                ),
-                                              ),
-                                            ),
-                                            kSizedBox,
-                                            TextButton(
-                                              onPressed: controller
-                                                  .goBackToSelectInstantBookOption,
-                                              child: Text(
-                                                "Go Back",
-                                                textAlign: TextAlign.center,
-                                                style: defaultTextStyle(
-                                                  color: kPrimaryColor,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w800,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                        return bookSharedRideTabbarView(
+                                          media,
+                                          colorScheme,
+                                          controller,
                                         );
                                       } else {
                                         return bookInstantRideTabBarView(

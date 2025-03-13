@@ -24,6 +24,7 @@ import 'package:green_wheels/src/models/ride/instant_ride_amount_response_model.
 import 'package:green_wheels/src/models/ride/rent_ride_vehicle_model.dart';
 import 'package:green_wheels/src/models/ride/ride_completed_response_model.dart';
 import 'package:green_wheels/src/models/ride/ride_started_response_model.dart';
+import 'package:green_wheels/src/models/ride/shared_ride_request_response_model.dart';
 import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.dart';
 import 'package:green_wheels/src/models/rider/rider_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
@@ -118,6 +119,7 @@ class HomeScreenController extends GetxController
   //================ Keys =================\\
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final bookRideFormKey = GlobalKey<FormState>();
+  final bookSharedRideFormKey = GlobalKey<FormState>();
 
   //================ Boolean =================\\
   var showInfo = false.obs;
@@ -300,15 +302,23 @@ class HomeScreenController extends GetxController
     pickupLat = userLocation.latitude.toString();
     pickupLong = userLocation.longitude.toString();
 
+    pickupSharedLat = userLocation.latitude.toString();
+    pickupSharedLong = userLocation.longitude.toString();
+    destinationSharedLat = "6.45612277432871";
+    destinationSharedLong = "7.507697509076796";
+    destinationSharedLocation.value =
+        "1st Floor Suite 09, Swissgarde Plaza, Ogui Rd, Achara, Enugu 400102, Enugu";
+    sharedDestinationEC.text = destinationSharedLocation.value;
+
     log("User Position: $userLocation");
     log("Pickup Location: Latitude: $pickupLat, Longitude: $pickupLong");
 
-    getPlaceMark(latLngPosition);
+    getInitialPlaceMark(latLngPosition);
 
     return userLocation;
   }
 
-  Future getPlaceMark(LatLng position) async {
+  Future getInitialPlaceMark(LatLng position) async {
     List<Placemark> placemarks =
         await placemarkFromCoordinates(position.latitude, position.longitude);
     Placemark address = placemarks[0];
@@ -317,6 +327,7 @@ class HomeScreenController extends GetxController
     pinnedLocation.value = addressStr;
     await Future.delayed(const Duration(milliseconds: 400));
     pickupLocationEC.text = pinnedLocation.value;
+    pickupSharedLocationEC.text = pinnedLocation.value;
 
     log("LatLng: ${LatLng(position.latitude, position.longitude)}");
     log("PinnedLocation: $addressStr");
@@ -473,7 +484,7 @@ class HomeScreenController extends GetxController
 
   goToPersonalRide() async {
     sharedRideIsSelected.value = false;
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 200));
     selectInstantBookOptionPageController.animateToPage(
       1,
       duration: Duration(milliseconds: 300),
@@ -483,7 +494,7 @@ class HomeScreenController extends GetxController
 
   goToSharedRide() async {
     sharedRideIsSelected.value = true;
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 200));
     selectInstantBookOptionPageController.animateToPage(
       1,
       duration: Duration(milliseconds: 300),
@@ -1468,6 +1479,177 @@ class HomeScreenController extends GetxController
   }
 
   //!==== Shared Ride ==============================================================>
+  //================ Variables =================\\
+  String pickupSharedLat = "";
+  String pickupSharedLong = "";
+  String destinationSharedLat = "";
+  String destinationSharedLong = "";
+  var pickupSharedLocation = "".obs;
+  var destinationSharedLocation = "".obs;
+  var estimatedInstantSharedRideDistance = "".obs;
+  var estimatedInstantSharedRideTime = 0.obs;
+  var instantSharedRideAmount = 0.0.obs;
+
+  //================ Booleans =================\\
+  var shareRideButtonIsVisible = false.obs;
+  var initiatingSharedRide = false.obs;
+
+  //================ Controllers =================\\
+  var pickupSharedLocationEC = TextEditingController();
+  var sharedDestinationEC = TextEditingController();
+
+  //================ Focus Nodes =================\\
+  var pickupSharedLocationFN = FocusNode();
+  var sharedDestinationFN = FocusNode();
+
+  //================ Models =================\\
+  var sharedRideRequestResponseModel =
+      SharedRideRequestResponseModel.fromJson(null).obs;
+
+  setSharedPickupGoogleMapsLocation() async {
+    var latitude = double.tryParse(pickupSharedLat)!;
+    var longitude = double.tryParse(pickupSharedLong)!;
+    final result = await Get.to(
+      () => GoogleMaps(
+        latitude: latitude,
+        longitude: longitude,
+      ),
+      routeName: '/google-maps',
+      duration: const Duration(milliseconds: 300),
+      fullscreenDialog: true,
+      curve: Curves.easeIn,
+      preventDuplicates: true,
+      popGesture: true,
+      transition: Transition.downToUp,
+      binding: BindingsBuilder(() => Get.lazyPut<GoogleMapsController>(
+            () => GoogleMapsController(),
+          )),
+    );
+
+    if (result != null) {
+      final latitude = result["latitude"];
+      final longitude = result["longitude"];
+      final address = result["address"];
+
+      pickupSharedLocationEC.text = address;
+      pickupSharedLocation.value = address;
+      pickupSharedLat = latitude;
+      pickupSharedLong = longitude;
+
+      if (pickupSharedLocationEC.text.isNotEmpty &&
+          sharedDestinationEC.text.isNotEmpty &&
+          pickupSharedLat.isNotEmpty &&
+          destinationSharedLat.isNotEmpty) {
+        shareRideButtonIsVisible.value = true;
+      }
+    }
+  }
+
+  setSharedDestinationGoogleMapsLocation() async {
+    var latitude = double.tryParse(pickupSharedLat)!;
+    var longitude = double.tryParse(pickupSharedLong)!;
+    final result = await Get.to(
+      () => GoogleMaps(
+        latitude: latitude,
+        longitude: longitude,
+      ),
+      routeName: '/google-maps',
+      duration: const Duration(milliseconds: 300),
+      fullscreenDialog: true,
+      curve: Curves.easeIn,
+      preventDuplicates: true,
+      popGesture: true,
+      transition: Transition.downToUp,
+      binding: BindingsBuilder(() => Get.lazyPut<GoogleMapsController>(
+            () => GoogleMapsController(),
+          )),
+    );
+
+    if (result != null) {
+      final latitude = result["latitude"];
+      final longitude = result["longitude"];
+      final address = result["address"];
+
+      pickupSharedLocationEC.text = address;
+      pickupSharedLocation.value = address;
+      pickupSharedLat = latitude;
+      pickupSharedLong = longitude;
+    }
+  }
+
+  Future<void> createSharedRide() async {
+    var url = ApiUrl.baseUrl + ApiUrl.bookSharedRide;
+
+    var userToken = prefs.getString("userToken") ?? "";
+    initiatingSharedRide.value = true;
+
+    Map<String, dynamic> data = {
+      "pickup_location": {
+        "address": pickupSharedLocationEC.text,
+        "lat": pickupSharedLat,
+        "long": pickupSharedLong,
+      },
+      "destination": {
+        "address": sharedDestinationEC.text,
+        "lat": destinationSharedLat,
+        "long": destinationSharedLong,
+      },
+      "payment_type": "wallet",
+    };
+
+    log("URL=> $url\nUSERTOKEN=>$userToken\nData=>$data");
+
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $userToken"
+    };
+
+    //HTTP Client Service
+    http.Response? response =
+        // await HttpClientService.postRequest(url, userToken, data);
+        await HttpClientService.postRequest(url, userToken, data, headers);
+
+    if (response == null) {
+      initiatingSharedRide.value = false;
+      return;
+    }
+
+    try {
+      dynamic responseJson;
+
+      responseJson = jsonDecode(response.body);
+
+      log("This is the responseJson: $responseJson\nResponse status code: ${response.statusCode}",
+          name: "Book Shared Ride");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ApiProcessorController.successSnack("${responseJson["message"]}");
+        initiatingSharedRide.value = false;
+
+        // webSocketService = ReverbWebSocketService(
+        //   riderUUID: riderModel.value.riderUuid,
+        //   authToken: userToken,
+        // );
+
+        // final websocketIsConnected = await webSocketService!.connect();
+        // log("Websocket is connected: $websocketIsConnected");
+
+        // if (websocketIsConnected) {
+        //   showSearchingForDriverModalSheet();
+        //   await bookRideAwaitDriverResponseTimer();
+        // } else {
+        //   webSocketService?.disconnect();
+        //   webSocketService = null; // Cleanup
+        // }
+      } else {
+        ApiProcessorController.warningSnack("${responseJson["message"]}");
+        log(responseJson.toString());
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    initiatingSharedRide.value = false;
+  }
 
   //!==== Schedule Trip =========================================================================>
 

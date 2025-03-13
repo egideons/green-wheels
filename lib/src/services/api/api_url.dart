@@ -19,6 +19,7 @@ class ApiUrl {
   //=============== Booking ====================\\
   static const rideAmount = "/ride-amount";
   static const bookInstantRide = "/booking/instant";
+  static const bookSharedRide = "/booking/shared";
   static const scheduleRide = "/booking/schedule";
   static const getAvailableVehicles = "/vehicles/available";
   static const rentRide = "/booking/rent";
