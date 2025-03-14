@@ -12,14 +12,14 @@ import 'package:green_wheels/src/models/ride/ride_started_response_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-class ReverbWebSocketService {
+class BookSharedRideWebSocketService {
   WebSocketChannel? channel;
   final String riderUUID;
   final String authToken;
   bool? hasNewRequest;
   bool _isManuallyDisconnected = false;
 
-  ReverbWebSocketService({
+  BookSharedRideWebSocketService({
     required this.riderUUID,
     required this.authToken,
   });

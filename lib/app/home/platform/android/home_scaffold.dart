@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:green_wheels/app/home/views/ride_panel.dart';
+import 'package:green_wheels/app/home/views/shared_ride_panel.dart';
 import 'package:green_wheels/theme/colors.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -64,6 +65,23 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
                       topRight: Radius.circular(32),
                     ),
                     panel: RidePanel(),
+                  ),
+                if (controller.sharedRidePanelIsVisible.value)
+                  SlidingUpPanel(
+                    controller: controller.sharedRidePanelController,
+                    maxHeight: size.height * .8,
+                    backdropTapClosesPanel: true,
+                    minHeight: size.height * .2,
+                    backdropEnabled: true,
+                    defaultPanelState: PanelState.CLOSED,
+                    panelSnapping: false,
+                    backdropColor: kTransparentColor,
+                    backdropOpacity: 0,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(32),
+                      topRight: Radius.circular(32),
+                    ),
+                    panel: SharedRidePanel(),
                   ),
                 Positioned(
                   top: 15,

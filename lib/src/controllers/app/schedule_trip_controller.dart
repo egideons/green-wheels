@@ -11,8 +11,8 @@ import 'package:green_wheels/src/controllers/others/api_processor_controller.dar
 import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.dart';
 import 'package:green_wheels/src/models/rider/rider_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
+import 'package:green_wheels/src/services/client/book_instant_ride_web_socket_service.dart';
 import 'package:green_wheels/src/services/client/http_client_service.dart';
-import 'package:green_wheels/src/services/client/web_socket_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -339,7 +339,7 @@ class ScheduleTripController extends GetxController {
   }
 
   //! WebSocket Service instance
-  ReverbWebSocketService? webSocketService;
+  BookInstantRideReverbWebSocketService? webSocketService;
 
   //================ Confirm Booking =================//
   Future<void> scheduleTrip() async {
@@ -412,7 +412,7 @@ class ScheduleTripController extends GetxController {
       if (response.statusCode == 201 || response.statusCode == 200) {
         log("$responseJson", name: "Schedule Trip Response Json");
 
-        webSocketService = ReverbWebSocketService(
+        webSocketService = BookInstantRideReverbWebSocketService(
           riderUUID: riderModel.value.riderUuid,
           authToken: userToken!,
         );

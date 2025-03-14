@@ -28,8 +28,9 @@ import 'package:green_wheels/src/models/ride/shared_ride_request_response_model.
 import 'package:green_wheels/src/models/rider/get_rider_profile_response_model.dart';
 import 'package:green_wheels/src/models/rider/rider_model.dart';
 import 'package:green_wheels/src/services/api/api_url.dart';
+import 'package:green_wheels/src/services/client/book_instant_ride_web_socket_service.dart';
+import 'package:green_wheels/src/services/client/book_shared_ride_web_socket_service.dart';
 import 'package:green_wheels/src/services/client/http_client_service.dart';
-import 'package:green_wheels/src/services/client/web_socket_service.dart';
 import 'package:green_wheels/src/services/google_maps/autocomplete_prediction_model.dart';
 import 'package:green_wheels/src/services/google_maps/location_service.dart';
 import 'package:green_wheels/src/utils/components/animated_dialog.dart';
@@ -137,8 +138,8 @@ class HomeScreenController extends GetxController
       ? homePanelController.close()
       : homePanelController.open();
 
-  openHomePanel() => homePanelController.open();
   closeHomePanel() => homePanelController.close();
+  openHomePanel() => homePanelController.open();
 
 //=================================== Ride tabs ==========================================\\
   List<Map<String, dynamic>> tabData(ColorScheme colorScheme) => [
@@ -318,7 +319,7 @@ class HomeScreenController extends GetxController
     return userLocation;
   }
 
-  Future getInitialPlaceMark(LatLng position) async {
+  Future<void> getInitialPlaceMark(LatLng position) async {
     List<Placemark> placemarks =
         await placemarkFromCoordinates(position.latitude, position.longitude);
     Placemark address = placemarks[0];
@@ -912,7 +913,7 @@ class HomeScreenController extends GetxController
   }
 
   //! WebSocket Service instance
-  ReverbWebSocketService? webSocketService;
+  BookInstantRideReverbWebSocketService? bookInstantRideWebSocketService;
 
   Future<void> bookInstantRide() async {
     var url = ApiUrl.baseUrl + ApiUrl.bookInstantRide;
@@ -963,20 +964,21 @@ class HomeScreenController extends GetxController
         ApiProcessorController.successSnack("${responseJson["message"]}");
         isBookingInstantRide.value = false;
 
-        webSocketService = ReverbWebSocketService(
+        bookInstantRideWebSocketService = BookInstantRideReverbWebSocketService(
           riderUUID: riderModel.value.riderUuid,
           authToken: userToken,
         );
 
-        final websocketIsConnected = await webSocketService!.connect();
+        final websocketIsConnected =
+            await bookInstantRideWebSocketService!.connect();
         log("Websocket is connected: $websocketIsConnected");
 
         if (websocketIsConnected) {
           showSearchingForDriverModalSheet();
           await bookRideAwaitDriverResponseTimer();
         } else {
-          webSocketService?.disconnect();
-          webSocketService = null; // Cleanup
+          bookInstantRideWebSocketService?.disconnect();
+          bookInstantRideWebSocketService = null; // Cleanup
         }
       } else {
         ApiProcessorController.warningSnack("${responseJson["message"]}");
@@ -1303,7 +1305,9 @@ class HomeScreenController extends GetxController
   }
 
   goToHomeScreen() async {
-    webSocketService?.disconnect();
+    bookInstantRideWebSocketService?.disconnect();
+    bookSharedRideWebSocketService?.disconnect();
+
     stopRiderLocationUpdates();
     await Get.offAll(
       () => LoadingScreen(
@@ -1493,10 +1497,12 @@ class HomeScreenController extends GetxController
   //================ Booleans =================\\
   var shareRideButtonIsVisible = false.obs;
   var initiatingSharedRide = false.obs;
+  var sharedRidePanelIsVisible = false.obs;
 
   //================ Controllers =================\\
   var pickupSharedLocationEC = TextEditingController();
   var sharedDestinationEC = TextEditingController();
+  var sharedRidePanelController = PanelController();
 
   //================ Focus Nodes =================\\
   var pickupSharedLocationFN = FocusNode();
@@ -1577,6 +1583,8 @@ class HomeScreenController extends GetxController
     }
   }
 
+  BookSharedRideWebSocketService? bookSharedRideWebSocketService;
+
   Future<void> createSharedRide() async {
     var url = ApiUrl.baseUrl + ApiUrl.bookSharedRide;
 
@@ -1619,36 +1627,45 @@ class HomeScreenController extends GetxController
 
       responseJson = jsonDecode(response.body);
 
-      log("This is the responseJson: $responseJson\nResponse status code: ${response.statusCode}",
-          name: "Book Shared Ride");
+      log(
+        "This is the responseJson: $responseJson\nResponse status code: ${response.statusCode}",
+        name: "Book Shared Ride",
+      );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.statusCode == 201) {
         ApiProcessorController.successSnack("${responseJson["message"]}");
         initiatingSharedRide.value = false;
 
-        // webSocketService = ReverbWebSocketService(
-        //   riderUUID: riderModel.value.riderUuid,
-        //   authToken: userToken,
-        // );
+        bookSharedRideWebSocketService = BookSharedRideWebSocketService(
+          riderUUID: riderModel.value.riderUuid,
+          authToken: userToken,
+        );
 
-        // final websocketIsConnected = await webSocketService!.connect();
-        // log("Websocket is connected: $websocketIsConnected");
+        final bookSharedRideWebsocketIsConnected =
+            await bookSharedRideWebSocketService!.connect();
+        log("Shared Ride Websocket is connected: $bookSharedRideWebsocketIsConnected");
 
-        // if (websocketIsConnected) {
-        //   showSearchingForDriverModalSheet();
-        //   await bookRideAwaitDriverResponseTimer();
-        // } else {
-        //   webSocketService?.disconnect();
-        //   webSocketService = null; // Cleanup
-        // }
+        if (bookSharedRideWebsocketIsConnected) {
+          closeHomePanel();
+          sharedRidePanelIsVisible.value = true;
+          sharedRidePanelController.open();
+        } else {
+          log(responseJson.toString());
+          initiatingSharedRide.value = false;
+          bookSharedRideWebSocketService?.disconnect();
+          bookSharedRideWebSocketService = null; // Cleanup
+        }
       } else {
+        initiatingSharedRide.value = false;
         ApiProcessorController.warningSnack("${responseJson["message"]}");
         log(responseJson.toString());
       }
     } catch (e) {
+      initiatingSharedRide.value = false;
       log(e.toString());
+    } finally {
+      initiatingSharedRide.value = false;
     }
-    initiatingSharedRide.value = false;
   }
 
   //!==== Schedule Trip =========================================================================>
