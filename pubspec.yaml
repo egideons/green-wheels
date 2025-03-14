@@ -40,6 +40,7 @@ dependencies:
   google_fonts:
   flutter_paystack_max:
   flutter_local_notifications:
+  animated_flip_counter:
 
 dev_dependencies:
   flutter_test:

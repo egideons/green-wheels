@@ -76,6 +76,7 @@ class HomeScreenController extends GetxController
   void onClose() {
     tabBarController.dispose();
     bookRideTimer?.cancel();
+    _sharedRideWaitingTimer?.cancel();
     super.onClose();
   }
 
@@ -1498,6 +1499,7 @@ class HomeScreenController extends GetxController
   var shareRideButtonIsVisible = false.obs;
   var initiatingSharedRide = false.obs;
   var sharedRidePanelIsVisible = false.obs;
+  var sharedRidePanelIsOpen = false.obs;
 
   //================ Controllers =================\\
   var pickupSharedLocationEC = TextEditingController();
@@ -1585,6 +1587,57 @@ class HomeScreenController extends GetxController
 
   BookSharedRideWebSocketService? bookSharedRideWebSocketService;
 
+  openSharedRidePanel() {
+    sharedRidePanelController.open();
+    sharedRidePanelIsOpen.value = true;
+  }
+
+  closeSharedRidePanel() {
+    sharedRidePanelController.close();
+    sharedRidePanelIsOpen.value = false;
+  }
+
+  var sharedRideWaitingTimeRemaining = 300.obs; // 5 minutes in seconds
+  var isSharedRideWaitingTimeEnded = false.obs;
+  Timer? _sharedRideWaitingTimer;
+
+  void startSharedRideWaitingTimer() {
+    if (_sharedRideWaitingTimer != null && _sharedRideWaitingTimer!.isActive) {
+      return; // Prevent multiple timers from running
+    }
+
+    isSharedRideWaitingTimeEnded.value = false; // Reset the flag
+
+    _sharedRideWaitingTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (sharedRideWaitingTimeRemaining.value > 0) {
+        sharedRideWaitingTimeRemaining.value--;
+        log("Timer remaining: ${sharedRideWaitingTimeRemaining.value}",
+            name: "Shared Ride Waiting Timer");
+      } else {
+        log("Timer canceled", name: "Shared Ride Waiting Timer");
+        timer.cancel();
+        isSharedRideWaitingTimeEnded.value = true; // Timer ended
+      }
+    });
+  }
+
+  void stopSharedRideWaitingTimer() {
+    _sharedRideWaitingTimer?.cancel();
+  }
+
+  void restartSharedRideWaitingTimer() {
+    stopSharedRideWaitingTimer();
+    sharedRideWaitingTimeRemaining.value = 300;
+    isSharedRideWaitingTimeEnded.value = false;
+    startSharedRideWaitingTimer();
+  }
+
+  String get sharedRideWaitingFormattedTime {
+    int minutes = sharedRideWaitingTimeRemaining.value ~/ 60;
+    int seconds = sharedRideWaitingTimeRemaining.value % 60;
+    return "$minutes:${seconds.toString().padLeft(2, '0')}";
+  }
+
   Future<void> createSharedRide() async {
     var url = ApiUrl.baseUrl + ApiUrl.bookSharedRide;
 
@@ -1646,9 +1699,11 @@ class HomeScreenController extends GetxController
         log("Shared Ride Websocket is connected: $bookSharedRideWebsocketIsConnected");
 
         if (bookSharedRideWebsocketIsConnected) {
-          closeHomePanel();
+          await closeHomePanel();
           sharedRidePanelIsVisible.value = true;
-          sharedRidePanelController.open();
+          // sharedRidePanelController.open();
+          await Future.delayed(const Duration(seconds: 1));
+          startSharedRideWaitingTimer();
         } else {
           log(responseJson.toString());
           initiatingSharedRide.value = false;

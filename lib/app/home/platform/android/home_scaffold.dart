@@ -73,7 +73,7 @@ class HomeScreenScaffold extends GetView<HomeScreenController> {
                     backdropTapClosesPanel: true,
                     minHeight: size.height * .2,
                     backdropEnabled: true,
-                    defaultPanelState: PanelState.CLOSED,
+                    defaultPanelState: PanelState.OPEN,
                     panelSnapping: false,
                     backdropColor: kTransparentColor,
                     backdropOpacity: 0,
